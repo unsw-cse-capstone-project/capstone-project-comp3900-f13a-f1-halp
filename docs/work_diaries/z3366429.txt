@@ -1,4 +1,11 @@
 Week 1
 
+Friday
+
 Group formed. We decided on project OnlinePropertySale, and Roy Shen volunteered to be Scrum Master. I openned a github repo, and started on drafting user stories. We are going to meet next week and compare our stories.
 
+Week 2
+
+Tuesday
+
+github repo migrated to repo provided by cse. I drafted user stories. My draft was discussed and edited by all members during meeting. I was assigned to draft buyer related user story board, and suppose to finish around Friday this week.
