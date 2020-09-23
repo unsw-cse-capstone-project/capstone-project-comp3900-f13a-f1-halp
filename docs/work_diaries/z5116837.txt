@@ -1,0 +1,7 @@
+Week 1
+Friday
+Formed group. Formed with Yubai, Jiayi, Roy and me. During the lab we selected to go for OnlinePropertySales. We set up github and Jira for coding. A group on Teams as well as Facebook was created for official and informal meetings. We were to go through the assignment spec sheet to prepare for Tuesday's meeting.
+
+Week 2
+Tuesday
+A draft version of user case stories was developed that would be used as the base of the Jira backlog. Scrum master will upload the user stories onto Jira. Other members were to further investiage on software similar to OnlinePropertySales and begin the formation of storyboards. We have decided that we will implement the backend app by python with flask. No confirmation has been decided on front end.
