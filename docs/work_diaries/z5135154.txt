@@ -9,4 +9,4 @@ week2 Tue 22/09
 We discussed and worked out the user stories together and will be created by scrum master on Jira .
 I will be invesgating the background of online property auction.
 Others will be working on storyboard of our system.
-The whole project will be implemented by python and flask.
+The whole project will be implemented by python and flask. 
