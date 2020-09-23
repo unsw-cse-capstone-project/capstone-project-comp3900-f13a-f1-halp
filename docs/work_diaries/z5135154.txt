@@ -1,5 +1,12 @@
 week1
-	Group formed
-	We are going to build an Online property Sale website by Python
-	I revised User stories , studied on project description and built user stories for discussion in next meeting, and I tried little test on Jira to
-	learn how to build user stories on this platform
+
+Group formed
+We are going to build an Online property Sale website by Python
+I revised User stories , studied on project description and built user stories for discussion in next meeting, and I tried little test on Jira to learn how to build user stories on this platform
+
+week2 Tue 22/09
+
+We discussed and worked out the user stories together and will be created by scrum master on Jira .
+I will be invesgating the background of online property auction.
+Others will be working on storyboard of our system.
+The whole project will be implemented by python and flask.
