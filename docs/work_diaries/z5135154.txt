@@ -16,3 +16,9 @@ week2 Fri 25/09
 The backgroud and user stories on Jira were finished on time.
 We discussed the details of strotboards and assigned them for each member.
 By the next meeting, we are supposed to finish storyboard and system architecture.
+
+week3 Tue 29/09
+
+The assigned part of storyboards and system architecture are done.
+We are cutting off the user stories since one of our member leaves.
+I am going to finish the search section of storyboard, Damin is going to set up the python-flask environment on github and Roy will communicate with tutor to settle down our issues.We all needed to review the technical stuff from the past so that we can arrange and assign the sprints next meeting.
