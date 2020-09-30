@@ -11,3 +11,12 @@ Week 1
   - Creating some basic user stories for comparison for next week
   
   
+Week 2
+  Group
+  - Started working on the proposal
+  - Planning out the user stories, user architecture and user interface of the product
+  - Discussing the first sprint, and what needs to be done for what parts
+  
+  Me
+  - Created the user stories discussed in Jira
+  - Planned out basic time estimation for each user story
