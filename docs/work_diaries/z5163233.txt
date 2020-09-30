@@ -20,3 +20,13 @@ Week 2
   Me
   - Created the user stories discussed in Jira
   - Planned out basic time estimation for each user story
+
+Week 2
+  Group
+  - Workout out group member assignment with Yubai leave
+  - Finish finalizing all technology/language/libraries used in the project
+  - Finishing the Proposal due at the end of this week
+  
+  Me
+  - Creating System architecture diagram for proposal
+  - Editing User stories and explaining how user stories satisfy project objectives
