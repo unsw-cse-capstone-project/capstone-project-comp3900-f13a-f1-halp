@@ -17,3 +17,18 @@ Yubai had to drop the course due to conflicts with his scheduling. A reduced sco
 Week 3
 Tuesday
 Attempts made to contact the suggested member, Yiwei Ma, have been unsuccessful. No repsonse on emails were received and no social media connections could be established to get in touch with them. Under the assumption that there were only gonig to be three members in the group, we decided to work on a reduced scope. Sprints were reorganised with the new reduced scope. Setting up of base files are to be made to prepare for our first sprint.
+
+Friday
+Confrimed to be a three member project with a reduced scope. Work was carried out to finish the report. Current feedback from lab demonstrator indicated report was on track. First base files for Flask and base html pages were set up.
+
+Week 4
+Tuesday
+I was unable to attend meeting today, so we had to reschedule for Wednesday.
+
+Wednesday
+Some progress were made by Jiayi on her side of of tasks. My lack of understanding for databases and SQLAlchemy was going to be troublesome. After Jiayi made her classes and database implementations, I have a rough idea of how to implement it. Database structure will be recorded in a separate file for easier reference. Everyone will make their own database for their individual tasks on the sprint.
+
+Friday
+Short meeting. Most memebers have not done a lot since last meeting due to commitments on other subjects. A lab demonstration is required for next Firday to show our work. Serious progress must be achieved throughout the next few days.
+
+Week 5
