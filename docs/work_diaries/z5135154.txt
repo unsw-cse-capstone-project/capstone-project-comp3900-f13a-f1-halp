@@ -22,3 +22,15 @@ week3 Tue 29/09
 The assigned part of storyboards and system architecture are done.
 We are cutting off the user stories since one of our member leaves.
 I am going to finish the search section of storyboard, Damin is going to set up the python-flask environment on github and Roy will communicate with tutor to settle down our issues.We all needed to review the technical stuff from the past so that we can arrange and assign the sprints next meeting.
+
+week3 Fri 02/10
+
+Assigned the first sprint for us and start to doing the project
+
+week4 Wed 07/10
+
+Discussed the progression of our work and decided to build a class structure file for each member to interact with the system
+
+week4 Fri 09/10
+
+Short meeting about the progression and keep doing our work.
