@@ -1,4 +1,5 @@
-from models/userDetails import app, db, User, BankDetails, login_manager
+from models.userDetails import User, BankDetails, clear_session
+from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager,UserMixin
 from datetime import datetime

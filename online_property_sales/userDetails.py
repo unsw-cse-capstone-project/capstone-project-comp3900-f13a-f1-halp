@@ -1,19 +1,8 @@
 from flask import Flask
-from flask_login import LoginManager,UserMixin
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-
-# app.secret_key = 'very-secret-123'
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-db = SQLAlchemy(app)
+from server import db
 
 #buyers and sellers all have to add extral bank details as some point, and all their attributes are the same,
 #So I just treat them all as users, They just need to input the extral details at different time. 
@@ -55,26 +44,26 @@ class BankDetails(db.Model):
     def __repr__(self):
         return '<BankDetails %r>' % self.id
 
-# db.create_all()
+
 def clear_session():
     db.session.query(User).delete()
     db.session.query(BankDetails).delete()
     db.session.commit()
 
-#samples
-clear_session()
 
-u1= User(login_name='Tom123', password='psw', address='address', date_of_birth= datetime(2000,12,12))
-u2= User(login_name='Cloudia', password='psw', address='address', date_of_birth= datetime(1999,1,1))
-bank1=BankDetails(id='5555444433331111',phone_number='1530009999',id_confirmation='id',holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12,1) ,author = u1)
-bank2 = BankDetails (id='1111222233334444', phone_number='1530009999', id_confirmation='id', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10,1), author=u1)
+# clear_session()
 
-db.session.add(u1)
-db.session.add(u2)
-db.session.add(bank1)
-db.session.add(bank2)
+# u1= User(login_name='Tom123', password='psw', address='address', date_of_birth= datetime(2000,12,12))
+# u2= User(login_name='Cloudia', password='psw', address='address', date_of_birth= datetime(1999,1,1))
+# bank1=BankDetails(id='5555444433331111',phone_number='1530009999',id_confirmation='id',holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12,1) ,author = u1)
+# bank2 = BankDetails (id='1111222233334444', phone_number='1530009999', id_confirmation='id', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10,1), author=u1)
 
-db.session.commit()
+# db.session.add(u1)
+# db.session.add(u2)
+# db.session.add(bank1)
+# db.session.add(bank2)
+
+# db.session.commit()
 
 # users= User.query.all()
 # cards= BankDetails.query.all()
