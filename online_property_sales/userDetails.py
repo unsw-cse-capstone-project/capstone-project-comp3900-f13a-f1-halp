@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from server import db
+from server import db, login_manager
 
 #buyers and sellers all have to add extral bank details as some point, and all their attributes are the same,
 #So I just treat them all as users, They just need to input the extral details at different time. 
@@ -13,19 +14,32 @@ from server import db
 #If user keeps the initial bids as an attribute, he/she has to keep a list of initial bids and cooresponding property(ID)
 #Or should the property keeps a list of registered auction buyers(RAB) with their cooresponding initial bids 
 
+
 class User(UserMixin, db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key = True)
 
     login_name = db.Column(db.String, unique=True)
-    password = db.Column(db.String(20))
+    password_hash = db.Column(db.String)
     address = db.Column(db.String(1000))  
     date_of_birth = db.Column(db.DateTime)
 
     cards = db.relationship('BankDetails', backref='author', lazy='dynamic')
 
+    #create hashed password for security
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     def __repr__(self):
         return '<User %r>' % self.login_name
+
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(id)
 
 class BankDetails(db.Model):
     __tablename__ = 'BankDetails'
@@ -50,20 +64,22 @@ def clear_session():
     db.session.query(BankDetails).delete()
     db.session.commit()
 
+clear_session()
+db.create_all()
 
-# clear_session()
+u1= User(login_name='Tom123', address='address', date_of_birth= datetime(2000,12,12))
+u1.set_password('psw')
+u2= User(login_name='Cloudia', address='address', date_of_birth= datetime(1999,1,1))
+u2.set_password('psw2')
+bank1=BankDetails(id='5555444433331111',phone_number='1530009999',id_confirmation='id',holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12,1) ,author = u1)
+bank2 = BankDetails (id='1111222233334444', phone_number='1530009999', id_confirmation='id', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10,1), author=u1)
 
-# u1= User(login_name='Tom123', password='psw', address='address', date_of_birth= datetime(2000,12,12))
-# u2= User(login_name='Cloudia', password='psw', address='address', date_of_birth= datetime(1999,1,1))
-# bank1=BankDetails(id='5555444433331111',phone_number='1530009999',id_confirmation='id',holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12,1) ,author = u1)
-# bank2 = BankDetails (id='1111222233334444', phone_number='1530009999', id_confirmation='id', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10,1), author=u1)
+db.session.add(u1)
+db.session.add(u2)
+db.session.add(bank1)
+db.session.add(bank2)
 
-# db.session.add(u1)
-# db.session.add(u2)
-# db.session.add(bank1)
-# db.session.add(bank2)
-
-# db.session.commit()
+db.session.commit()
 
 # users= User.query.all()
 # cards= BankDetails.query.all()

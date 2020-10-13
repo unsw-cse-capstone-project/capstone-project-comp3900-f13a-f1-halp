@@ -1,19 +1,47 @@
-from models.userDetails import User, BankDetails, clear_session
+from userDetails import User, BankDetails, clear_session
 from server import app, db, login_manager
-from flask import render_template, request, redirect, url_for
-from flask_login import LoginManager,UserMixin
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
-
-
-@login_manager.user_loader
-def load_user(id):
-    return User.query.get(id)
+from forms import LoginForm
 
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('home.html')
 
+@app.route('/login', methods = ['GET','POST'])
+def login():
+    
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+
+        user = User.query.filter_by(login_name=form.login_name.data).first()
+
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('home'))
+
+    return render_template('login.html', form=form)
+
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+    
+
+# @app.route('logout')
+# def logout():
+#     logout_user()
+#     return redirect(url_for('home'))
 
 # @app.route('/signup', methods=['POST'])
 # def signup():

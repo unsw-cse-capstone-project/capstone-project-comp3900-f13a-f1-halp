@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        .signup{
-            background-color: bisque;
-            text-align: center;
-            padding-top: 30px;
-        }
-    </style>
+{% extends "base.html" %}
 
-    <title>SignUP</title>
-</head>
-<body style="margin-top: 100px;">
-    <form method= "POST">
+{% block content %}
+    <h1 style="margin-top: 80px; text-align: center; size: 20px;">Auction World</h1>
+    <form method= "POST" style="margin-top: 50px;"">
         <div class="signup">
             <label> Please enter your login name: </label><br>
             <input type="text" name="login_name" placeholder="Enter login name"/>
@@ -39,5 +27,4 @@
             <button type="Submit" name="signup" value="signup" >SignUP</button>
         </div>
     </form>
-</body>
-</html>
+{% endblock %}
