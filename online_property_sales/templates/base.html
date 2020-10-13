@@ -12,20 +12,40 @@
         /* body{
             background-color: gold;
         } */
-        .login{
+        .form{
             background-color: bisque;
             text-align: center;
             padding-top: 30px;
         }
-        .signup{
-            background-color: bisque;
-            text-align: center;
-            padding-top: 30px;
+        
+        .home_button {
+            display: block;
+            width: 200px;
+            margin-left: 375px;
+            line-height: 40px;
+            font-size: 30px;
+            text-decoration: none; 
+            background-color: #0884EA; 
+            color: white;
+            float: left;
         }
     </style>
 </head>
 <body>
-    <div>AuctionWorld: <a href="/home">Home</a></div>
+    <div style="margin: 0 auto; width: 1000px;">
+        <p style="float: left;">
+            AuctionWorld: <a href="/home" >Home</a>
+        </p>
+
+        <p style="float: right;">
+            {% if current_user.is_authenticated %}
+                <a href="/account">Account</a>
+                <a href="/logout">logout</a>
+                Hi, {{ current_user.login_name }}!
+            {% endif %}
+        </p>
+        <br>
+    </div>
     <hr>
     {% block content %}{% endblock %}
 </body>

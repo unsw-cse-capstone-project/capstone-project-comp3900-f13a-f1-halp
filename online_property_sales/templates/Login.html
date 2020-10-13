@@ -4,22 +4,33 @@
     <h1 style="margin-top: 80px; text-align: center; size: 20px;">Auction World</h1>
     <form action="" method= "POST" style="margin-top: 50px;" novalidate>
         {{ form.hidden_tag() }}
-        <div class="login">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div style="text-align: center; color: red">
+            {% for message in messages %}
+            {{ message }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        
+        <div class="form">
             {{ form.login_name.label }}<br>
-            {{ form.login_name(size=32) }}
+            {{ form.login_name(size=32) }}<br>
             {% for error in form.login_name.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div class="login">
+        <div class="form">
             {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
+            {{ form.password(size=32) }}<br>
             {% for error in form.password.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </div>
-        <div class="login">{{ form.remember_me() }} {{ form.remember_me.label }}</div>
-        <div class="login">{{ form.submit() }}</div>
+        <div class="form">{{ form.remember_me() }} {{ form.remember_me.label }}</div>
+        <div class="form">{{ form.submit() }}</div>
     </form>
 {% endblock %}
     
