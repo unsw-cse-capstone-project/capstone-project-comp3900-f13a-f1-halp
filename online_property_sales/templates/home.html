@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
-{% block body %}
-<h1>Hi</h1>
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 style="margin-top: 200px; text-align: center; size: 20px;">Auction World</h1>
+    <form style="text-align: center; margin-top: 200px;" method= "POST">
+        <button style = "color: white; background-color:rgb(7, 132, 249); margin-right: 100px;" type="Submit" name="login" value="login">Login</button>
+        <button style = "color: white; background-color:rgb(7, 132, 249); margin-left: 100px; " type="Submit" name="signup" value="signup">signup</button>
+    </form>
 {% endblock %}
