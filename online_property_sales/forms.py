@@ -3,6 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 from flask import flash
 from userDetails import User
+import re
 
 class AccountForm(FlaskForm):
     password = PasswordField('password')
@@ -20,10 +21,15 @@ class AccountForm(FlaskForm):
     cvc = StringField ('cvc')
     expire_date = StringField ('expire_date')
 
+    cancel = SubmitField('Cancel')
     submit = SubmitField('Edit')
-
-    def validate_password(self):
-        return self.password.data.EqualTo(self.password2.data)
+    
+    def validate_DOB(self, data):
+        r=re.compile('.{2}/.{2}/.{4}')
+        if r.match(data):
+            return True
+        flash("Please input date with valid format!")
+        return False
 
 class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
@@ -45,6 +51,13 @@ class SignupForm(FlaskForm):
             flash("Please select another unique name!")
             return False
         return True
+
+    def validate_DOB(self, data):
+        r=re.compile('.{2}/.{2}/.{4}')
+        if r.match(data):
+            return True
+        flash("Please input date with valid format!")
+        return False
 
 class LoginForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
