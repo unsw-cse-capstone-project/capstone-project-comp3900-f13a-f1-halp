@@ -14,7 +14,7 @@
         {% endif %}
         {% endwith %}
 
-        <h2>Username: {{current_user.login_name}}</h2>
+        <h2 class="form" style="text-align: left ;margin-bottom: 0;">Username: {{current_user.login_name}}</h2>
 
         <div class="form">
             {{ form.password.label }}<br>
@@ -33,10 +33,14 @@
 
         <div class="form">
             {{ form.date_of_birth.label }}<br>
-            {{ form.date_of_birth(size=32) }}<br>
+            {{ form.date_of_birth(placeholder="dd/mm/yyyy", size=32) }}<br>
+        </div>
+        <div class="form">
+            {{ form.phone_number.label }}<br>
+            {{ form.phone_number(size=32) }}<br>
         </div>
 
-        <h2>Bank Details</h2>
+        <h2 class="form" style="margin-bottom: 0;">Bank Details</h2>
 
         <div class="form">
             {{ form.holder_fname.label }}<br>
@@ -49,10 +53,6 @@
         <div class="form">
             {{ form.card_number.label }}<br>
             {{ form.card_number(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.phone_number.label }}<br>
-            {{ form.phone_number(size=32) }}<br>
         </div>
         <div class="form">
             {{ form.id_confirmation.label }}<br>

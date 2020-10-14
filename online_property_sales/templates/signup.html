@@ -45,7 +45,7 @@
         </div>
         <div class="form">
             {{ form.date_of_birth.label }}<br>
-            {{ form.date_of_birth(size=32) }}<br>
+            {{ form.date_of_birth(placeholder="dd/mm/yyyy",size=32) }}<br>
             {% for error in form.date_of_birth.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
