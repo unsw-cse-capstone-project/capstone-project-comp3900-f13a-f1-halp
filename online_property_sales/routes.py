@@ -54,7 +54,7 @@ def signup():
 
     return render_template('signup.html', title='signup', form=form)
 
-@app.route('/account')
+@app.route('/account', methods=['POST'])
 def edit_account():
     
     if current_user.is_anonymous:
