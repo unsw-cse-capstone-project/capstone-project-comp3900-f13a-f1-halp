@@ -64,10 +64,10 @@ def edit_account():
 
     form = AccountForm()
     user = User.query.filter_by(login_name=current_user.login_name).first()
-    cards= user.cards.all()
+    
     change=False
-    if form.validate_on_submit():
 
+    if form.validate_on_submit():
         password = form.password.data
         password2 = form.password2.data
         if password:
@@ -87,11 +87,12 @@ def edit_account():
 
         date_of_birth = form.date_of_birth.data
         if date_of_birth:
-            if form.validate_DOB(date_of_birth):
+            r=re.compile('.{2}/.{2}/.{4}')
+            if r.match(date_of_birth):
                 user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
                 change=True
             else:
-                flash("Please input the DOB following the format dd/mm/yyy")
+                flash("Please input DOB with valid format!")
 
         phone_number =  form.phone_number.data
         if phone_number:
@@ -107,32 +108,46 @@ def edit_account():
 
         new_card=True
         if card_number:
+            cards=BankDetails.query.filter_by(id=card_number).all()
             for c in cards:
                 #the user has this card and going to change details
-                if card_number == c.card_number:
+                if card_number == c.id:
                     new_card=False 
-                    old_card = cards.query.get(card_number)
-                    if holder_fname:
-                        old_card.set_fname(holder_fname)
-                        change=True
-                    if holder_lname:
-                        old_card.set_lname(holder_lname)
-                        change=True
-                    if cvc:
-                        old_card.set_cvc(cvc)
-                        change=True
-                    if expire_date:
-                        old_card.set_expire_date(expire_date)
-                        change=True
-                    if id_confirmation:
-                        old_card.set_id_confirmation(id_confirmation)
-                        change=True
+                    if c.user_id == current_user.id:
+                        old_card = c
+                        if holder_fname:
+                            old_card.set_fname(holder_fname)
+                            change=True
+                        if holder_lname:
+                            old_card.set_lname(holder_lname)
+                            change=True
+                        if cvc:
+                            old_card.set_cvc(cvc)
+                            change=True
+                        if expire_date:
+                            r=re.compile('.{2}/.{4}')
+                            if r.match(expire_date):
+                                old_card.set_expire_date(datetime.strptime(date_of_birth,'%m/%Y'))
+                                change=True
+                            else:
+                                flash("Please input expire date with valid format!")
+                        if id_confirmation:
+                            old_card.set_id_confirmation(id_confirmation)
+                            change=True
+                    else:
+                        new_card=False
+                        flash("This card already registered by other user")
 
         #this is a new card, all the info should be inputed
-        if new_card == True and holder_fname and holder_lname and cvc and expire_date and id_confirmation:
-            bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
-            change=True
-            db.session.add(bank)
+        if new_card == True:
+            r=re.compile('.{2}/.{4}')
+            if holder_fname and holder_lname and cvc and expire_date and id_confirmation and r.match(expire_date):
+                bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
+                flash("Congraduation! you add a new bank card to your account")
+                change=True
+                db.session.add(bank)
+            else:
+                flash("This is a new card, the full info of the card should be inserted! And please make sure the date format is correct")
 
         if change:
             db.session.commit()
