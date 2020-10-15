@@ -59,8 +59,12 @@
 					{% endif %}					
 				</div>
 			</fieldset>
+			<div class="form-group">
+				{{ form.submit(class="btn btn-outline-info") }}
+			</div>
 		</form>
 	</div>
+
 	<div class="border-top pt-3">
 		<small class="text-muted">
 			Building not registered? <a class="ml-2" href="{{ url_for('register') }}">Register new buliding</a>
