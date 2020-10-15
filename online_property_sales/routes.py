@@ -44,11 +44,17 @@ def signup():
 
     form = SignupForm()
 
-    if form.validate_on_submit() and form.validate_username(form.login_name.data) and form.validate_DOB(form.date_of_birth.data):
-        user = User(login_name=form.login_name.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+    if form.validate_on_submit():
+        if form.validate_username(form.login_name.data):
+            if form.validate_DOB(form.date_of_birth.data):
+                user = User(login_name=form.login_name.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
+                user.set_password(form.password.data)
+                db.session.add(user)
+                db.session.commit()
+            else:
+                flash('Please input DOB with valid format!')
+        else:
+            flash('The username has been taken, please input another one')
         flash('Congratulations, you are now a registered user!')
 
         return redirect(url_for('login'))
