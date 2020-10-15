@@ -1,73 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="" method= "POST" style="margin-top: 50px;" novalidate>
-        {{ form.hidden_tag() }}
+    <div class="content-section">
+        <form action="" method= "POST" style="margin-top: 50px;" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}</legend>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div style="text-align: center; color: red">
+                    {% for message in messages %}
+                    {{ message }}<br>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div style="text-align: center; color: red">
-            {% for message in messages %}
-            {{ message }}<br>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% endwith %}
+                <div class="form-group">
+                    {{ form.password.label }}<br>
+                    {{ form.password(size=32) }}<br>
+                </div>
 
-        <h2 class="form" style="text-align: left ;margin-bottom: 0;">Username: {{current_user.login_name}}</h2>
+                <div class="form-group">
+                    {{ form.password2.label }}<br>
+                    {{ form.password2(size=32) }}<br>
+                </div>
 
-        <div class="form">
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-        </div>
+                <div class="form-group">
+                    {{ form.address.label }}<br>
+                    {{ form.address(size=32) }}<br>
+                </div>
 
-        <div class="form">
-            {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
-        </div>
+                <div class="form-group">
+                    {{ form.date_of_birth.label }}<br>
+                    {{ form.date_of_birth(placeholder="dd/mm/yyyy", size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.phone_number.label }}<br>
+                    {{ form.phone_number(size=32) }}<br>
+                </div>
 
-        <div class="form">
-            {{ form.address.label }}<br>
-            {{ form.address(size=32) }}<br>
-        </div>
+                <legend class="border-bottom mb-4">Bank Details</legend>
+                <div class="form-group">
+                    {{ form.holder_fname.label }}<br>
+                    {{ form.holder_fname(size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.holder_lname.label }}<br>
+                    {{ form.holder_lname(size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.card_number.label }}<br>
+                    {{ form.card_number(size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.id_confirmation.label }}<br>
+                    {{ form.id_confirmation(size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.cvc.label }}<br>
+                    {{ form.cvc(size=32) }}<br>
+                </div>
+                <div class="form-group">
+                    {{ form.expire_date.label }}<br>
+                    {{ form.expire_date(placeholder="mm/yyyy",size=32) }}<br>
+                </div>        
 
-        <div class="form">
-            {{ form.date_of_birth.label }}<br>
-            {{ form.date_of_birth(placeholder="dd/mm/yyyy", size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.phone_number.label }}<br>
-            {{ form.phone_number(size=32) }}<br>
-        </div>
-
-        <h2 class="form" style="margin-bottom: 0;">Bank Details</h2>
-
-        <div class="form">
-            {{ form.holder_fname.label }}<br>
-            {{ form.holder_fname(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.holder_lname.label }}<br>
-            {{ form.holder_lname(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.card_number.label }}<br>
-            {{ form.card_number(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.id_confirmation.label }}<br>
-            {{ form.id_confirmation(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.cvc.label }}<br>
-            {{ form.cvc(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.expire_date.label }}<br>
-            {{ form.expire_date(placeholder="mm/yyyy",size=32) }}<br>
-        </div>        
-
-        <div class="form">{{ form.submit() }}</div>
-
-    </form>
+                <div class="form-group">{{ form.submit() }}</div>
+            </fieldset>
+        </form>
+    </div>
+    
 {% endblock %}
