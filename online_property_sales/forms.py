@@ -21,15 +21,9 @@ class AccountForm(FlaskForm):
     cvc = StringField ('cvc')
     expire_date = StringField ('expire_date')
 
-    cancel = SubmitField('Cancel')
+    # cancel = SubmitField('Cancel')
     submit = SubmitField('Edit')
     
-    def validate_DOB(self, data):
-        r=re.compile('.{2}/.{2}/.{4}')
-        if r.match(data):
-            return True
-        flash("Please input date with valid format!")
-        return False
 
 class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
@@ -63,4 +57,4 @@ class LoginForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('log In')
+    submit = SubmitField('logIn')

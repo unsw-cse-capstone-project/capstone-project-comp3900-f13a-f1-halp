@@ -1,73 +1,164 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="" method= "POST" style="margin-top: 50px;" novalidate>
-        {{ form.hidden_tag() }}
+    <div class="content-section">
+        <form action="" method= "POST" style="margin-top: 50px;" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}</legend>
+            
+                <div class="form-group">
+                    {{ form.password.label }}<br>
+                    {% if form.password.errors %}
+						{{ form.password(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.password.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.password(class="form-control form-control-lg") }}
+					{% endif %}	
+                </div>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div style="text-align: center; color: red">
-            {% for message in messages %}
-            {{ message }}<br>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% endwith %}
+                <div class="form-group">
+                    {{ form.password2.label }}<br>
+                    {% if form.password2.errors %}
+						{{ form.password2(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.password2.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.password2(class="form-control form-control-lg") }}
+					{% endif %}
+                </div>
 
-        <h2 class="form" style="text-align: left ;margin-bottom: 0;">Username: {{current_user.login_name}}</h2>
+                <div class="form-group">
+                    {{ form.address.label }}<br>
+                    {% if form.address.errors %}
+						{{ form.address(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.address.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.address(class="form-control form-control-lg") }}
+					{% endif %}
+                </div>
 
-        <div class="form">
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-        </div>
+                <div class="form-group">
+                    {{ form.date_of_birth.label }}<br>
+                    {% if form.date_of_birth.errors %}
+						{{ form.date_of_birth(placeholder="dd/mm/yyyy" ,class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.date_of_birth.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.date_of_birth(class="form-control form-control-lg") }}
+					{% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.phone_number.label }}<br>
+                    {% if form.phone_number.errors %}
+                        {{ form.phone_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.phone_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.phone_number(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
 
-        <div class="form">
-            {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
-        </div>
+                <legend class="border-bottom mb-4">Bank Details</legend>
+                <div class="form-group">
+                    {{ form.holder_fname.label }}<br>
+                    {% if form.holder_fname.errors %}
+                        {{ form.holder_fname(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.holder_fname.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.holder_fname(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.holder_lname.label }}<br>
+                    {% if form.holder_lname.errors %}
+                        {{ form.holder_lname(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.holder_lname.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.holder_lname(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.card_number.label }}<br>
+                    {% if form.card_number.errors %}
+                        {{ form.card_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.card_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.card_number(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.id_confirmation.label }}<br>
+                    {% if form.id_confirmation.errors %}
+                        {{ form.id_confirmation(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.id_confirmation.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.id_confirmation(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.cvc.label }}<br>
+                    {% if form.cvc.errors %}
+                        {{ form.cvc(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.cvc.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.cvc(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.expire_date.label }}<br>
+                    {% if form.expire_date.errors %}
+                        {{ form.expire_date(placeholder="mm/yyyy",class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.expire_date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.expire_date(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>        
 
-        <div class="form">
-            {{ form.address.label }}<br>
-            {{ form.address(size=32) }}<br>
-        </div>
-
-        <div class="form">
-            {{ form.date_of_birth.label }}<br>
-            {{ form.date_of_birth(placeholder="dd/mm/yyyy", size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.phone_number.label }}<br>
-            {{ form.phone_number(size=32) }}<br>
-        </div>
-
-        <h2 class="form" style="margin-bottom: 0;">Bank Details</h2>
-
-        <div class="form">
-            {{ form.holder_fname.label }}<br>
-            {{ form.holder_fname(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.holder_lname.label }}<br>
-            {{ form.holder_lname(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.card_number.label }}<br>
-            {{ form.card_number(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.id_confirmation.label }}<br>
-            {{ form.id_confirmation(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.cvc.label }}<br>
-            {{ form.cvc(size=32) }}<br>
-        </div>
-        <div class="form">
-            {{ form.expire_date.label }}<br>
-            {{ form.expire_date(size=32) }}<br>
-        </div>        
-
-        <div class="form">{{ form.submit() }}</div>
-
-    </form>
+                <div class="form-group">{{ form.submit() }}</div>
+            </fieldset>
+        </form>
+    </div>
+    
 {% endblock %}
