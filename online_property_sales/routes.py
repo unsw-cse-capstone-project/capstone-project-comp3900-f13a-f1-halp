@@ -139,3 +139,12 @@ def edit_account():
             return redirect(url_for('home'))
     
     return render_template('account.html', title='account', form=form)
+
+@app.route('/property')
+def property_details():
+    
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    return render_template('property.html')
