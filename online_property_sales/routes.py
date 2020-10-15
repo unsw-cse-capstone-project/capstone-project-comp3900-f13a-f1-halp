@@ -51,14 +51,12 @@ def signup():
                 user.set_password(form.password.data)
                 db.session.add(user)
                 db.session.commit()
+                flash('Congratulations, you are now a registered user!')
+                return redirect(url_for('login'))
             else:
                 flash('Please input DOB with valid format!')
         else:
             flash('The username has been taken, please input another one')
-        flash('Congratulations, you are now a registered user!')
-
-        return redirect(url_for('login'))
-
     return render_template('signup.html', title='signup', form=form)
 
 @app.route('/account', methods=['POST','GET'])
