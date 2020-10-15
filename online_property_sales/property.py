@@ -10,6 +10,7 @@ class property(db.Model):
     address = db.Column(db.String(1000))
     num_bedrooms = db.Column(db.Integer)
     num_parking = db.Column(db.Integer)
+    num_bathrooms = db.Column(db.Integer)
     parking_features = db.Column(db.String)
     building_size = db.Column(db.Integer) #is it meant to be float?
     land_size = db.Column(db.Integer) #float?
@@ -31,6 +32,9 @@ class property(db.Model):
 
     def set_num_parking(self, parking):
         self.num_parking = parking
+
+    def set_num_bathrooms(self, bathrooms):
+        self.num_bathrooms = bathrooms
 
     def set_parking_features(self, features):
         self.parking_features = features

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, SelectField
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 from flask import flash
 from userDetails import User
@@ -21,15 +21,9 @@ class AccountForm(FlaskForm):
     cvc = StringField ('cvc')
     expire_date = StringField ('expire_date')
 
-    cancel = SubmitField('Cancel')
+    # cancel = SubmitField('Cancel')
     submit = SubmitField('Edit')
     
-    def validate_DOB(self, data):
-        r=re.compile('.{2}/.{2}/.{4}')
-        if r.match(data):
-            return True
-        flash("Please input date with valid format!")
-        return False
 
 class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
@@ -63,4 +57,28 @@ class LoginForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('log In')
+    submit = SubmitField('logIn')
+
+class PropertyForm(FlaskForm):
+    property_type = SelectField('Property Type', [DataRequired()],
+                        choices=[('house', 'House'),
+                                 ('unit', 'Apartments & Units'),
+                                 ('townhouse', 'Townhouse'),
+                                 ('villa', 'Villa'),
+                                 ('land', 'Land'),
+                                 ('acerage', 'Acerage'),
+                                 ('rural', 'Rural'),
+                                 ('blocks', 'Blocks of Units'),
+                                 ('retirement', 'Retirement Living')])
+    address = StringField('Address', validators=[DataRequired()])
+    num_bedrooms = StringField('Number of Bedrooms', validators=[DataRequired()])
+    num_bathrooms = StringField('Number of Bathrooms', validators=[DataRequired()])
+    num_parking = StringField('Number of Parking', validators=[DataRequired()])
+    parking_features = StringField('Parking Features', validators=[DataRequired()])
+    building_size = StringField('Building Size', validators=[DataRequired()])
+    land_size = StringField('Land Size', validators=[DataRequired()])
+    inspection_date = DateField('Date of Inspection')
+    description = StringField('Property Description', validators=[DataRequired()])
+    year_built = StringField('Year of Built', validators=[DataRequired()])
+    #photos haha
+    submit = SubmitField('Submit')

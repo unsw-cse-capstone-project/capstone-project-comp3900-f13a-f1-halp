@@ -1,6 +1,30 @@
 {% extends "base.html" %}
-{% block content %}
 
-<h1>Hi</h1>
+{% block content %}
+<div class="content-section">
+    <h1>Hi</h1>
+
+        <h2 class="title">Property</h2>
+        <form action="" method="POST" action="/property" style="margin-top: 50px;" novalidate>
+            <fieldset class="form-group">
+                <div class="form-group">{{ form.address.label }} {{form.address}}</div>
+                <div class="form-group">{{ form.property_type.label }} {{form.property_type}}</div>
+                <div class="form-group">{{ form.num_bedrooms.label }} {{form.num_bedrooms}}</div>
+                <div class="form-group">{{ form.num_bathrooms.label }} {{form.num_bathrooms}}</div>
+                <div class="form-group">{{ form.num_parking.label }} {{form.num_parking}}</div>
+                <div class="form-group">{{ form.parking_features.label }} {{form.parking_features}}</div>
+                <div class="form-group">{{ form.building_size.label }} {{form.building_size}}</div>
+                <div class="form-group">{{ form.land_size.label }} {{form.land_size}}</div>
+                <div class="form-group">{{ form.description.label }} {{form.description}}</div>
+                <div class="form-group">{{ form.year_built.label }} {{form.year_built}}</div>
+                <div class="form-group">{{ form.inspection_date.label }} {{form.inspection_date}}</div>
+                <div class="form-group">{{ form.submit }}</div>
+            </fieldset>
+            
+        </form>
+
+</div>
+
+
 
 {% endblock %}
