@@ -80,8 +80,8 @@ def clear_session():
 # u1.set_password('psw')
 # u2= User(login_name='Cloudia', address='address', date_of_birth= datetime(1999,1,1),phone_number='18999999999')
 # u2.set_password('psw2')
-# bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12,1) ,author = u1)
-# bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10,1), author=u1)
+# bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime(2022,12) ,author = u1)
+# bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime(2025,10), author=u1)
 
 # db.session.add(u1)
 # db.session.add(u2)
