@@ -2,8 +2,10 @@
 
 {% block content %}
     <h1 style="margin-top: 200px; text-align: center; size: 20px;">Auction World</h1>
-    <form style="text-align: center; margin-top: 200px;" method= "POST">
-        <button style = "color: white; background-color:rgb(7, 132, 249); margin-right: 100px;" type="Submit" name="login" value="login">Login</button>
-        <button style = "color: white; background-color:rgb(7, 132, 249); margin-left: 100px; " type="Submit" name="signup" value="signup">signup</button>
-    </form>
+    <div style="text-align: center; margin-top: 100px;">
+        {% if current_user.is_anonymous %}
+            <a href="/login" class="home_button">login</a>
+            <a href="/signup" class="home_button" >signup</a> 
+        {% endif %}
+    </div>
 {% endblock %}
