@@ -162,10 +162,6 @@ def edit_account():
 
 @app.route('/property', methods=['POST','GET'])
 def property_details():
-    
-@app.route("/createAuction", methods=['GET', 'POST'])
-def createAuction():
-
     if current_user.is_anonymous:
         flash('Please login first')
         return redirect(url_for('login'))
@@ -241,7 +237,9 @@ def createAuction():
         return redirect(url_for('home'))
 
     return render_template('property.html', title = 'property', form = form)
-
+    
+@app.route("/createAuction", methods=['GET', 'POST'])
+def createAuction():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User.query.filter_by(login_name=current_user.login_name).first()
