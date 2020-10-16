@@ -1,10 +1,11 @@
-from userDetails import User, BankDetails, clear_session
+from userDetails import User, BankDetails, clear_session, AuctionDetails
 from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
 import re
+import random
 
 @app.route('/')
 @app.route('/home')
@@ -162,6 +163,9 @@ def edit_account():
 @app.route('/property', methods=['POST','GET'])
 def property_details():
     
+@app.route("/createAuction", methods=['GET', 'POST'])
+def createAuction():
+
     if current_user.is_anonymous:
         flash('Please login first')
         return redirect(url_for('login'))
@@ -237,3 +241,16 @@ def property_details():
         return redirect(url_for('home'))
 
     return render_template('property.html', title = 'property', form = form)
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(login_name=current_user.login_name).first()
+        auctionDetails = AuctionDetails(AuctionID = random.random(), PropertyID = random.random(), SellerID = current_user.login_name, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
+            ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
+        db.session.add(auctionDetails)
+        db.session.commit()
+        flash(f'Auction created for {form.reservePrice.data}!', 'success')
+        return redirect(url_for('home'))
+
+        cards=BankDetails.query.filter_by(id=card_number).all()
+    return render_template('createAuction.html', form = form)
