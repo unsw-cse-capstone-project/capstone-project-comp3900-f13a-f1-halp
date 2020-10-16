@@ -65,6 +65,7 @@
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
                 {% if current_user.is_authenticated %}
+                  <a class="nav-item nav-link" href="/property">property</a>
                   <a class="nav-item nav-link" href="/account">Account</a>
                   <a class="nav-item nav-link" href="/logout">logout</a>
                   <p style="margin-top: 8px; margin-bottom: 0px;">Hi, {{ current_user.login_name }}!</p>
