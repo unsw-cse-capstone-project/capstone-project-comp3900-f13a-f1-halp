@@ -168,6 +168,72 @@ def property_details():
 
     form = PropertyForm()
     if form.validate_on_submit():
+        # Check values
+
+        # Property Types
+        if form.property_type.data == "house":
+            print("House")
+        elif form.property_type.data == "unit":
+            print("Apartments")
+        elif form.property_type.data == "townhouse":
+            print("Townhouse")
+        elif form.property_type.data == "villa":
+            print("Villa")
+        elif form.property_type.data == "land":
+            print("Land")
+        elif form.property_type.data == "acerage":
+            print("Acerage")
+        elif form.property_type.data == "rural":
+            print("Rural")
+        elif form.property_type.data == "blocks":
+            print("Blocks of Units")
+        elif form.property_type.data == "retirement":
+            print("Retirement")
+        else:
+            print("Error")
+
+        # Address
+
+        # Num bedrooms
+        if form.num_bedrooms.data.isdigit():
+            print(form.num_bedrooms.data)
+            # Else statement
+
+        # Num bathrooms
+        if form.num_bathrooms.data.isdigit():
+            print(form.num_bathrooms.data)
+            # Else statement
+
+        # Num Parking
+        if form.num_parking.data.isdigit():
+            print(form.num_parking.data)
+            # Else statement
+
+        # Parking Features
+
+        # Building Size
+        if form.building_size.data.isdigit():
+            print(form.building_size.data)
+            # Else statement
+
+        # Land Size
+        if form.land_size.data.isdigit():
+            print(form.land_size.data)
+            # Else statement
+
+        # inspection date
+        
+        # description
+
+        # year built
+        if form.year_built.data.isdigit():
+            print(form.year_built.data)
+
+
+
+
+
+
         return redirect(url_for('home'))
 
-    return render_template('property.html', form = form)
+    return render_template('property.html', title = 'property', form = form)
