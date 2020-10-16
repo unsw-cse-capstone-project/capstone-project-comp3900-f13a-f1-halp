@@ -82,3 +82,4 @@ class PropertyForm(FlaskForm):
     year_built = StringField('Year of Built', validators=[DataRequired()])
     #photos haha
     submit = SubmitField('Submit')
+    
