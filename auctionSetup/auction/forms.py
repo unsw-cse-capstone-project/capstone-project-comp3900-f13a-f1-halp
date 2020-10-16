@@ -8,5 +8,5 @@ class RegistrationForm(FlaskForm):
     #HouseID = StringField('HouseID',validators=[DataRequired(), Length(min=2, max=20)])
     #SellerID = StringField('SellerID',validators=[DataRequired(), Length(min=2, max=20)])
     reservePrice = DecimalField('Reserve Price', validators=[DataRequired()])
-    MinBiddingGap = DecimalField('Bidding Gap', validators=[DataRequired()])
+    minBiddingGap = DecimalField('Bidding Gap', validators=[DataRequired()])
     submit = SubmitField('CreateClass')

@@ -73,6 +73,18 @@ def clear_session():
     db.session.query(BankDetails).delete()
     db.session.commit()
 
+class AuctionDetails(db.Model):
+    AuctionID = db.Column(db.String, primary_key=True)
+    PropertyID = db.Column(db.String, unique=True, nullable=False)
+    SellerID = db.Column(db.String, nullable=False)
+    AuctionStart = db.Column(db.DateTime, nullable=False)
+    AuctionEnd = db.Column(db.DateTime, nullable=False)
+    ReservePrice = db.Column(db.Float, nullable=False)
+    MinBiddingGap = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
+
 # clear_session()
 # db.create_all()
 

@@ -5,7 +5,7 @@ class AuctionDetails(db.Model):
 	AuctionID = db.Column(db.String, primary_key=True)
 	PropertyID = db.Column(db.String, unique=True, nullable=False)
 	SellerID = db.Column(db.Integer, nullable=False)
-	AuctionStart = db.Column(db.DateTime, db.ForeignKey('user.id') nullable=False)
+	AuctionStart = db.Column(db.DateTime, nullable=False)
 	AuctionEnd = db.Column(db.DateTime, nullable=False)
 	ReservePrice = db.Column(db.Float, nullable=False)
 	MinBiddingGap = db.Column(db.Float, nullable=False)
