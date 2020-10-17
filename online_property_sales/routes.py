@@ -167,6 +167,8 @@ def property_details():
         return redirect(url_for('login'))
 
     form = PropertyForm()
+    error = None
+
     if form.validate_on_submit():
         # Check values
 
@@ -197,17 +199,20 @@ def property_details():
         # Num bedrooms
         if form.num_bedrooms.data.isdigit():
             print(form.num_bedrooms.data)
-            # Else statement
+        else:
+            error = "Invalid data entered for a field"
 
         # Num bathrooms
         if form.num_bathrooms.data.isdigit():
             print(form.num_bathrooms.data)
-            # Else statement
+        else:
+            error = "Invalid data entered for a field"
 
         # Num Parking
         if form.num_parking.data.isdigit():
             print(form.num_parking.data)
-            # Else statement
+        else:
+            error = "Invalid data entered for a field"
 
         # Parking Features
 
@@ -229,11 +234,13 @@ def property_details():
         if form.year_built.data.isdigit():
             print(form.year_built.data)
 
+        if error is None:
+            flash("Successfully updated")
+            return redirect(url_for('home'))
 
 
 
 
-
-        return redirect(url_for('home'))
+        return render_template('property.html', error = error, form = form)
 
     return render_template('property.html', title = 'property', form = form)

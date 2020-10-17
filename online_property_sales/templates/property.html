@@ -5,6 +5,9 @@
     <h1>Hi</h1>
 
         <h2 class="title">Property</h2>
+        {% if error %}
+            <p><strong>Error:</strong> {{ error }}
+        {% endif %}
         <form action="" method="POST" action="/property" style="margin-top: 50px;" novalidate>
             <fieldset class="form-group">
                 {{ form.hidden_tag() }}
