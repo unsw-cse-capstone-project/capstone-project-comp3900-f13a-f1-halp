@@ -162,10 +162,6 @@ def edit_account():
 
 @app.route('/property', methods=['POST','GET'])
 def property_details():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
-
     form = PropertyForm()
     if form.validate_on_submit():
         # Check values
@@ -240,6 +236,10 @@ def property_details():
     
 @app.route("/createAuction", methods=['GET', 'POST'])
 def createAuction():
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User.query.filter_by(login_name=current_user.login_name).first()
@@ -252,3 +252,12 @@ def createAuction():
 
         cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
+
+@app.route("/auctions", methods=['GET', 'POST'])
+def auctions():
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    auctions = AuctionDetails.query.filter_by(SellerID = current_user.login_name)
+    return render_template('auctions.html', auctions=auctions)

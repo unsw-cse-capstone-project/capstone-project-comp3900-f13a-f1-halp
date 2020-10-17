@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for auction in auctions %}
+        <article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('changeAuction', auction.AuctionID) }}">{{ auction.SellerID }}</a>
+              <small class="text-muted">{{ auction.SellerID }}</small>
+            </div>
+            <p class="article-content">{{ auction.AuctionStart }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
