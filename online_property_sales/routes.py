@@ -1,10 +1,11 @@
-from userDetails import User, BankDetails, clear_session
+from userDetails import User, BankDetails, clear_session, AuctionDetails
 from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
 import re
+import random
 
 @app.route('/')
 @app.route('/home')
@@ -19,11 +20,9 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-
         user = User.query.filter_by(login_name=form.login_name.data).first()
-
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password','danger')
             return redirect(url_for('login'))
 
         login_user(user, remember=form.remember_me.data)
@@ -51,57 +50,33 @@ def signup():
                 user.set_password(form.password.data)
                 db.session.add(user)
                 db.session.commit()
-                flash('Congratulations, you are now a registered user!')
+                flash('Congratulations, you are now a registered user!','success')
                 return redirect(url_for('login'))
             else:
-                flash('Please input DOB with valid format!')
+                flash('Please input DOB with valid format!','danger')
         else:
-            flash('The username has been taken, please input another one')
+            flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
 
-@app.route('/account', methods=['POST','GET'])
-def edit_account():
+@app.route('/account/<login_name>', methods=['POST','GET'])
+@login_required
+def account(login_name):
     
     if current_user.is_anonymous:
-        flash('Please login first')
+        flash('Please login first','danger')
         return redirect(url_for('login'))
 
     form = AccountForm()
-    user = User.query.filter_by(login_name=current_user.login_name).first()
+    user = User.query.filter_by(login_name=login_name).first_or_404()
     
-    change=False
-
     if form.validate_on_submit():
-        password = form.password.data
-        password2 = form.password2.data
-        if password:
-            if password2:
-                if password==password2:
-                    user.set_password(password)
-                    change=True
-                else:
-                    flash('Please repeat the same password')
-            else:
-                flash('Please repeat the same password')
 
-        address =  form.address.data
-        if address:
-            user.set_address(address)
-            change=True
-
+        user.set_address(form.address.data)
+        user.set_phone_number(form.phone_number.data)
         date_of_birth = form.date_of_birth.data
-        if date_of_birth:
-            r=re.compile('.{2}/.{2}/.{4}')
-            if r.match(date_of_birth):
-                user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
-                change=True
-            else:
-                flash("Please input DOB with valid format!")
-
-        phone_number =  form.phone_number.data
-        if phone_number:
-            user.set_phone_number(phone_number)
-            change=True
+        user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
+        if form.password.data:
+            user.set_password(form.password.data)
 
         card_number = form.card_number.data
         holder_fname =  form.holder_fname.data
@@ -110,58 +85,58 @@ def edit_account():
         cvc =  form.cvc.data
         expire_date =  form.expire_date.data
 
-        new_card=True
-        if card_number:
-            cards=BankDetails.query.filter_by(id=card_number).all()
-            for c in cards:
-                #the user has this card and going to change details
-                if card_number == c.id:
+        if len(card_number)>0:
+            new_card=True
+            old_card=BankDetails.query.get(card_number)
+            #this card already in our database
+            if old_card!=None:
+                #this card belongs to current user
+                if old_card.user_id == user.id:
                     new_card=False 
-                    if c.user_id == current_user.id:
-                        old_card = c
-                        if holder_fname:
-                            old_card.set_fname(holder_fname)
-                            change=True
-                        if holder_lname:
-                            old_card.set_lname(holder_lname)
-                            change=True
-                        if cvc:
-                            old_card.set_cvc(cvc)
-                            change=True
-                        if expire_date:
-                            r=re.compile('.{2}/.{4}')
-                            if r.match(expire_date):
-                                old_card.set_expire_date(datetime.strptime(date_of_birth,'%m/%Y'))
-                                change=True
-                            else:
-                                flash("Please input expire date with valid format!")
-                        if id_confirmation:
-                            old_card.set_id_confirmation(id_confirmation)
-                            change=True
-                    else:
-                        new_card=False
-                        flash("This card already registered by other user")
+                    if holder_fname:
+                        old_card.set_fname(holder_fname)
+                    if holder_lname:
+                        old_card.set_lname(holder_lname)
+                    if cvc:
+                        old_card.set_cvc(cvc)
+                    if expire_date:
+                        old_card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
+                    if id_confirmation:
+                        old_card.set_id_confirmation(id_confirmation)
+                #this card does not belong to current user
+                else:
+                    new_card=False
+                    flash(f"This card already registered by other user", 'danger')
+                    return render_template('account.html', title='account', form=form, user=user)
 
-        #this is a new card, all the info should be inputed
-        if new_card == True:
-            r=re.compile('.{2}/.{4}')
-            if holder_fname and holder_lname and cvc and expire_date and id_confirmation and r.match(expire_date):
-                bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
-                flash("Congraduation! you add a new bank card to your account")
-                change=True
-                db.session.add(bank)
-            else:
-                flash("This is a new card, the full info of the card should be inserted! And please make sure the date format is correct")
+            #this is a new card, all the info should be inputed
+            if new_card == True:
+                if holder_fname and holder_lname and cvc and expire_date and id_confirmation and expire_date:
+                    bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
+                    flash("Congraduation! you add a new credit card to your account",'success')
+                    db.session.add(bank)
+                else:
+                    flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
+                    db.session.commit()
+                    return render_template('account.html', title='account', form=form, user=user)
+               
+        #only change user details with no errors
+        db.session.commit()
+        return redirect(url_for('home'))
 
-        if change:
-            db.session.commit()
-            return redirect(url_for('home'))
-    
-    return render_template('account.html', title='account', form=form)
+    elif request.method == 'GET':
+        form.address.data = current_user.address
+        form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
+        form.phone_number.data = current_user.phone_number
+        if len(current_user.cards.all()) == 0:
+            flash(f'You have not inputted a credit card before, please upload one with full bank details.', 'info')
+        else:
+            flash(f'To edit parts or whole details of your uploaded credit cards, you have to input the card name correctly.','info')
+
+    return render_template('account.html', title='account', form=form, user=user)
 
 @app.route('/property', methods=['POST','GET'])
 def property_details():
-    
     if current_user.is_anonymous:
         flash('Please login first')
         return redirect(url_for('login'))
@@ -237,3 +212,18 @@ def property_details():
         return redirect(url_for('home'))
 
     return render_template('property.html', title = 'property', form = form)
+    
+@app.route("/createAuction", methods=['GET', 'POST'])
+def createAuction():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(login_name=current_user.login_name).first()
+        auctionDetails = AuctionDetails(AuctionID = random.random(), PropertyID = random.random(), SellerID = current_user.login_name, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
+            ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
+        db.session.add(auctionDetails)
+        db.session.commit()
+        flash('Auction created for {form.reservePrice.data}!', 'success')
+        return redirect(url_for('home'))
+
+        cards=BankDetails.query.filter_by(id=card_number).all()
+    return render_template('createAuction.html', form = form)
