@@ -6,6 +6,7 @@ from datetime import datetime
 from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
 import re
 import random
+import sys
 
 @app.route('/')
 @app.route('/home')
@@ -272,16 +273,41 @@ def changeAuctionDetails():
     auction = AuctionDetails.query.filter_by(AuctionID = AuctionID_).first()
 
     form = RegistrationForm()
-    form.auctionStart.data = auction.AuctionStart
 
     if form.validate_on_submit():
-        user = User.query.filter_by(login_name=current_user.login_name).first()
-        auctionDetails = AuctionDetails(AuctionID = random.random(), PropertyID = random.random(), SellerID = current_user.login_name, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
-            ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
-        db.session.add(auctionDetails)
+        auction = AuctionDetails.query.filter_by(AuctionID = AuctionID_).first()
+        auction.AuctionStart = form.auctionStart.data
+        auction.AuctionEnd = form.auctionEnd.data
+        auction.ReservePrice = form.reservePrice.data
+        auction.MinBiddingGap = form.minBiddingGap.data
         db.session.commit()
-        flash(f'Auction created for {form.reservePrice.data}!', 'success')
+        flash(f'Auction edited for {form.reservePrice.data}!', 'success')
         return redirect(url_for('home'))
+
+    elif request.method == 'GET':
+        form.auctionStart.data = auction.AuctionStart
+        form.auctionEnd.data = auction.AuctionEnd
+        form.reservePrice.data = auction.ReservePrice
+        form.minBiddingGap.data = auction.MinBiddingGap
 
     return render_template('changeAuctionDetails.html', form=form)
     
+@app.route("/deleteAuction", methods=['GET', 'POST'])
+@login_required
+def deleteAuction():
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    AuctionID_=request.args.get('auctionID')
+    print(AuctionID_)
+    auction = AuctionDetails.query.filter_by(AuctionID = AuctionID_).first()
+
+    #post = Post.query.get_or_404(post_id)
+
+    #if auction.SellerID != current_user.login_name:
+    #    abort(403)
+    db.session.delete(auction)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('home'))

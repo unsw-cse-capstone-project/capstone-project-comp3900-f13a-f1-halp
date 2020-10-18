@@ -8,6 +8,7 @@
               <small class="text-muted">{{ auction.SellerID }}</small>
             </div>
             <p class="article-content">{{ auction.AuctionStart }}</p>
+            <a class="mr-2" href="{{ url_for('deleteAuction', auctionID = auction.AuctionID) }}">DeLete Auction {{ auction.AuctionID }}</a>
           </div>
         </article>
     {% endfor %}
