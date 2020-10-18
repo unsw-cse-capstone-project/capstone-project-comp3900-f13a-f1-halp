@@ -1,7 +1,8 @@
 from userDetails import User, BankDetails, clear_session, AuctionDetails
+from property import Property
 from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
+from flask_login import LoginManager, UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
 import re
@@ -167,74 +168,72 @@ def property_details():
         return redirect(url_for('login'))
 
     form = PropertyForm()
+    error = None
+
     if form.validate_on_submit():
         # Check values
+        p_type = form.property_type.data
+        p_add = form.address.data
+        p_n_beds = form.num_bedrooms.data
+        p_n_baths = form.num_bathrooms.data
+        p_n_park = form.num_parking.data
+        p_p_features = form.parking_features.data
+        p_b_size = form.building_size.data
+        p_l_size = form.land_size.data
+        p_desc = form.description.data
+        p_year = form.year_built.data
+        p_i_date = form.inspection_date.data
 
         # Property Types
-        if form.property_type.data == "house":
-            print("House")
-        elif form.property_type.data == "unit":
-            print("Apartments")
-        elif form.property_type.data == "townhouse":
-            print("Townhouse")
-        elif form.property_type.data == "villa":
-            print("Villa")
-        elif form.property_type.data == "land":
-            print("Land")
-        elif form.property_type.data == "acerage":
-            print("Acerage")
-        elif form.property_type.data == "rural":
-            print("Rural")
-        elif form.property_type.data == "blocks":
-            print("Blocks of Units")
-        elif form.property_type.data == "retirement":
-            print("Retirement")
-        else:
-            print("Error")
+        if p_type == None:
+            error = "Property Type error"
+        print(p_type)
 
         # Address
 
         # Num bedrooms
-        if form.num_bedrooms.data.isdigit():
-            print(form.num_bedrooms.data)
-            # Else statement
-
+        if not p_n_beds.isdigit():
+            error = "Invalid data entered for a field"
+            
         # Num bathrooms
-        if form.num_bathrooms.data.isdigit():
-            print(form.num_bathrooms.data)
-            # Else statement
+        if not p_n_baths.isdigit():
+            error = "Invalid data entered for a field"
 
         # Num Parking
-        if form.num_parking.data.isdigit():
-            print(form.num_parking.data)
-            # Else statement
+        if not p_n_park.isdigit():
+            error = "Invalid data entered for a field"
 
         # Parking Features
 
         # Building Size
-        if form.building_size.data.isdigit():
-            print(form.building_size.data)
-            # Else statement
+        if not p_b_size.isdigit():
+            error = "Invalid data entered for a field"
 
         # Land Size
-        if form.land_size.data.isdigit():
-            print(form.land_size.data)
-            # Else statement
+        if form.building_size.data > form.land_size.data:
+            error = "Building size exceeds land size"
+            if not p_l_size.isdigit():
+                error = "Invalid data entered for a field"
 
         # inspection date
-        
+        print(datetime.today().date())
+        if not p_i_date > datetime.today().date():
+            error = "Invalid date entered for a field"
+            
         # description
 
         # year built
-        if form.year_built.data.isdigit():
-            print(form.year_built.data)
+        if not p_year.isdigit():
+            error = "Invalid year entered for a field"
 
+        if error is None:
+            property_p = Property(property_type = p_type, address = p_add, num_bedrooms = p_n_beds, num_bathrooms = p_n_baths, num_parking = p_n_park, parking_features = p_p_features, building_size = p_b_size, land_size = p_l_size, seller = User.login_name, inspection_date = p_i_date, description = p_desc, year_built = p_year)
+            ## Not Working
+            db.session.add(property_p)
+            db.session.commit()
+            return redirect(url_for('home'))
 
-
-
-
-
-        return redirect(url_for('home'))
+        return render_template('property.html', title = 'property', error = error, form = form)
 
     return render_template('property.html', title = 'property', form = form)
     

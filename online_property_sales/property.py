@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from server import db
 
-class property(db.Model):
+class Property(db.Model):
     __tablename__ = 'Property'
 
     id = db.Column(db.Integer, primary_key = True)
@@ -67,7 +67,7 @@ class property(db.Model):
     def __repr__(self):
         return '<Property at %r>' % self.address
 
-class photos(db.Model):
+class Photos(db.Model):
     __tablename__ = 'Photos'
 
     id = db.Column(db.Integer, primary_key = True)
