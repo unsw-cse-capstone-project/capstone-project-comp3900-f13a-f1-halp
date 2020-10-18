@@ -250,7 +250,6 @@ def createAuction():
         flash(f'Auction created for {form.reservePrice.data}!', 'success')
         return redirect(url_for('home'))
 
-        cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
 
 @app.route("/auctions", methods=['GET', 'POST'])
@@ -261,3 +260,28 @@ def auctions():
 
     auctions = AuctionDetails.query.filter_by(SellerID = current_user.login_name)
     return render_template('auctions.html', auctions=auctions)
+
+@app.route("/changeAuctionDetails", methods=['GET', 'POST'])
+def changeAuctionDetails():
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    AuctionID_=request.args.get('auctionID')
+    print(AuctionID_)
+    auction = AuctionDetails.query.filter_by(AuctionID = AuctionID_).first()
+
+    form = RegistrationForm()
+    form.auctionStart.data = auction.AuctionStart
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(login_name=current_user.login_name).first()
+        auctionDetails = AuctionDetails(AuctionID = random.random(), PropertyID = random.random(), SellerID = current_user.login_name, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
+            ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
+        db.session.add(auctionDetails)
+        db.session.commit()
+        flash(f'Auction created for {form.reservePrice.data}!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('changeAuctionDetails.html', form=form)
+    
