@@ -6,6 +6,7 @@ from userDetails import User
 import re
 
 class passwordForm(FlaskForm):
+    old_password = PasswordField('Confirm Old Password',validators= [Optional()])
     password = PasswordField('Password', validators=[Optional(), 
         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
         message="Minimum 8 letters and should contain at least one number, one lowercase letter, one Uppercase letter and one special character(@$!%*?&)")])
@@ -14,8 +15,6 @@ class passwordForm(FlaskForm):
 
 class AccountForm(FlaskForm):
     login_name = StringField('login_name', validators=[Optional()])
-    old_password = PasswordField('Confirm Old Password',validators= [Optional()])
-    
     email = StringField('Email', validators=[Optional(), Email()])
     address = StringField('Address')
     date_of_birth = StringField('Date of Birth',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ')])
@@ -29,13 +28,15 @@ class AccountForm(FlaskForm):
     expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
 
     submit = SubmitField('Edit')
-    change_password = SubmitField('Change Password')
 
     # cancel = SubmitField('Cancel')
-    def validate_username(self, login_name):
-        user = User.query.filter_by(login_name=self.login_name.data).first()
+    def validate_username(self, login_name, user_id):
+        user = User.query.filter_by(login_name=login_name).first()
         if user is not None:
-            flash(f"Please select another unique name!", 'danger')
+            if user.id == user_id:
+                flash(f"Please select another unique name or leave the slot empty for not changing your login name", 'danger')
+            else:
+                flash(f"Please select another unique name!", 'danger')
             return False
         return True
     
@@ -44,7 +45,7 @@ class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(),
         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
-        message="Minimum 8 letters and should contain at least one number, one lowercase letter, one Uppercase letter and one special character")])
+        message="Minimum 8 letters and should contain at least one number, one lowercase letter, one Uppercase letter and one special character @$!%*?&")])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     email = StringField('Email address', validators = [DataRequired(), Email()]) 
