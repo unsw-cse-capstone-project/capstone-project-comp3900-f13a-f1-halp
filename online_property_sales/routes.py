@@ -3,13 +3,15 @@ from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
+from sqlalchemy import func
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm
 import re
 import random
 
 @app.route('/')
 @app.route('/home')
 def home():
+    flash(f"The password requires at least 8 letter, one lowercase, one uppercase, one number and one special number. And Users are able to login with case insensitive login name. We have users who have same password as their login_name in our db: Tom123@g and Cloudia@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
@@ -20,7 +22,7 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(login_name=form.login_name.data).first()
+        user = User.query.filter( func.lower(User.login_name) == func.lower(form.login_name.data)).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password','danger')
             return redirect(url_for('login'))
@@ -46,7 +48,7 @@ def signup():
     if form.validate_on_submit():
         if form.validate_username(form.login_name.data):
             if form.validate_DOB(form.date_of_birth.data):
-                user = User(login_name=form.login_name.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
+                user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
                 user.set_password(form.password.data)
                 db.session.add(user)
                 db.session.commit()
@@ -58,6 +60,30 @@ def signup():
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
 
+@app.route('/changePassword/<login_name>', methods=['POST','GET'])
+@login_required
+def changePassword(login_name):
+
+    form = passwordForm()
+    user = User.query.filter_by(login_name=login_name).first_or_404()
+
+    if form.validate_on_submit():
+        if form.old_password.data:
+            if user.check_password(form.old_password.data):
+                if form.password.data:
+                    user.set_password(form.password.data)
+                    db.session.commit()
+                    return redirect('home')
+                else:
+                    flash(f'Please input your new password','info')
+            else:
+                flash(f'Please input correct original password','danger')
+        else:
+            flash(f'Please input correct original password and new password','info')
+
+    return render_template('changePassword.html', title='Change Password', form=form, login_name=login_name)
+   
+        
 @app.route('/account/<login_name>', methods=['POST','GET'])
 @login_required
 def account(login_name):
@@ -70,13 +96,17 @@ def account(login_name):
     user = User.query.filter_by(login_name=login_name).first_or_404()
     
     if form.validate_on_submit():
+        #change password after confirmming old password first
+        if form.login_name.data:
+            if form.validate_username(form.login_name.data, user.id):
+                user.set_login_name(form.login_name.data)
+            else:
+                return render_template('account.html', title='account', form=form, user=user)
 
         user.set_address(form.address.data)
         user.set_phone_number(form.phone_number.data)
-        date_of_birth = form.date_of_birth.data
-        user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
-        if form.password.data:
-            user.set_password(form.password.data)
+        user.set_date_of_birth( datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'))
+        user.set_email(form.email.data)
 
         card_number = form.card_number.data
         holder_fname =  form.holder_fname.data
@@ -119,15 +149,17 @@ def account(login_name):
                     flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
                     db.session.commit()
                     return render_template('account.html', title='account', form=form, user=user)
-               
+            
         #only change user details with no errors
         db.session.commit()
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
+        form.login_name.data = current_user.login_name
         form.address.data = current_user.address
         form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
         form.phone_number.data = current_user.phone_number
+        form.email.data = current_user.email
         if len(current_user.cards.all()) == 0:
             flash(f'You have not inputted a credit card before, please upload one with full bank details.', 'info')
         else:
