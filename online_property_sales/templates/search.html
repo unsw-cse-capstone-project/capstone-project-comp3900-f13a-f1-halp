@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form action="" method= "POST" style="margin-top: 50px;" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+				<legend class="border-bottom mb-4">Search</legend>
+				
+				<div class="form-group">
+                    {{ form.auctionStart.label }}<br>
+                    {% if form.auctionStart.errors %}
+						{{ form.auctionStart(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.auctionStart.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.auctionStart(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+					{% endif %}	
+                </div>
+
+                <div class="form-group">
+                    {{ form.auctionEnd.label }}<br>
+                    {% if form.auctionEnd.errors %}
+						{{ form.auctionEnd(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.auctionEnd.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.auctionEnd(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+					{% endif %}	
+                </div>
+
+                <div class="form-group">
+                    {{ form.suburb.label }}<br>
+                    {% if form.suburb.errors %}
+						{{ form.suburb(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.suburb.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.suburb(class="form-control form-control-lg") }}
+					{% endif %}
+                </div>
+
+                <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

@@ -4,8 +4,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from sqlalchemy import func
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm
-import re
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm, searchForm
 import random
 
 @app.route('/')
@@ -59,7 +58,20 @@ def signup():
         else:
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
-
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.route('/search', methods=['POST','GET'])
+# @login_required
+def search():
+    form=searchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('home'))
+    return render_template('search.html', title='search', form=form)
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
 @login_required
 def changePassword(login_name):
@@ -82,16 +94,12 @@ def changePassword(login_name):
             flash(f'Please input correct original password and new password','info')
 
     return render_template('changePassword.html', title='Change Password', form=form, login_name=login_name)
-   
-        
+
+
 @app.route('/account/<login_name>', methods=['POST','GET'])
 @login_required
 def account(login_name):
     
-    if current_user.is_anonymous:
-        flash('Please login first','danger')
-        return redirect(url_for('login'))
-
     form = AccountForm()
     user = User.query.filter_by(login_name=login_name).first_or_404()
     
