@@ -5,32 +5,47 @@
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}</legend>
-            
-                <div class="form-group">
-                    {{ form.password.label }}<br>
-                    {% if form.password.errors %}
-						{{ form.password(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.password.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.password(class="form-control form-control-lg") }}
-					{% endif %}	
-                </div>
 
                 <div class="form-group">
-                    {{ form.password2.label }}<br>
-                    {% if form.password2.errors %}
-						{{ form.password2(class="form-control form-control-lg is-invalid") }}
+                    {{ form.old_password.label }}<br>
+                    {% if form.old_password.errors %}
+						{{ form.old_password(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
-							{% for error in form.password2.errors %}
+							{% for error in form.old_password.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.password2(class="form-control form-control-lg") }}
+						{{ form.old_password(class="form-control form-control-lg") }}
+					{% endif %}	
+                </div>
+                <div class="form-group" style="float: right;margin-left: 500px;">
+                    {{ form.change_password(class="btn btn-outline-info") }}</div>
+
+                <div class="form-group">
+                    {{ form.login_name.label }}<br>
+                    {% if form.login_name.errors %}
+						{{ form.login_name(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.login_name.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.login_name(class="form-control form-control-lg") }}
+					{% endif %}	
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }}<br>
+                    {% if form.email.errors %}
+						{{ form.email(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.email.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.email(class="form-control form-control-lg") }}
 					{% endif %}
                 </div>
 

@@ -3,7 +3,7 @@ from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm
 import re
 import random
 
@@ -46,7 +46,7 @@ def signup():
     if form.validate_on_submit():
         if form.validate_username(form.login_name.data):
             if form.validate_DOB(form.date_of_birth.data):
-                user = User(login_name=form.login_name.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
+                user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
                 user.set_password(form.password.data)
                 db.session.add(user)
                 db.session.commit()
@@ -58,6 +58,23 @@ def signup():
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
 
+@app.route('/changePassword', methods=['POST','GET'])
+@login_required
+def changePassword():
+    
+    form = passwordForm()
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+
+    if form.validate_on_submit():
+        if form.password.data:
+            user.set_password(form.password.data)
+            db.session.commit()
+            return redirect('home')
+
+    flash(f'Please input valid password','danger')
+    return render_template('changePassword.html', title='changePassword', form=form)
+   
+        
 @app.route('/account/<login_name>', methods=['POST','GET'])
 @login_required
 def account(login_name):
@@ -70,64 +87,77 @@ def account(login_name):
     user = User.query.filter_by(login_name=login_name).first_or_404()
     
     if form.validate_on_submit():
+        #change password after confirmming old password first
+        if form.change_password.data:
+            if user.check_password(form.old_password.data):
+                return render_template('changePassword.html')
 
-        user.set_address(form.address.data)
-        user.set_phone_number(form.phone_number.data)
-        date_of_birth = form.date_of_birth.data
-        user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
-        if form.password.data:
-            user.set_password(form.password.data)
+            flash(f'Incorrect password','danger')
+            return render_template('account.html', title='account', form=form, user=user)
+            
+        elif form.submit.data:
 
-        card_number = form.card_number.data
-        holder_fname =  form.holder_fname.data
-        holder_lname =  form.holder_lname.data
-        id_confirmation =  form.id_confirmation.data
-        cvc =  form.cvc.data
-        expire_date =  form.expire_date.data
+            if form.validate_username(form.login_name.data):
+                user.set_login_name(form.login_name.data)
+            else:
+                return render_template('account.html', title='account', form=form, user=user)
+            user.set_address(form.address.data)
+            user.set_phone_number(form.phone_number.data)
+            date_of_birth = form.date_of_birth.data
+            user.set_date_of_birth( datetime.strptime(date_of_birth,'%d/%m/%Y'))
+            user.set_email(form.email.data)
 
-        if len(card_number)>0:
-            new_card=True
-            old_card=BankDetails.query.get(card_number)
-            #this card already in our database
-            if old_card!=None:
-                #this card belongs to current user
-                if old_card.user_id == user.id:
-                    new_card=False 
-                    if holder_fname:
-                        old_card.set_fname(holder_fname)
-                    if holder_lname:
-                        old_card.set_lname(holder_lname)
-                    if cvc:
-                        old_card.set_cvc(cvc)
-                    if expire_date:
-                        old_card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
-                    if id_confirmation:
-                        old_card.set_id_confirmation(id_confirmation)
-                #this card does not belong to current user
-                else:
-                    new_card=False
-                    flash(f"This card already registered by other user", 'danger')
-                    return render_template('account.html', title='account', form=form, user=user)
+            card_number = form.card_number.data
+            holder_fname =  form.holder_fname.data
+            holder_lname =  form.holder_lname.data
+            id_confirmation =  form.id_confirmation.data
+            cvc =  form.cvc.data
+            expire_date =  form.expire_date.data
 
-            #this is a new card, all the info should be inputed
-            if new_card == True:
-                if holder_fname and holder_lname and cvc and expire_date and id_confirmation and expire_date:
-                    bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
-                    flash("Congraduation! you add a new credit card to your account",'success')
-                    db.session.add(bank)
-                else:
-                    flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
-                    db.session.commit()
-                    return render_template('account.html', title='account', form=form, user=user)
-               
-        #only change user details with no errors
-        db.session.commit()
-        return redirect(url_for('home'))
+            if len(card_number)>0:
+                new_card=True
+                old_card=BankDetails.query.get(card_number)
+                #this card already in our database
+                if old_card!=None:
+                    #this card belongs to current user
+                    if old_card.user_id == user.id:
+                        new_card=False 
+                        if holder_fname:
+                            old_card.set_fname(holder_fname)
+                        if holder_lname:
+                            old_card.set_lname(holder_lname)
+                        if cvc:
+                            old_card.set_cvc(cvc)
+                        if expire_date:
+                            old_card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
+                        if id_confirmation:
+                            old_card.set_id_confirmation(id_confirmation)
+                    #this card does not belong to current user
+                    else:
+                        new_card=False
+                        flash(f"This card already registered by other user", 'danger')
+                        return render_template('account.html', title='account', form=form, user=user)
+
+                #this is a new card, all the info should be inputed
+                if new_card == True:
+                    if holder_fname and holder_lname and cvc and expire_date and id_confirmation and expire_date:
+                        bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
+                        flash("Congraduation! you add a new credit card to your account",'success')
+                        db.session.add(bank)
+                    else:
+                        flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
+                        db.session.commit()
+                        return render_template('account.html', title='account', form=form, user=user)
+                
+            #only change user details with no errors
+            db.session.commit()
+            return redirect(url_for('home'))
 
     elif request.method == 'GET':
         form.address.data = current_user.address
         form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
         form.phone_number.data = current_user.phone_number
+        form.email.data = current_user.email
         if len(current_user.cards.all()) == 0:
             flash(f'You have not inputted a credit card before, please upload one with full bank details.', 'info')
         else:
