@@ -11,6 +11,7 @@ import random
 @app.route('/')
 @app.route('/home')
 def home():
+    flash(f"The password requires at least 8 letter, one lowercase, one uppercase, one number and one special number. And Users are able to login with case insensitive login name. We have users who have same password as their login_name in our db: Tom123@g and Cloudia@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
