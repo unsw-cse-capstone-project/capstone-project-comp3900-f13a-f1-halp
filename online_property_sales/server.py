@@ -19,7 +19,7 @@ app.secret_key = "*U78u!#2@fs"
 
 # database
 db = SQLAlchemy(app)
-
+db.create_all()
 
 # instantiate models
 #System = bidApp()

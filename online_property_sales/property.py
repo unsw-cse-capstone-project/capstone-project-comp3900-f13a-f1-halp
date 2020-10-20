@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, time
 from server import db
 
 class Property(db.Model):
@@ -19,7 +19,7 @@ class Property(db.Model):
     inspection_date = db.Column(db.DateTime)
     description = db.Column(db.String(2000))
     year_built = db.Column(db.Integer)
-    photo_collection = db.relationship('Photos', backref='image', lazy='dynamic')
+    photo_collection = db.relationship('Photos', backref='author', lazy='dynamic')
 
     def set_property_type(self, p_type):
         self.property_type = p_type
@@ -76,3 +76,20 @@ class Photos(db.Model):
 
     def set_photo(self, photo):
         self.photo = photo
+'''
+
+p1 = Property(property_type = 'house', address = '1 John Street, Chatswood, NSW, 2130')
+p1.set_num_bedrooms(3)
+p1.set_num_bathrooms(3)
+p1.set_num_parking(2)
+p1.set_building_size(110)
+p1.set_land_size(300)
+p1.set_seller('Cloudia')
+p1.set_inspection_date(datetime(2020,10,20,0,0,0))
+p1.set_description('Amazing views in the heart of Chatswood')
+p1.set_year_built(1990)
+
+db.session.add(p1)
+db.session.commit()
+
+'''
