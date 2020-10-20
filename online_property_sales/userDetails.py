@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key = True)
 
-    login_name = db.Column(db.String, unique=True)
+    login_name = db.Column(db.String(collation='NOCASE') ,unique=True)
     email = db.Column(db.String, unique=True)
     password_hash = db.Column(db.String)
     address = db.Column(db.String(1000))  
@@ -93,22 +93,22 @@ class AuctionDetails(db.Model):
     def __repr__(self):
         return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
 
-# clear_session()
-# db.create_all()
+clear_session()
+db.create_all()
 
-# u1= User(login_name='Tom123', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
-# u1.set_password('123')
-# u2= User(login_name='Cloudia', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
-# u2.set_password('123')
-# bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,author = u1)
-# bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), author=u1)
+u1= User(login_name='Tom123@g', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
+u1.set_password('Tom123@g')
+u2= User(login_name='Cloudia@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
+u2.set_password('Cloudia@g')
+bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,author = u1)
+bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), author=u1)
 
-# db.session.add(u1)
-# db.session.add(u2)
-# db.session.add(bank1)
-# db.session.add(bank2)
+db.session.add(u1)
+db.session.add(u2)
+db.session.add(bank1)
+db.session.add(bank2)
 
-# db.session.commit()
+db.session.commit()
 
 # users= User.query.all()
 # cards= BankDetails.query.all()

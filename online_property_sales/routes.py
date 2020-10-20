@@ -3,6 +3,7 @@ from server import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
+from sqlalchemy import func
 from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm
 import re
 import random
@@ -20,7 +21,7 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(login_name=form.login_name.data).first()
+        user = User.query.filter( func.lower(User.login_name) == func.lower(form.login_name.data)).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password','danger')
             return redirect(url_for('login'))

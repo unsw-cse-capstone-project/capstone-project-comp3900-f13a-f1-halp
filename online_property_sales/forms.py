@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Decim
 from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional, Email
 from flask import flash
 from userDetails import User
-import re
+from sqlalchemy import func
 
 class passwordForm(FlaskForm):
     old_password = PasswordField('Confirm Old Password',validators= [Optional()])
@@ -31,7 +31,7 @@ class AccountForm(FlaskForm):
 
     # cancel = SubmitField('Cancel')
     def validate_username(self, login_name, user_id):
-        user = User.query.filter_by(login_name=login_name).first()
+        user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
         if user is not None:
             if user.id == user_id:
                 flash(f"Please select another unique name or leave the slot empty for not changing your login name", 'danger')
@@ -56,7 +56,7 @@ class SignupForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_username(self, login_name):
-        user = User.query.filter_by(login_name=self.login_name.data).first()
+        user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
         if user is not None:
             flash("Please select another unique name!")
             return False
