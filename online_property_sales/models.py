@@ -202,7 +202,7 @@ def initial_db():
 
     db.session.commit()
 
-# initial_db()
+initial_db()
 
 #query examples
 # users= User.query.all()
