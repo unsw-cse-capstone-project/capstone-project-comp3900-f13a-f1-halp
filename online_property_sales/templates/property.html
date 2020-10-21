@@ -4,7 +4,9 @@
 <div class="content-section">
     <br><br><br>
 
-    {% if properties == None %}
+    {% if not properties %}
+    <h1>No properties found. Add one now!</h1>
+    <a href="{{ url_for('add_property') }}">Add a property</a>
     {% endif %}
 
     {% for p in properties %}
