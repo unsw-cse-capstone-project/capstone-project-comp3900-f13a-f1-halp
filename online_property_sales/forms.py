@@ -70,7 +70,24 @@ class PropertyForm(FlaskForm):
                                  ('rural', 'Rural'),
                                  ('blocks', 'Blocks of Units'),
                                  ('retirement', 'Retirement Living')])
-    address = StringField('Address', validators=[DataRequired()])
+    # old address version
+    address = StringField('Address')
+
+    # new address version
+    add_unit = StringField('Unit Number', validators=[DataRequired()])
+    add_num = StringField('Street Number', validators=[DataRequired()])
+    add_name = StringField('Street Name', validators=[DataRequired()])
+    add_suburb = StringField('Suburb', validators=[DataRequired()])
+    add_state = SelectField('State', [DataRequired()],
+                        choices=[('ACT', 'ACT'),
+                                 ('QLD', 'QLD'),
+                                 ('NSW', 'NSW'),
+                                 ('NT', 'NT'),
+                                 ('SA', 'SA'),
+                                 ('TAS', 'TAS'),
+                                 ('WA', 'WA')])
+    add_pc = StringField('Postcode', validators=[DataRequired()])
+
     num_bedrooms = StringField('Number of Bedrooms', validators=[DataRequired()])
     num_bathrooms = StringField('Number of Bathrooms', validators=[DataRequired()])
     num_parking = StringField('Number of Parking', validators=[DataRequired()])
@@ -81,6 +98,7 @@ class PropertyForm(FlaskForm):
     description = StringField('Property Description', validators=[DataRequired()])
     year_built = StringField('Year of Built', validators=[DataRequired()])
     #photos haha
+    
     submit = SubmitField('Submit')
     
 class RegistrationForm(FlaskForm):

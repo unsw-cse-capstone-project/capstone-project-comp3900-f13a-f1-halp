@@ -7,7 +7,14 @@ class Property(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     property_type = db.Column(db.String)
-    address = db.Column(db.String(1000))
+    add_unit = db.Column(db.String(100))
+    add_num = db.Column(db.String(100))
+    add_name = db.Column(db.String(100))
+    add_suburb = db.Column(db.String(100))
+    add_state = db.Column(db.String(3))
+    add_pc = db.Column(db.String(4))
+
+    #address = db.Column(db.String(1000))
     num_bedrooms = db.Column(db.Integer)
     num_parking = db.Column(db.Integer)
     num_bathrooms = db.Column(db.Integer)
@@ -65,7 +72,7 @@ class Property(db.Model):
     # Might not need end
 
     def __repr__(self):
-        return '<Property at %r>' % self.address
+        return '<Property at %r>' % self.id
 
 class Photos(db.Model):
     __tablename__ = 'Photos'

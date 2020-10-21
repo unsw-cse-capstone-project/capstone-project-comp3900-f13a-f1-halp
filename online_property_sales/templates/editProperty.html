@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-section">
+    <br><br><br>
+
+    <h2 class="title">Edit Property</h2>
+
+    {% if error %}
+        <p><strong>Error:</strong> {{ error }}</p>
+    {% endif %}
+
+    {% if not property %}
+        <h1>Error: Invalid Property ID</h1>
+    {% else %}
+        {% for p in property %}
+        <form action="" method="POST" action="/property" style="margin-top: 50px;" novalidate>
+            <fieldset class="form-group">
+                {{ form.hidden_tag() }}
+                <div class="form-group">{{ form.add_unit.label }} [{{ p.add_unit }}] {{form.add_unit}}</div>
+                <div class="form-group">{{ form.add_num.label }} [{{ p.add_num }}] {{form.add_num}}</div>
+                <div class="form-group">{{ form.add_name.label }} [{{ p.add_name }}] {{form.add_name}}</div>
+                <div class="form-group">{{ form.add_suburb.label }} [{{ p.add_suburb }}] {{form.add_suburb}}</div>
+                <div class="form-group">{{ form.add_state.label }} [{{ p.add_state }}] {{form.add_state}}</div>
+                <div class="form-group">{{ form.add_pc.label }} [{{ p.add_pc }}] {{form.add_pc}}</div>
+                <div class="form-group">{{ form.property_type.label }} [{{ p.property_type }}] {{form.property_type}}</div>
+                <div class="form-group">{{ form.num_bedrooms.label }} [{{ p.num_bedrooms }}] {{form.num_bedrooms}}</div>
+                <div class="form-group">{{ form.num_bathrooms.label }} [{{ p.num_bathrooms }}] {{form.num_bathrooms}}</div>
+                <div class="form-group">{{ form.num_parking.label }} [{{ p.num_parking }}] {{form.num_parking}}</div>
+                <div class="form-group">{{ form.parking_features.label }} [{{ p.parking_features }}] {{form.parking_features}}</div>
+                <div class="form-group">{{ form.building_size.label }} [{{ p.building_size }}] {{form.building_size}}</div>
+                <div class="form-group">{{ form.land_size.label }} [{{ p.land_size }}] {{form.land_size}}</div>
+                <div class="form-group">{{ form.description.label }} [{{ p.description }}] {{form.description}}</div>
+                <div class="form-group">{{ form.year_built.label }} [{{ p.year_built }}] {{form.year_built}}</div>
+                <div class="form-group">{{ form.inspection_date.label }} [{{ p.inspection_date }}] {{form.inspection_date}}</div>
+                <div class="form-group">{{ form.submit }}</div>
+        {% endfor %}
+        
+        {% if form.errors %}
+            {{ form.errors }}
+        {% endif %}
+        </fieldset>
+        
+    </form>
+    {% endif %}
+
+    
+
+</div>
+
+
+
+{% endblock %}

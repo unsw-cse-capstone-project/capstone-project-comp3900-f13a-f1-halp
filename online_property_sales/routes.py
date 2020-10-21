@@ -5,6 +5,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm
+from validateProperty import *
 import re
 import random
 
@@ -161,8 +162,8 @@ def edit_account():
     
     return render_template('account.html', title='account', form=form)
 
-@app.route('/property', methods=['POST','GET'])
-def property_details():
+@app.route('/addProperty', methods=['GET', 'POST'])
+def add_property():
     if current_user.is_anonymous:
         flash('Please login first')
         return redirect(url_for('login'))
@@ -171,72 +172,133 @@ def property_details():
     error = None
 
     if form.validate_on_submit():
-        # Check values
-        p_type = form.property_type.data
-        p_add = form.address.data
-        p_n_beds = form.num_bedrooms.data
-        p_n_baths = form.num_bathrooms.data
-        p_n_park = form.num_parking.data
-        p_p_features = form.parking_features.data
-        p_b_size = form.building_size.data
-        p_l_size = form.land_size.data
-        p_desc = form.description.data
-        p_year = form.year_built.data
-        p_i_date = form.inspection_date.data
+        if check_all_details(form):
+            p_type = form.property_type.data
+            p_add_unit = form.add_unit.data
+            p_add_num = form.add_num.data
+            p_add_name = form.add_name.data
+            p_add_suburb = form.add_suburb.data
+            p_add_state = form.add_state.data
+            p_add_pc = form.add_pc.data
+            p_n_beds = form.num_bedrooms.data
+            p_n_baths = form.num_bathrooms.data
+            p_n_park = form.num_parking.data
+            p_p_features = form.parking_features.data
+            p_b_size = form.building_size.data
+            p_l_size = form.land_size.data
+            p_desc = form.description.data
+            p_year = form.year_built.data
+            p_i_date = form.inspection_date.data
 
-        # Property Types
-        if p_type == None:
-            error = "Property Type error"
-        print(p_type)
+            p_to_db = Property(property_type = p_type, add_unit = p_add_unit,
+                            add_num = p_add_num, add_name = p_add_name, add_suburb = p_add_suburb,
+                            add_state = p_add_state, add_pc = p_add_pc, num_bedrooms = p_n_beds,
+                            num_parking = p_n_park, num_bathrooms = p_n_baths,
+                            parking_features = p_p_features, building_size = p_b_size,
+                            land_size = p_l_size, seller = current_user.login_name, inspection_date = p_i_date,
+                            description = p_desc, year_built = p_year)
 
-        # Address
-
-        # Num bedrooms
-        if not p_n_beds.isdigit():
-            error = "Invalid data entered for a field"
-            
-        # Num bathrooms
-        if not p_n_baths.isdigit():
-            error = "Invalid data entered for a field"
-
-        # Num Parking
-        if not p_n_park.isdigit():
-            error = "Invalid data entered for a field"
-
-        # Parking Features
-
-        # Building Size
-        if not p_b_size.isdigit():
-            error = "Invalid data entered for a field"
-
-        # Land Size
-        if form.building_size.data > form.land_size.data:
-            error = "Building size exceeds land size"
-            if not p_l_size.isdigit():
-                error = "Invalid data entered for a field"
-
-        # inspection date
-        print(datetime.today().date())
-        if not p_i_date > datetime.today().date():
-            error = "Invalid date entered for a field"
-            
-        # description
-
-        # year built
-        if not p_year.isdigit():
-            error = "Invalid year entered for a field"
-
-        if error is None:
-            property_p = Property(property_type = p_type, address = p_add, num_bedrooms = p_n_beds, num_bathrooms = p_n_baths, num_parking = p_n_park, parking_features = p_p_features, building_size = p_b_size, land_size = p_l_size, seller = User.login_name, inspection_date = p_i_date, description = p_desc, year_built = p_year)
-            ## Not Working
-            db.session.add(property_p)
+            db.session.add(p_to_db)
             db.session.commit()
-            return redirect(url_for('home'))
 
-        return render_template('property.html', title = 'property', error = error, form = form)
-
-    return render_template('property.html', title = 'property', form = form)
+            # if everything is successful, redirects to property list
+            return redirect(url_for('property_list'))
+        else:
+            error = "One or more fields have been entered incorrectly. Please try again."
+            return render_template('addProperty.html', title = 'addProperty', error = error, form = form)
     
+    return render_template('addProperty.html', title = 'addProperty', form = form)
+
+@app.route('/editProperty/<p_id>', methods=['POST','GET'])
+def edit_property(p_id):
+    # edits property of selected user's one
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    print(p)
+
+    form = PropertyForm()
+    error = None
+    working = False
+
+    if form.validate_on_submit():
+        if check_edited_updates(form):
+            # Success
+            p_type = form.property_type.data
+            p_add_unit = form.add_unit.data
+            p_add_num = form.add_num.data
+            p_add_name = form.add_name.data
+            p_add_suburb = form.add_suburb.data
+            p_add_state = form.add_state.data
+            p_add_pc = form.add_pc.data
+            p_n_beds = form.num_bedrooms.data
+            p_n_baths = form.num_bathrooms.data
+            p_n_park = form.num_parking.data
+            p_p_features = form.parking_features.data
+            p_b_size = form.building_size.data
+            p_l_size = form.land_size.data
+            p_desc = form.description.data
+            p_year = form.year_built.data
+            p_i_date = form.inspection_date.data
+
+            # Cheap hack
+            if p_type:
+                p[0].property_type = p_type
+            
+            if p_add_unit or p_add_num or p_add_name or p_add_suburb or p_add_state or p_add_pc:
+                p[0].add_unit = p_add_unit
+                p[0].add_num = p_add_num
+                p[0].add_name = p_add_name
+                p[0].add_suburb = p_add_suburb
+                p[0].add_state = p_add_state
+                p[0].add_pc = p_add_pc
+
+            if p_n_beds:
+                p[0].num_bedrooms = p_n_beds
+
+            if p_n_baths:
+                p[0].num_bathrooms = p_n_baths
+
+            if p_n_park:
+                p[0].num_parking = p_n_park
+
+            if p_p_features:
+                p[0].parking_features = p_p_features
+
+            if p_b_size:
+                p[0].building_size = p_b_size
+
+            if p_l_size:
+                p[0].land_size = p_l_size
+
+            if p_desc:
+                p[0].description = p_desc
+
+            if p_year:
+                p[0].year_built = p_year
+
+            if p_i_date:
+                p[0].inspection_date = p_i_date
+
+            db.session.commit()
+            return redirect(url_for('property_list'))
+
+        else:
+            error = "One or more fields have been entered incorrectly. Please try again."
+            return render_template('editProperty.html', title = 'editProperty', error = error, form = form, property = p)
+
+    return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
+    
+@app.route("/property")
+def property_list():
+    # returns list of properties from user
+
+    properties = Property.query.filter_by(seller=current_user.login_name).all()
+    
+    return render_template('property.html', properties = properties)
+
 @app.route("/createAuction", methods=['GET', 'POST'])
 def createAuction():
     form = RegistrationForm()
