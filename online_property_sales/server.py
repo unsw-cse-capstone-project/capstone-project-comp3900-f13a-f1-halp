@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # instantiate app object
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 login_manager = LoginManager()
@@ -24,6 +24,5 @@ db = SQLAlchemy(app)
 
 
 # instantiate models
-#System = bidApp()
-
+# initial_db()
 

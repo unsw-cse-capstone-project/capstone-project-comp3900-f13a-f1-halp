@@ -7,30 +7,30 @@
 				<legend class="border-bottom mb-4">Search</legend>
 				
 				<div class="form-group">
-                    {{ form.auctionStart.label }}<br>
-                    {% if form.auctionStart.errors %}
-						{{ form.auctionStart(class="form-control form-control-lg is-invalid") }}
+                    {{ form.auction_before.label }}<br>
+                    {% if form.auction_before.errors %}
+						{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
-							{% for error in form.auctionStart.errors %}
+							{% for error in form.auction_before.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.auctionStart(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
 					{% endif %}	
                 </div>
 
                 <div class="form-group">
-                    {{ form.auctionEnd.label }}<br>
-                    {% if form.auctionEnd.errors %}
-						{{ form.auctionEnd(class="form-control form-control-lg is-invalid") }}
+                    {{ form.auction_after.label }}<br>
+                    {% if form.auction_after.errors %}
+						{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
-							{% for error in form.auctionEnd.errors %}
+							{% for error in form.auction_after.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.auctionEnd(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
 					{% endif %}	
                 </div>
 
@@ -51,5 +51,21 @@
                 <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
             </fieldset>
         </form>
-    </div>
+	</div>
+	
+	<table class="table">
+        <tr>
+			<th>Seller<th>
+			<th>Auction Start<th>
+			<th>Auction End<th>
+        </tr>
+        {% for item in auctions %}
+        <tr>
+			<th>{{item.SellerID}}<th>
+			<th>{{item.AuctionStart}}<th>
+			<th>{{item.AuctionEnd}}<th>
+        </tr>
+        {% endfor %}
+	</table>
+	
 {% endblock %}

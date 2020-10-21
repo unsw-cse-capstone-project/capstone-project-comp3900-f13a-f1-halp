@@ -2,12 +2,18 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, DateTimeField, SelectField, DateField
 from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional, Email
 from flask import flash
-from userDetails import User
+from models import User
 from sqlalchemy import func
 
 class searchForm(FlaskForm):
-    auctionStart =  DateTimeField('Auction Start Time', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
-    auctionEnd = DateTimeField('Auction End Time', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
+    auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
+    # auctionStart_before = BooleanField('before')
+    # auctionStart_after = BooleanField('after')
+
+    auction_after = DateTimeField('Auction After', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
+    # auctionEnd_before = BooleanField('before')
+    # auctionEnd_after = BooleanField('after')
+
     suburb = StringField('Suburb', validators=[Optional()])
     submit = SubmitField('Search')
 
