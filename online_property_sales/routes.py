@@ -176,10 +176,8 @@ def account(login_name):
     return render_template('account.html', title='account', form=form, user=user)
 
 @app.route('/property', methods=['POST','GET'])
+@login_required
 def property_details():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     form = PropertyForm()
     if form.validate_on_submit():
@@ -254,6 +252,7 @@ def property_details():
     return render_template('property.html', title = 'property', form = form)
     
 @app.route("/createAuction", methods=['GET', 'POST'])
+@login_required
 def createAuction():
     form = RegistrationForm()
     if form.validate_on_submit():
