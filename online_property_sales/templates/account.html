@@ -52,7 +52,7 @@
                 <div class="form-group">
                     {{ form.date_of_birth.label }}<br>
                     {% if form.date_of_birth.errors %}
-						{{ form.date_of_birth(placeholder="dd/mm/yyyy" ,class="form-control form-control-lg is-invalid") }}
+						{{ form.date_of_birth(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
 							{% for error in form.date_of_birth.errors %}
 								<span>{{ error }}</span>

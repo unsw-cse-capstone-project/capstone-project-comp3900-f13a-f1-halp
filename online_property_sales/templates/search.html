@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form action="" method= "POST" style="margin-top: 50px;" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+				<legend class="border-bottom mb-4">Search</legend>
+				
+				<div class="form-group">
+                    {{ form.auction_before.label }}<br>
+                    {% if form.auction_before.errors %}
+						{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.auction_before.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+					{% endif %}	
+                </div>
+
+                <div class="form-group">
+                    {{ form.auction_after.label }}<br>
+                    {% if form.auction_after.errors %}
+						{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.auction_after.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+					{% endif %}	
+                </div>
+
+                <div class="form-group">
+                    {{ form.suburb.label }}<br>
+                    {% if form.suburb.errors %}
+						{{ form.suburb(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.suburb.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.suburb(class="form-control form-control-lg") }}
+					{% endif %}
+                </div>
+
+                <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
+            </fieldset>
+        </form>
+	</div>
+	
+	<table class="table">
+        <tr>
+			<th>Seller<th>
+			<th>Auction Start<th>
+			<th>Auction End<th>
+        </tr>
+        {% for item in auctions %}
+        <tr>
+			<th>{{item.SellerID}}<th>
+			<th>{{item.AuctionStart}}<th>
+			<th>{{item.AuctionEnd}}<th>
+        </tr>
+        {% endfor %}
+	</table>
+	
+{% endblock %}
