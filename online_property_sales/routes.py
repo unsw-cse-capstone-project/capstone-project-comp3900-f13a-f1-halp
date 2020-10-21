@@ -74,7 +74,6 @@ def search():
         before=form.auction_before.data
         after=form.auction_after.data
         suburb = form.suburb.data
-
         
         if before and not after :
             auctions = AuctionDetails.query.filter(AuctionDetails.AuctionStart<=before).all()
@@ -88,9 +87,6 @@ def search():
 
 
     return render_template('search.html', title='search', form=form)
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
 @login_required

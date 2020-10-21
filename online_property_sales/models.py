@@ -9,12 +9,12 @@ class User(UserMixin, db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key = True)
 
-    login_name = db.Column(db.String(collation='NOCASE') ,unique=True)
-    email = db.Column(db.String, unique=True)
-    password_hash = db.Column(db.String)
-    address = db.Column(db.String(1000))  
-    date_of_birth = db.Column(db.DateTime)
-    phone_number = db.Column(db.String)
+    login_name = db.Column(db.String(collation='NOCASE') ,unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
+    address = db.Column(db.String(1000), nullable=False)  
+    date_of_birth = db.Column(db.DateTime, nullable=False)
+    phone_number = db.Column(db.String, nullable=False)
 
     #one-to-many
     auctionId = db.relationship('AuctionDetails', backref='seller', lazy='dynamic')
@@ -54,13 +54,13 @@ def load_user(id):
 class BankDetails(db.Model):
     __tablename__ = 'BankDetails'
     id = db.Column("card_number",db.String, primary_key=True)
-    holder_fname = db.Column(db.String())
-    holder_lname = db.Column(db.String(20))
-    cvc = db.Column(db.Integer)
-    expire_date = db.Column(db.DateTime)
-    id_confirmation = db.Column(db.String(100))
+    holder_fname = db.Column(db.String(), nullable=False)
+    holder_lname = db.Column(db.String(20), nullable=False)
+    cvc = db.Column(db.Integer, nullable=False)
+    expire_date = db.Column(db.DateTime, nullable=False)
+    id_confirmation = db.Column(db.String(100), nullable=False)
     
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
 
     def set_fname(self,value):
         self.holder_fname=value
@@ -202,7 +202,7 @@ def initial_db():
 
     db.session.commit()
 
-initial_db()
+# initial_db()
 
 #query examples
 # users= User.query.all()

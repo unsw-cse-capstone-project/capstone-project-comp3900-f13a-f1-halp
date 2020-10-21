@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager,UserMixin
 from flask_sqlalchemy import SQLAlchemy
-# import login manager
-# import models
-# from models.bidSystem import bidApp
+# from models import *
 
 # instantiate app object
 app = Flask(__name__)
@@ -21,7 +19,6 @@ app.secret_key = "*U78u!#2@fs"
 
 # database
 db = SQLAlchemy(app)
-
 
 # instantiate models
 # initial_db()

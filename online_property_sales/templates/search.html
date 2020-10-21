@@ -55,17 +55,25 @@
 	
 	<table class="table">
         <tr>
-			<th>Seller<th>
+			<th>SellerID<th>
 			<th>Auction Start<th>
 			<th>Auction End<th>
-        </tr>
-        {% for item in auctions %}
-        <tr>
-			<th>{{item.SellerID}}<th>
-			<th>{{item.AuctionStart}}<th>
-			<th>{{item.AuctionEnd}}<th>
-        </tr>
-        {% endfor %}
+			<th>PropertyID</th>
+		</tr>
+		{% if auctions|length == 0 %}
+			<tr>
+				<th>No Results<th>
+			</tr>
+		{% else %}
+			{% for item in auctions %}
+			<tr>
+				<th>{{item.SellerID}}<th>
+				<th>{{item.AuctionStart}}<th>
+				<th>{{item.AuctionEnd}}<th>
+				<th>{{item.PropertyID}}</th>
+			</tr>
+			{% endfor %}
+		{% endif %}
 	</table>
 	
 {% endblock %}
