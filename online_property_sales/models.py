@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
 
     #one-to-many
     auctionId = db.relationship('AuctionDetails', backref='seller', lazy='dynamic')
-    properties = db.relationship('property', backref='sellerID', lazy='dynamic')
+    properties = db.relationship('Property', backref='sellerID', lazy='dynamic')
     cards = db.relationship('BankDetails', backref='user', lazy='dynamic')
 
     #create hashed password for security
@@ -89,18 +89,24 @@ class AuctionDetails(db.Model):
     ReservePrice = db.Column(db.Float, nullable=False)
     MinBiddingGap = db.Column(db.Float, nullable=False)
 
-    PropertyID = db.Column(db.String, db.ForeignKey('property.id'), unique=True, nullable=False)
+    PropertyID = db.Column(db.String, db.ForeignKey('Property.id'), unique=True, nullable=False)
     SellerID = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
 
     def __repr__(self):
         return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
 
-class property(db.Model):
-    __tablename__ = 'property'
+class Property(db.Model):
+    __tablename__ = 'Property'
 
     id = db.Column(db.Integer, primary_key = True)
     property_type = db.Column(db.String)
-    address = db.Column(db.String(1000))
+    add_unit = db.Column(db.String(100))
+    add_num = db.Column(db.String(100))
+    add_name = db.Column(db.String(100))
+    add_suburb = db.Column(db.String(100))
+    add_state = db.Column(db.String(3))
+    add_pc = db.Column(db.String(4))
+    #address = db.Column(db.String(1000))
     num_bedrooms = db.Column(db.Integer)
     num_parking = db.Column(db.Integer)
     num_bathrooms = db.Column(db.Integer)
@@ -115,15 +121,30 @@ class property(db.Model):
     seller = db.Column(db.Integer, db.ForeignKey('User.id'))
     #one-to-one
     #backref defines the varible that the other table should call
-    auctionId = db.relationship('AuctionDetails', backref='property', uselist=False)
+    auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
     #one-to-many
-    photo_collection = db.relationship('photos', backref='property', lazy='dynamic')
+    photo_collection = db.relationship('Photos', backref='Property', lazy='dynamic')
 
     def set_property_type(self, p_type):
         self.property_type = p_type
 
-    def set_address(self, address):
-        self.address = address
+    def set_address_unit_num(self, u_num):
+        self.add_unit = u_num
+
+    def set_address_street_num(self, s_num):
+        self.add_num = s_num
+
+    def set_address_street_name(self, s_name):
+        self.add_name = s_name
+
+    def set_address_suburb(self, suburb):
+        self.add_suburb = suburb
+
+    def set_address_state(self, state):
+        self.add_state = state
+
+    def set_address_postcode(self, pc):
+        self.add_pc = pc
 
     def set_num_bedrooms(self, bedrooms):
         self.num_bedrooms = bedrooms
@@ -163,14 +184,14 @@ class property(db.Model):
     # Might not need end
 
     def __repr__(self):
-        return '<Property at %r>' % self.address
+        return '<Property ID at %r>' % self.id
 
-class photos(db.Model):
+class Photos(db.Model):
     __tablename__ = 'Photos'
 
     id = db.Column(db.Integer, primary_key = True)
     photo = db.Column(db.String)
-    property_id = db.Column(db.Integer, db.ForeignKey('property.id'))
+    property_id = db.Column(db.Integer, db.ForeignKey('Property.id'))
 
     def set_photo(self, photo):
         self.photo = photo
@@ -179,8 +200,8 @@ def clear_session():
     db.session.query(User).delete()
     db.session.query(BankDetails).delete()
     db.session.query(AuctionDetails).delete()
-    db.session.query(property).delete()
-    db.session.query(photos).delete()
+    db.session.query(Property).delete()
+    db.session.query(Photos).delete()
     db.session.commit()
 
 def initial_db():
