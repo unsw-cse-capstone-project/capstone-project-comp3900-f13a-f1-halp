@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="content-section">
-    <h1>Hi</h1>
 
     <h2 class="title">Add a Property</h2>
 
@@ -30,6 +29,8 @@
             <div class="form-group">{{ form.year_built.label }} {{form.year_built}}</div>
             <div class="form-group">{{ form.inspection_date.label }} {{form.inspection_date}}</div>
             <div class="form-group">{{ form.submit }}</div>
+            <button class='btn btn-outline-light text-dark btn-lg' type='submit'>{{ form.submit }}</button>
+            <a href="{{ url_for('property_list') }}"><button class='btn btn-outline-danger btn-lg' type='submit'>Cancel</button></a>
 
             {% if form.errors %}
                 {{ form.errors }}
@@ -37,6 +38,9 @@
         </fieldset>
         
     </form>
+    <button class='btn btn-outline-light text-dark btn-lg' type='submit'>{{ form.submit }}</button>
+    <a href="{{ url_for('property_list') }}"><button class='btn btn-outline-danger btn-lg' type='submit'>Cancel</button></a>
+
 
 </div>
 
