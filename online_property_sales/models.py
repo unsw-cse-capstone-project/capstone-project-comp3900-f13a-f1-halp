@@ -194,6 +194,13 @@ def initial_db():
     u2.set_password('Cloudia@g')
     bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
+    # property1 = property(property_type = 'House',
+    #                         add_num = '10', add_name = 'street', add_suburb = 'suburb',
+    #                         add_state = 'state', add_pc = '2000', num_bedrooms = '1',
+    #                         num_parking = '1', num_bathrooms = '1',
+    #                         parking_features = 'park features', building_size = '200',
+    #                         land_size = '200', seller = 1, inspection_date = '12/12/2020',
+    #                         description = 'desc', year_built = '2019')
 
     db.session.add(u1)
     db.session.add(u2)
@@ -203,6 +210,8 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
+
+# print(BankDetails.query.get('5555444433331111').user_id)
 
 #query examples
 # users= User.query.all()
