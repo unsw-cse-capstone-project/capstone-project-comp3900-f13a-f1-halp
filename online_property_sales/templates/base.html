@@ -50,7 +50,7 @@
                   <a class="nav-item nav-link" href="/auction">Auction</a>
                   <a class="nav-item nav-link" href="/property">Property</a>
                   <a class="nav-item nav-link" href={{ url_for("account", login_name=current_user.login_name) }}>Account</a>
-                  <a class="nav-item nav-link" href="/logout">logout</a>
+                  <a class="nav-item nav-link" href="/logout">Logout</a>
                   <p style="margin-top: 8px; margin-bottom: 0px;">Hi, {{ current_user.login_name }}!</p>
                 {% endif %}
               </div>
@@ -61,7 +61,7 @@
       
       <main role="main" class="container" style="margin-top: 70px;">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-12">
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                 {% for category, message in messages %}
