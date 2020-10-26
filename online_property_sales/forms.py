@@ -1,41 +1,38 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, DateTimeField, SelectField, DateField
-from wtforms.validators import ValidationError, DataRequired, EqualTo
+from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional
 from flask import flash
 from userDetails import User
 import re
 
 class AccountForm(FlaskForm):
-    password = PasswordField('password')
-    password2 = PasswordField('Repeat Password')
+    password = PasswordField('Password')
+    password2 = PasswordField('Repeat Password',validators= [EqualTo('password')])
+    address = StringField('Address')
+    date_of_birth = StringField('Date of Birth',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ')])
+    holder_fname = StringField ('Holder First Name')
+    holder_lname = StringField ('Holder Last Name')
 
-    address = StringField('address')
-    date_of_birth = StringField('date_of_birth')
+    card_number = StringField ( 'Card Number',validators=[ Optional(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
+    phone_number = StringField ('Phone Number',  validators=[ Optional(),Length(min=10, max=10) ] )
+    id_confirmation = StringField ('Id Confirmation')
+    cvc = StringField ( 'CVC', validators=[ Optional(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
+    expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
 
-    holder_fname = StringField ('holder_fname')
-    holder_lname = StringField ('holder_lname')
-
-    card_number = StringField ('card_number')
-    phone_number = StringField ('phone_number')
-    id_confirmation = StringField ('id_confirmation')
-    cvc = StringField ('cvc')
-    expire_date = StringField ('expire_date')
-
-    # cancel = SubmitField('Cancel')
     submit = SubmitField('Edit')
+    # cancel = SubmitField('Cancel')
+   
     
 
 class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
-    
     password = PasswordField('password', validators=[DataRequired()])
-
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
 
     address = StringField('address', validators=[DataRequired()])
-    date_of_birth = StringField('date_of_birth', validators=[DataRequired()])
-    phone_number = StringField('phone_number', validators=[DataRequired()])
+    date_of_birth = StringField('date_of_birth', validators=[DataRequired(), Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ') ])
+    phone_number = StringField('phone_number', validators=[DataRequired(), Length(min=10, max=10)])
 
     submit = SubmitField('Register')
 
@@ -90,4 +87,4 @@ class RegistrationForm(FlaskForm):
     #SellerID = StringField('SellerID',validators=[DataRequired(), Length(min=2, max=20)])
     reservePrice = DecimalField('Reserve Price', validators=[DataRequired()])
     minBiddingGap = DecimalField('Bidding Gap', validators=[DataRequired()])
-    submit = SubmitField('CreateClass')
+    submit = SubmitField('Save Auction')

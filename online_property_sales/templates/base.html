@@ -15,26 +15,7 @@
         <title>Auction World</title>
     {% endif %}
     <style>
-        /* body{
-            background-color: gold;
-        } */
-        .form{
-            background-color: bisque;
-            text-align: center;
-            padding-top: 30px;
-        }
-        
-        .home_button {
-            display: block;
-            width: 200px;
-            margin-left: 375px;
-            line-height: 40px;
-            font-size: 30px;
-            text-decoration: none; 
-            background-color: #0884EA; 
-            color: white;
-            float: left;
-        }
+       
     </style>
 </head>
 <body>
@@ -65,8 +46,8 @@
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
                 {% if current_user.is_authenticated %}
-                  <a class="nav-item nav-link" href="/property">property</a>
-                  <a class="nav-item nav-link" href="/account">Account</a>
+                  <a class="nav-item nav-link" href="/property">Property</a>
+                  <a class="nav-item nav-link" href={{ url_for("account", login_name=current_user.login_name) }}>Account</a>
                   <a class="nav-item nav-link" href="/logout">logout</a>
                   <p style="margin-top: 8px; margin-bottom: 0px;">Hi, {{ current_user.login_name }}!</p>
                 {% endif %}
@@ -76,7 +57,7 @@
         </nav>
       </header>
       
-      <main role="main" class="container">
+      <main role="main" class="container" style="margin-top: 70px;">
         <div class="row">
           <div class="col-md-8">
             {% with messages = get_flashed_messages(with_categories=true) %}

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
     <div class="content-section">
         <form action="" method= "POST" style="margin-top: 50px;" novalidate>
@@ -78,6 +77,19 @@
 
                 <legend class="border-bottom mb-4">Bank Details</legend>
                 <div class="form-group">
+                    {{ form.card_number.label }}<br>
+                    {% if form.card_number.errors %}
+                        {{ form.card_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.card_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.card_number(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{ form.holder_fname.label }}<br>
                     {% if form.holder_fname.errors %}
                         {{ form.holder_fname(class="form-control form-control-lg is-invalid") }}
@@ -101,19 +113,6 @@
                         </div>
                     {% else %}
                         {{ form.holder_lname(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.card_number.label }}<br>
-                    {% if form.card_number.errors %}
-                        {{ form.card_number(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.card_number.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.card_number(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
                 <div class="form-group">
@@ -156,7 +155,7 @@
                     {% endif %}
                 </div>        
 
-                <div class="form-group">{{ form.submit() }}</div>
+                <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
             </fieldset>
         </form>
     </div>
