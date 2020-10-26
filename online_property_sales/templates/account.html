@@ -4,33 +4,34 @@
         <form action="" method= "POST" style="margin-top: 50px;" novalidate>
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}</legend>
-            
-                <div class="form-group">
-                    {{ form.password.label }}<br>
-                    {% if form.password.errors %}
-						{{ form.password(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.password.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.password(class="form-control form-control-lg") }}
-					{% endif %}	
-                </div>
+                <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}
+                    <a class="btn btn-outline-info" style="float: right; margin-bottom: 5px;" href="{{url_for('changePassword', login_name=current_user.login_name)}}">Change Password</a>
+                </legend>
 
                 <div class="form-group">
-                    {{ form.password2.label }}<br>
-                    {% if form.password2.errors %}
-						{{ form.password2(class="form-control form-control-lg is-invalid") }}
+                    {{ form.login_name.label }}<br>
+                    {% if form.login_name.errors %}
+						{{ form.login_name(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
-							{% for error in form.password2.errors %}
+							{% for error in form.login_name.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.password2(class="form-control form-control-lg") }}
+						{{ form.login_name(class="form-control form-control-lg") }}
+					{% endif %}	
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }}<br>
+                    {% if form.email.errors %}
+						{{ form.email(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.email.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.email(class="form-control form-control-lg") }}
 					{% endif %}
                 </div>
 
@@ -51,7 +52,7 @@
                 <div class="form-group">
                     {{ form.date_of_birth.label }}<br>
                     {% if form.date_of_birth.errors %}
-						{{ form.date_of_birth(placeholder="dd/mm/yyyy" ,class="form-control form-control-lg is-invalid") }}
+						{{ form.date_of_birth(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
 							{% for error in form.date_of_birth.errors %}
 								<span>{{ error }}</span>
