@@ -93,7 +93,7 @@ class AuctionDetails(db.Model):
     SellerID = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
 
     def __repr__(self):
-        return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
+        return f"AuctionDetails('{self.id}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
 
 class Property(db.Model):
     __tablename__ = 'Property'
@@ -230,6 +230,25 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
+
+#queries
+
+# prop_auc=db.session.query(Property,AuctionDetails.AuctionStart,AuctionDetails.AuctionEnd).join(AuctionDetails)
+# for i in prop_auc:
+#     print(i)
+
+# auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart>=datetime.now()).join(AuctionDetails)
+# list_auc = [i.id for i in auctions]
+# for i in auctions:
+    # print(i)
+
+# cards=db.session.query(User.login_name, BankDetails.id).join(BankDetails)
+# for i in cards:
+#     print(i)
+
+# suburbList= db.session.query(Property.add_suburb).distinct(Property.add_suburb)
+# for i in suburbList:
+#     print(i[2])
 
 # print(BankDetails.query.get('5555444433331111').user_id)
 

@@ -7,14 +7,8 @@ from sqlalchemy import func
 
 class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
-    # auctionStart_before = BooleanField('before')
-    # auctionStart_after = BooleanField('after')
-
     auction_after = DateTimeField('Auction After', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
-    # auctionEnd_before = BooleanField('before')
-    # auctionEnd_after = BooleanField('after')
-
-    suburb = StringField('Suburb', validators=[Optional()])
+    suburb = SelectField('suburb', validators=[Optional()])
     submit = SubmitField('Search')
 
 class passwordForm(FlaskForm):

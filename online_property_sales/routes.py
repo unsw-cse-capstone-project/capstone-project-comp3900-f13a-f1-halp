@@ -61,28 +61,38 @@ def signup():
         else:
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 @app.route('/search', methods=['POST','GET'])
 # @login_required
 def search():
     form=searchForm()
-    auctions=[]
-    
+    available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
+    #load all suburbs in db and initial with an empty value
+    form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
+    properties=[]
+
+    #auction time -> auction id list -> property id list
+    #suburb -> property id list
+    #property id list -> property, AuctionDetails objects left?join(AuctionDetails)
     if form.validate_on_submit():
 
         before=form.auction_before.data
         after=form.auction_after.data
         suburb = form.suburb.data
         
-        if before and not after :
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionStart<=before).all()
-        elif after and not before:
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd>=after).all()
-        elif before and after:
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionStart<=before,
-                AuctionDetails.AuctionEnd>=after).all()
+        if before or after:
+            auctions=[]
+            if before and not after :
+                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before).join(AuctionDetails)
+            elif after and not before:
+                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionEnd>=after).join(AuctionDetails)
+            elif before and after:
+                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before,
+                    AuctionDetails.AuctionEnd>=after).join(AuctionDetails)
+
+        if suburb:
+            prop_suburb=[]
+            prop_suburb= Property.query.filter(Property.add_suburb==suburb)
 
         return render_template('search.html', title='search', form=form, auctions=auctions)
 
