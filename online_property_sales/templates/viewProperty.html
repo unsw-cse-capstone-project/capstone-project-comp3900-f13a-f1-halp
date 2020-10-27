@@ -1,8 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content-section">
-    {{property.id}}
-    {{auction.AuctionStart}}
-
+<div class="row">
+    <div class="col-md-8">
+        <div class="content-section">
+            <th>{{property.id}}<th>
+            <th>{{auction.AuctionStart}}<th>
+            <th>{{auction.AuctionEnd}}<th>
+            <th>{{property.property_type}}</th>
+            <th>{{property.add_unit}}</th>
+            <th>{{property.add_num}}</th>
+            <th>{{property.add_name}}</th>
+            <th>{{property.add_suburb}}</th>
+            <th>{{property.add_state}}</th>
+            <th>{{property.pc}}</th>
+            <th>{{property.num_bedrooms}}</th>
+            <th>{{property.num_bathrooms}}</th>
+            <th>{{property.num_parking}}</th>
+            <th>{{property.parking_features}}</th>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="content-section">
+            <h4>Seller Contact Information</h4>
+            <p class='text-muted'>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Email: {{current_user.email}}</li>
+                <li class="list-group-item list-group-item-light">PhoneNumber: {{current_user.phone_number}}</li>
+            </ul>
+            </p>
+        </div>
+        <form action="/search">
+            <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Join in as a bidder</button>
+        </form>
+    </div>
 </div>
+
+
 {% endblock %}
