@@ -55,25 +55,42 @@
 	
 	<table class="table">
         <tr>
-			<th>SellerID<th>
+			<th>PropertyID<th>
 			<th>Auction Start<th>
 			<th>Auction End<th>
-			<th>PropertyID</th>
+			<th>Property Type</th>
+			<th>Unit Number</th>
+			<th>Street Number</th>
+			<th>Street Name</th>
+			<th>Suburb</th>
+			<th>State</th>
+			<th>Postcode</th>
+			<th>Number of Bedrooms</th>
+			<th>Number of Bathrooms</th>
+			<th>Number of Parking</th>
+			<th>Parking Features</th>
+			<th>link of Property</th>
 		</tr>
-		{% if auctions|length == 0 %}
-			<tr>
-				<th>No Results<th>
-			</tr>
-		{% else %}
-			{% for item in auctions %}
-			<tr>
-				<th>{{item.SellerID}}<th>
-				<th>{{item.AuctionStart}}<th>
-				<th>{{item.AuctionEnd}}<th>
-				<th>{{item.PropertyID}}</th>
-			</tr>
-			{% endfor %}
-		{% endif %}
+		{% for item in properties %}
+		<tr>
+			<th>{{item.id}}<th>
+			<th>{{item.AuctionStart}}<th>
+			<th>{{item.AuctionEnd}}<th>
+			<th>{{item.property_type}}</th>
+			<th>{{item.add_unit}}</th>
+			<th>{{item.add_num}}</th>
+			<th>{{item.add_name}}</th>
+			<th>{{item.add_suburb}}</th>
+			<th>{{item.add_state}}</th>
+			<th>{{item.pc}}</th>
+			<th>{{item.num_bedrooms}}</th>
+			<th>{{item.num_bathrooms}}</th>
+			<th>{{item.num_parking}}</th>
+			<th>{{item.parking_features}}</th>
+			<th><a href={{ url_for("viewProperty", property_id=item.id) }}>Property Page</a></th>
+			
+		</tr>
+		{% endfor %}
 	</table>
 	
 {% endblock %}

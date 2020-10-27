@@ -69,36 +69,59 @@ def search():
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
     #load all suburbs in db and initial with an empty value
     form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
-    properties=[]
+    full_list=db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
+                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
+                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, 
+                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails)
+    property_Id=[]
 
     #auction time -> auction id list -> property id list
     #suburb -> property id list
     #property id list -> property, AuctionDetails objects left?join(AuctionDetails)
     if form.validate_on_submit():
-
+        input_form=False
         before=form.auction_before.data
         after=form.auction_after.data
         suburb = form.suburb.data
         
         if before or after:
-            auctions=[]
+            input_form=True
             if before and not after :
-                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before).join(AuctionDetails)
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
             elif after and not before:
-                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionEnd>=after).join(AuctionDetails)
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionEnd>=after)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
             elif before and after:
-                auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before,
-                    AuctionDetails.AuctionEnd>=after).join(AuctionDetails)
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before,
+                    AuctionDetails.AuctionEnd>=after)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
 
         if suburb:
-            prop_suburb=[]
-            prop_suburb= Property.query.filter(Property.add_suburb==suburb)
+            input_form=True
+            temp= db.session.query(Property.id).filter(Property.add_suburb==suburb)
+            property_Id = property_Id + [int(i.id) for i in temp]
+            flash(property_Id)
+        if input_form==True:
+            property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
+                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
+                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, 
+                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+        else: 
+            property_with_auction =full_list
 
-        return render_template('search.html', title='search', form=form, auctions=auctions)
+        return render_template('search.html', title='search', form=form, properties=property_with_auction)
+
+    return render_template('search.html', title='search', form=form, properties=full_list)
+
+@app.route('/viewProperty/<property_id>', methods=['POST','GET'])
+def viewProperty(property_id):
+    p = Property.query.filter_by(id=property_id).first_or_404()
+    return render_template('viewProperty.html', title='View Property', property=p, auction=p.auctionId)
 
 
-    return render_template('search.html', title='search', form=form)
-    
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
 @login_required
 def changePassword(login_name):
