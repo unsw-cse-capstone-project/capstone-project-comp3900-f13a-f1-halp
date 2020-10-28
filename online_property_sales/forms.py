@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, DateTimeField, SelectField, DateField
 from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional, Email
 from flask import flash
@@ -126,8 +127,11 @@ class PropertyForm(FlaskForm):
     inspection_date = DateField('Date of Inspection')
     description = StringField('Property Description', validators=[DataRequired()])
     year_built = StringField('Year of Built', validators=[DataRequired()])
-    #photos haha
     
+    submit = SubmitField('Submit')
+
+class AddImageForm(FlaskForm):
+    image = FileField('Add Image', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Submit')
     
 class RegistrationForm(FlaskForm):

@@ -4,9 +4,13 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from sqlalchemy import func
-from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm, searchForm
+from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm, searchForm, AddImageForm
 from validateProperty import *
+from PIL import Image
 import random
+import os
+import secrets
+
 
 # initial_db()
 
@@ -327,6 +331,44 @@ def property_list():
     properties = Property.query.filter_by(seller=current_user.login_name).all()
     
     return render_template('property.html', properties = properties)
+
+@app.route('/propertyImage/<p_id>', methods=['POST','GET'])
+def property_image(p_id):
+    if current_user.is_anonymous:
+        flash('Please login first')
+        return redirect(url_for('login'))
+
+    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
+    print(address)
+
+    img = Photos.query.filter_by(property_id=p_id).all()
+    
+    form = AddImageForm()
+    error = None
+    if form.validate_on_submit():
+        print("adding Image")
+        print(form.image.data)
+        pic = Photos(photo = save_pic(form.image.data), property_id = p_id)
+        db.session.add(pic)
+        db.session.commit()
+
+        return redirect(url_for('property_list'))
+
+    return render_template('propertyImage.html', form=form, error=error, address=address, image=img)
+
+def save_pic(form_pic):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_pic.filename)
+    pic_fmt = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/propertyImage', pic_fmt)
+
+    output_size = (1280, 720)
+    i = Image.open(form_pic)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return pic_fmt
 
 @app.route("/createAuction", methods=['GET', 'POST'])
 @login_required

@@ -190,7 +190,7 @@ class Photos(db.Model):
     __tablename__ = 'Photos'
 
     id = db.Column(db.Integer, primary_key = True)
-    photo = db.Column(db.String)
+    photo = db.Column(db.String, nullable=False)
     property_id = db.Column(db.Integer, db.ForeignKey('Property.id'))
 
     def set_photo(self, photo):
