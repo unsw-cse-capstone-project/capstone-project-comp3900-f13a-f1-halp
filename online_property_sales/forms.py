@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, DateTimeField, SelectField, DateField
-from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional, Email
+from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, Regexp, Optional, Email, NumberRange
 from flask import flash
 from models import User
 from sqlalchemy import func
@@ -137,3 +137,8 @@ class RegistrationForm(FlaskForm):
     reservePrice = DecimalField('Reserve Price', validators=[DataRequired()])
     minBiddingGap = DecimalField('Bidding Gap', validators=[DataRequired()])
     submit = SubmitField('Save Auction')
+
+class MakeBidForm(FlaskForm):
+    newBid = DecimalField('Bidding Gap', validators=[DataRequired()])
+    submitBid = SubmitField('Make Bid')
+    refresh = SubmitField('Refresh Page')

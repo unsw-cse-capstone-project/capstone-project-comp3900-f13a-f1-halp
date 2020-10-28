@@ -4,12 +4,12 @@
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <small class="text-muted">{{ auction.AuctionID }}</small>
+              <small class="text-muted">{{ auction.id}}</small>
             </div>
             <p class="article-content">Start Date: {{ auction.AuctionStart }}</p>
             <p class="article-content">End Date: {{ auction.AuctionEnd }}</p>
-            <a class="mr-2" href="{{ url_for('changeAuctionDetails', auctionID = auction.AuctionID) }}">Edit</a>
-            <a class="mr-2" href="{{ url_for('deleteAuction', auctionID = auction.AuctionID) }}">Delete</a>
+            <a class="mr-2" href="{{ url_for('changeAuctionDetails', AuctionID_ = auction.id) }}">Edit</a>
+            <a class="mr-2" href="{{ url_for('deleteAuction', AuctionID_ = auction.id) }}">Delete</a>
           </div>
         </article>
     {% endfor %}
