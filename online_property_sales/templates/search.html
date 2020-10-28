@@ -70,6 +70,7 @@
 			<th>Number of Parking</th>
 			<th>Parking Features</th>
 			<th>link of Property</th>
+			<th>seller</th>
 		</tr>
 		{% for item in properties %}
 		<tr>
@@ -88,6 +89,7 @@
 			<th>{{item.num_parking}}</th>
 			<th>{{item.parking_features}}</th>
 			<th><a href={{ url_for("viewProperty", property_id=item.id) }}>Property Page</a></th>
+			<th>{{item.seller}}</th>
 			
 		</tr>
 		{% endfor %}
