@@ -210,8 +210,8 @@ def initial_db():
 
     u1= User(login_name='Tom123@g', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
     u1.set_password('Tom123@g')
-    u2= User(login_name='Cloudia@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
-    u2.set_password('Cloudia@g')
+    u2= User(login_name='Cloudia0@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
+    u2.set_password('Cloudia0@g')
     bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
     property1 = Property(   property_type = 'House',
@@ -248,6 +248,12 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
+
+# recipients_id=[1,2]
+# recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+# emails = [x for (x,y) in recipients_info]
+# login_names = [y for (x,y) in recipients_info]
+# print(login_names)
 
 # prop_list=[1,2]
 # property_with_auction = db.session.query(Property, AuctionDetails.AuctionStart, 

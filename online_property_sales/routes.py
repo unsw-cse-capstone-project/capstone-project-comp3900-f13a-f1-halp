@@ -1,19 +1,28 @@
 from models import User, BankDetails, clear_session, AuctionDetails, initial_db, Property, Photos
-from server import app, db, login_manager
+from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from sqlalchemy import func
 from forms import LoginForm, SignupForm, AccountForm, PropertyForm, RegistrationForm, passwordForm, searchForm
 from validateProperty import *
+from flask_mail import Message
 import random
+import os
 
 # initial_db()
 
 @app.route('/')
 @app.route('/home')
 def home():
-    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia@g",'info')
+
+    # msg = Message("Hello", 
+    #                 recipients=["z5135154@student.unsw.edu.au"])
+
+    # msg.body = "Hello Flask message sent from Flask-Mail"
+    # mail.send(msg)
+
+    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
@@ -72,7 +81,7 @@ def search():
     full_list=db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
                                 Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
                                 Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, 
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
                                 AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails)
     property_Id=[]
 
@@ -107,7 +116,7 @@ def search():
             property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
                                 Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
                                 Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, 
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
                                 AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
         else: 
             property_with_auction =full_list
@@ -377,3 +386,19 @@ def createAuction():
 
         cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
+
+#recipients_id should be a list of user id 
+#if win is true -> send success email with info
+#else -> bad luck email
+def send_email(recipients_id, win, auctionId):
+    recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+    emails = [x for (x,y) in recipients_info]
+    login_names = [y for (x,y) in recipients_info]
+
+    if win == True:
+        msg = Message("Hello",
+                    subject="Congradulations! You win the auction"
+                    recipients=emails)
+        html_body=render_template('successFeedback.html',
+                                            user=user, token=token))
+        mail.send(msg)
