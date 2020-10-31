@@ -390,15 +390,15 @@ def createAuction():
 #recipients_id should be a list of user id 
 #if win is true -> send success email with info
 #else -> bad luck email
-def send_email(recipients_id, win, auctionId):
-    recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
-    emails = [x for (x,y) in recipients_info]
-    login_names = [y for (x,y) in recipients_info]
+# def send_email(recipients_id, win, auctionId):
+#     recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+#     emails = [x for (x,y) in recipients_info]
+#     login_names = [y for (x,y) in recipients_info]
 
-    if win == True:
-        msg = Message("Hello",
-                    subject="Congradulations! You win the auction"
-                    recipients=emails)
-        html_body=render_template('successFeedback.html',
-                                            user=user, token=token))
-        mail.send(msg)
+#     if win == True:
+#         msg = Message("Hello",
+#                     subject="Congradulations! You win the auction"
+#                     recipients=emails)
+#         html_body=render_template('successFeedback.html',
+#                                             user=user, token=token))
+#         mail.send(msg)

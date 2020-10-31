@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 #email server
 mail = Mail(app)
 
-app.config['MAIL_SERVER']='vps19984.inmotionhosting.com'
+app.config['MAIL_SERVER']='smtp.vps19984.inmotionhosting.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'comp3900@minamamoto.cloud'
 app.config['MAIL_PASSWORD'] = 'COMP3900F1-HALP'
