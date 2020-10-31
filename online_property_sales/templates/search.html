@@ -59,11 +59,12 @@
 				<img class="card-img-top" src="..." alt="Property image">
 				<h6 class="card-subtitle pt-2 pb-2 mt-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
 				<div class="card-body text-info">
-					{% if item.add_unit %}
-						<h4 class="card-title">{{item.add_unit}}/{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia</h4>
-					{% else %}
-						<h4 class="card-title">{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia</h4>
-					{% endif %}
+					<h4 class="card-title">
+						{% if item.add_unit %}
+							{{item.add_unit}} /
+						{% endif %}
+						{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia
+					</h4>
 					<p class="card-text">Type:{{item.property_type}} <br>Bedrooms:{{item.num_bedrooms}} Bathrooms:{{item.num_bedrooms}} <br>Parking:{{item.num_parking}} Features:{{item.parking_features}} </p>
 					<a href={{ url_for("viewProperty", property_id=item.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
 				</div>

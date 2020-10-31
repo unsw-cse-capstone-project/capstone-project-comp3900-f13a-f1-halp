@@ -390,20 +390,21 @@ def createAuction():
 #recipients_id should be a list of user id 
 #if win is true -> send success email with info
 #else -> bad luck email
-# def send_email(recipients_id, win, auctionId):
-#     auction_info = AuctionDetails.query.get(auctionId)
-#     property_info = Property.query.get(auction_info.PropertyID)
-#     seller = User.query.get(auction_info.SellerID)
-
-#     recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+def send_email(recipients_id, win, auctionId):
+    auction_info = AuctionDetails.query.get(auctionId)
+    property_info = Property.query.get(auction_info.PropertyID)
+    seller = User.query.get(auction_info.SellerID)
+    recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
     
-#     emails = [x for (x,y) in recipients_info]
-#     login_names = [y for (x,y) in recipients_info]
+    if win == True:
+        msg = Message("Congradulations! You win the auction",
+                        recipients=emails)
 
-#     if win == True:
-#         msg = Message("Congradulations! You win the auction",
-#                         recipients=emails)
-
-#         html_body=render_template('successFeedback.html',
-#                                             receiver=login_names[0], seller=seller, property=property_info )
-#         mail.send(msg)
+        msg.html=render_template('successFeedback.html',
+                                            receiver=login_names[0], seller=seller, property=property_info, auction=auction_info )
+        mail.send(msg)
+    else:
+        for (x,y) in recipients_info:
+            msg = Message("Unfortunately! You did not win the auction",recipients=[x])
+            msg.html = render_template('unfortunatelyFeedback.html',receiver=y, seller=seller, property=property_info, auction=auction_info )
+            mail.send(msg)
