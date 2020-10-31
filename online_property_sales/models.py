@@ -221,9 +221,26 @@ def initial_db():
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
                             description = 'desc', year_built = '2019')
+
     property2 = Property(   property_type = 'House',
                             add_num = '99', add_name = 'street', add_suburb = 'suburb2',
                             add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    property3 = Property(   property_type = 'Unit',
+                            add_unit='01',add_num = '13', add_name = 'some street', add_suburb = 'suburb3',
+                            add_state = 'NSW', add_pc = '2040', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    property4 = Property(   property_type = 'Unit',
+                            add_unit='52', add_num = '23', add_name = 'street', add_suburb = 'suburb4',
+                            add_state = 'NSW', add_pc = '3100', num_bedrooms = '1',
                             num_parking = '1', num_bathrooms = '1',
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
@@ -243,6 +260,8 @@ def initial_db():
     db.session.add(bank2)
     db.session.add(property1)
     db.session.add(property2)
+    db.session.add(property3)
+    db.session.add(property4)
     db.session.add(auction1)
 
     db.session.commit()

@@ -1,5 +1,5 @@
 from models import User, BankDetails, clear_session, AuctionDetails, initial_db, Property, Photos
-from server import app, db, login_manager, mail
+from server import app, db, login_manager #, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
@@ -391,14 +391,19 @@ def createAuction():
 #if win is true -> send success email with info
 #else -> bad luck email
 # def send_email(recipients_id, win, auctionId):
+#     auction_info = AuctionDetails.query.get(auctionId)
+#     property_info = Property.query.get(auction_info.PropertyID)
+#     seller = User.query.get(auction_info.SellerID)
+
 #     recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+    
 #     emails = [x for (x,y) in recipients_info]
 #     login_names = [y for (x,y) in recipients_info]
 
 #     if win == True:
-#         msg = Message("Hello",
-#                     subject="Congradulations! You win the auction"
-#                     recipients=emails)
+#         msg = Message("Congradulations! You win the auction",
+#                         recipients=emails)
+
 #         html_body=render_template('successFeedback.html',
-#                                             user=user, token=token))
+#                                             receiver=login_names[0], seller=seller, property=property_info )
 #         mail.send(msg)
