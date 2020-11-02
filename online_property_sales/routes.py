@@ -332,6 +332,13 @@ def property_list():
     
     return render_template('property.html', properties = properties)
 
+@app.route("/removeProperty/<p_id>")
+def remove_property(p_id):
+    to_remove = Property.query.filter_by(id=p_id).delete()
+    db.session.commit()
+    return redirect(url_for('property_list'))
+
+
 @app.route('/propertyImage/<p_id>', methods=['POST','GET'])
 def property_image(p_id):
     if current_user.is_anonymous:
