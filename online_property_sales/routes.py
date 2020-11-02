@@ -362,7 +362,7 @@ def property_image(p_id):
 
         return redirect(url_for('property_list'))
 
-    return render_template('propertyImage.html', form=form, error=error, address=address, image=img)
+    return render_template('propertyImage.html', form=form, error=error, address=address, image=img, property=p_id)
 
 def save_pic(form_pic):
     random_hex = secrets.token_hex(8)
@@ -376,6 +376,12 @@ def save_pic(form_pic):
     i.save(picture_path)
 
     return pic_fmt
+
+@app.route("/removeImage/<p_id>/<i_id>")
+def remove_image(p_id, i_id):
+    Photos.query.filter_by(id=i_id).delete()
+    db.session.commit()
+    return redirect(url_for('property_image', p_id = p_id))
 
 @app.route("/createAuction", methods=['GET', 'POST'])
 @login_required

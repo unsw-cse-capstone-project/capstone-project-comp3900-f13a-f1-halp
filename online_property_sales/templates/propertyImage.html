@@ -19,6 +19,7 @@
         {% for i in image %}
             <li class='list-group-item'>
                 <img src="/static/propertyImage/{{ i.photo }}" alt="">
+                <a href="{{ url_for('remove_image', p_id = property, i_id = i.id) }}"><button class='btn btn-outline-danger btn-lg' type="submit">Remove Image</button></a>
             </li>
             
         {% endfor %}
