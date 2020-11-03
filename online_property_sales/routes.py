@@ -91,39 +91,54 @@ def search():
     #suburb -> property id list
     #property id list -> property, AuctionDetails objects left?join(AuctionDetails)
     if form.validate_on_submit():
-        input_form=False
-        before=form.auction_before.data
-        after=form.auction_after.data
-        suburb = form.suburb.data
-        
-        if before or after:
-            input_form=True
-            if before and not after :
-                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before)
-                property_Id = property_Id + [int(i.PropertyID) for i in temp]
-            elif after and not before:
-                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionEnd>=after)
-                property_Id = property_Id + [int(i.PropertyID) for i in temp]
-            elif before and after:
-                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before,
-                    AuctionDetails.AuctionEnd>=after)
-                property_Id = property_Id + [int(i.PropertyID) for i in temp]
+        if form.clear.data:
+            form.auction_before.raw_data=['']
+            form.auction_after.raw_data=['']
+            form.suburb.data=''
+            return render_template('search.html', title='search', form=form, properties=full_list)
 
-        if suburb:
-            input_form=True
-            temp= db.session.query(Property.id).filter(Property.add_suburb==suburb)
-            property_Id = property_Id + [int(i.id) for i in temp]
-            flash(property_Id)
-        if input_form==True:
-            property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
-                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
-                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
-        else: 
-            property_with_auction =full_list
+        elif form.submit.data:
+            input_form=False
+            before=form.auction_before.data
+            after=form.auction_after.data
+            suburb = form.suburb.data
+            
+            if before or after:
+                input_form=True
+                if before and not after :
+                    temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before)
+                    property_Id = property_Id + [int(i.PropertyID) for i in temp]
+                elif after and not before:
+                    temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionEnd>=after)
+                    property_Id = property_Id + [int(i.PropertyID) for i in temp]
+                elif before and after:
+                    temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before,
+                        AuctionDetails.AuctionEnd>=after)
+                    property_Id = property_Id + [int(i.PropertyID) for i in temp]
 
-        return render_template('search.html', title='search', form=form, properties=property_with_auction)
+            if suburb:
+                temp= db.session.query(Property.id).filter(Property.add_suburb==suburb)
+                suburb_Id=[int(i.id) for i in temp]
+
+                if input_form==True:
+                    list_as_set=set(property_Id)
+                    intersection = list_as_set.intersection(suburb_Id)
+                    property_Id= list(intersection)
+                else:
+                    property_Id = property_Id + suburb_Id
+
+                input_form=True
+
+            if input_form==True:
+                property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
+                                    Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
+                                    Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
+                                    Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
+                                    AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+            else: 
+                property_with_auction =full_list
+
+            return render_template('search.html', title='search', form=form, properties=property_with_auction)
 
     return render_template('search.html', title='search', form=form, properties=full_list)
 

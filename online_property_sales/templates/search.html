@@ -5,35 +5,34 @@
 				{{ form.hidden_tag() }}
 				<fieldset class="form-group">
 					<legend class="border-bottom mb-4">Search</legend>
-					
-					<div class="form-group">
-						{{ form.auction_before.label }}<br>
-						{% if form.auction_before.errors %}
-							{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
-							<div class="invalid-feedback">
-								{% for error in form.auction_before.errors %}
-									<span>{{ error }}</span>
-								{% endfor %}
-							</div>
-						{% else %}
-							{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-						{% endif %}	
+					<div class="form-row">
+						<div class="col">
+							{{ form.auction_before.label }}<br>
+							{% if form.auction_before.errors %}
+								{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
+								<div class="invalid-feedback">
+									{% for error in form.auction_before.errors %}
+										<span>{{ error }}</span>
+									{% endfor %}
+								</div>
+							{% else %}
+								{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+							{% endif %}	
+						</div>
+						<div class="col">
+							{{ form.auction_after.label }}<br>
+							{% if form.auction_after.errors %}
+								{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
+								<div class="invalid-feedback">
+									{% for error in form.auction_after.errors %}
+										<span>{{ error }}</span>
+									{% endfor %}
+								</div>
+							{% else %}
+								{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+							{% endif %}	
+						</div>
 					</div>
-
-					<div class="form-group">
-						{{ form.auction_after.label }}<br>
-						{% if form.auction_after.errors %}
-							{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
-							<div class="invalid-feedback">
-								{% for error in form.auction_after.errors %}
-									<span>{{ error }}</span>
-								{% endfor %}
-							</div>
-						{% else %}
-							{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-						{% endif %}	
-					</div>
-
 					<div class="form-group">
 						{{ form.suburb.label }}<br>
 						{% if form.suburb.errors %}
@@ -47,29 +46,36 @@
 							{{ form.suburb(class="form-control form-control-lg") }}
 						{% endif %}
 					</div>
-
-					<div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
+					<div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg mr-5") }} {{ form.clear (class="btn btn-outline-warning btn-lg") }}</div>
 				</fieldset>
 			</form>
 		</div>
-	<div class="row col-xl-100">
-		
-		{% for item in properties %}
-			<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
-				<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
-				<img class="card-img-top" src="static/propertyImage/unnamed.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
-				<h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
-				<div class="card-body text-info">
-					<h4 class="card-title">
-						{% if item.add_unit %}
-							{{item.add_unit}} /
-						{% endif %}
-						{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia
-					</h4>
-					<p class="card-text">Type:{{item.property_type}} <br>Bedrooms:{{item.num_bedrooms}} Bathrooms:{{item.num_bedrooms}} <br>Parking:{{item.num_parking}} Features:{{item.parking_features}} </p>
-					<a href={{ url_for("viewProperty", property_id=item.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
+	<div class="row col-xl-15">
+		{% if not properties %}
+				<div style="width:100%; text-align: center;">
+				<h2 class="text-info">No results found.</h2>
 				</div>
 			</div>
-		{% endfor %}
+			
+		{% else %}
+			{% for item in properties %}
+				<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
+					<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+					<img class="card-img-top" src="static/propertyImage/unnamed.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
+					<h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
+					<div class="card-body text-info">
+						<h4 class="card-title">
+							{% if item.add_unit %}
+								{{item.add_unit}} /
+							{% endif %}
+							{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia
+						</h4>
+						<p class="card-text">Type:{{item.property_type}} <br>Bedrooms:{{item.num_bedrooms}} Bathrooms:{{item.num_bedrooms}} <br>Parking:{{item.num_parking}} Features:{{item.parking_features}} </p>
+						<a href={{ url_for("viewProperty", property_id=item.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
+					</div>
+				</div>
+			{% endfor %}
+		{% endif %}
+		
 	</div>
 {% endblock %}

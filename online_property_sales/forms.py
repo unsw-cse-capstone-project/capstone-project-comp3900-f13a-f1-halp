@@ -8,10 +8,11 @@ from sqlalchemy import func
 import re
 
 class searchForm(FlaskForm):
-    auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
+    auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
     auction_after = DateTimeField('Auction After', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
-    suburb = SelectField('suburb', validators=[Optional()])
+    suburb = SelectField('Suburb', validators=[Optional()])
     submit = SubmitField('Search')
+    clear = SubmitField('Clear Filter')
 
 class passwordForm(FlaskForm):
     old_password = PasswordField('Confirm Old Password',validators= [Optional()])
