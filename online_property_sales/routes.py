@@ -1,5 +1,5 @@
 from models import User, BankDetails, clear_session, AuctionDetails, initial_db, Property, Photos
-from server import app, db, login_manager #, mail
+from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
@@ -17,6 +17,7 @@ import os
 def home():
 
     # msg = Message("Hello", 
+    #                 sender = 'comp3900@minamamoto.cloud',
     #                 recipients=["z5135154@student.unsw.edu.au"])
 
     # msg.body = "Hello Flask message sent from Flask-Mail"
@@ -72,7 +73,7 @@ def signup():
     return render_template('signup.html', title='signup', form=form)
 
 @app.route('/search', methods=['POST','GET'])
-# @login_required
+@login_required
 def search():
     form=searchForm()
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
@@ -127,8 +128,9 @@ def search():
 
 @app.route('/viewProperty/<property_id>', methods=['POST','GET'])
 def viewProperty(property_id):
-    p = Property.query.filter_by(id=property_id).first_or_404()
-    return render_template('viewProperty.html', title='View Property', property=p, auction=p.auctionId)
+    property_info = Property.query.filter_by(id=property_id).first_or_404()
+    seller = User.query.get(property_info.seller)
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId, photos=property_info.photo_collection)
 
 
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
@@ -387,21 +389,25 @@ def createAuction():
         cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
 
-#recipients_id should be a list of user id 
-#if win is true -> send success email with info
-#else -> bad luck email
+# should call this function twice. one for all passed bidders, one for the winner
+# recipients_id should be a list of user id who are bidders in this auction
+# if win is true -> send success email with info
+# else -> bad luck email
 def send_email(recipients_id, win, auctionId):
+
     auction_info = AuctionDetails.query.get(auctionId)
     property_info = Property.query.get(auction_info.PropertyID)
     seller = User.query.get(auction_info.SellerID)
     recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
-    
+
     if win == True:
+        emails = [i for (i,j) in recipients_info]
+        login_names = [j for (i,j) in recipients_info]
+
         msg = Message("Congradulations! You win the auction",
                         recipients=emails)
-
         msg.html=render_template('successFeedback.html',
-                                            receiver=login_names[0], seller=seller, property=property_info, auction=auction_info )
+                                            receiver=login_names, seller=seller, property=property_info, auction=auction_info )
         mail.send(msg)
     else:
         for (x,y) in recipients_info:

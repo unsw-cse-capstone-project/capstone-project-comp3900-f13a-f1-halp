@@ -1,38 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
-        <div class="content-section">
-            <th>{{property.id}}<th>
-            <th>{{auction.AuctionStart}}<th>
-            <th>{{auction.AuctionEnd}}<th>
-            <th>{{property.property_type}}</th>
-            <th>{{property.add_unit}}</th>
-            <th>{{property.add_num}}</th>
-            <th>{{property.add_name}}</th>
-            <th>{{property.add_suburb}}</th>
-            <th>{{property.add_state}}</th>
-            <th>{{property.pc}}</th>
-            <th>{{property.num_bedrooms}}</th>
-            <th>{{property.num_bathrooms}}</th>
-            <th>{{property.num_parking}}</th>
-            <th>{{property.parking_features}}</th>
-        </div>
+    {% if current_user.id != seller.id %}
+        <div class="col-md-8">
+    {% else %}
+        <div class="col-md-12">
+    {% endif %}
+                <div class="card p-2 col-md-3.8 ml-3 mr-2 mb-3">
+                    <div class="card-header text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+                    <img class="card-img-top rounded" src="/static/propertyImage/unnamed.jpg" alt="Card image cap"  >
+                    <h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
+                    <div class="card-body text-info">
+                        <h4 class="card-title">
+                            {% if property.add_unit %}
+                                {{property.add_unit}} /
+                            {% endif %}
+                            {{property.add_num}} {{property.add_name}} {{property.add_suburb}} {{property.add_state}} {{property.pc}}, Australia
+                        </h4>
+                        <h4 class="card-title"> Features </h4>
+                        <p class="card-text">Type:{{property.property_type}} <br>Bedrooms:{{property.num_bedrooms}} Bathrooms:{{property.num_bedrooms}} <br>Parking:{{property.num_parking}} Features:{{property.parking_features}} </p>
+                        {% if auction.AuctionStart and auction.AuctionEnd %}
+                            <p class="text-dark bg-warning rounded pl-4 pr-4 mr-2 mb-0" style="float: left;"> Auction start: {{auction.AuctionStart}} </p>
+                            <p style="float: left; color: black;" class="mb-0">--</p>
+                            <p class="text-dark bg-warning rounded pl-4 pr-4 ml-2 mb-0" style="float: left;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
+                        {% endif %}
+                        <h4 class="card-title"> Desciption </h4>
+                        <p class="card-text">{{property.description}}</p>
+                    </div>
+                </div>
     </div>
-    <div class="col-md-4">
-        <div class="content-section">
-            <h4>Seller Contact Information</h4>
-            <p class='text-muted'>
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Email: {{current_user.email}}</li>
-                <li class="list-group-item list-group-item-light">PhoneNumber: {{current_user.phone_number}}</li>
-            </ul>
-            </p>
+    {% if current_user.id != seller.id %}
+        <div class="col-md-4">
+            <div class="content-section">
+                <h4>For more information</h4>
+                <p class='text-muted'>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">Email: comp3900@minamamoto.cloud</li>
+                    <li class="list-group-item list-group-item-light">PhoneNumber: +61421234567</li>
+                </ul>
+                </p>
+            </div>
+            
+            <form action="/search">
+                <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Join in as a bidder</button>
+            </form>
         </div>
-        <form action="/search">
-            <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Join in as a bidder</button>
-        </form>
-    </div>
+    {% endif %}
 </div>
 
 

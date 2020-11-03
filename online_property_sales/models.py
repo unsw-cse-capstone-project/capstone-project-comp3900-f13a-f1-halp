@@ -267,7 +267,6 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
-
 # recipients_id=[1,2]
 # recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
 # emails = [x for (x,y) in recipients_info]
