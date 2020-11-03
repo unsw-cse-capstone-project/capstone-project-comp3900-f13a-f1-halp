@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Dear {{receiver}},<br><br></p>
+    <p> We are sorry to inform you that you pass the auction of
+        <a href="{{ url_for('viewProperty', property_id=property.id) }}">the property</a>
+            at
+            {% if property.add_unit %}
+                {{proprerty.add_unit}}/
+            {% endif %}
+            {{proprerty.add_num}} {{proprerty.add_suburb}} {{proprerty.add_state}} {{proprerty.pc}}, Australia.
+            The final bid of this property if {{final bid}}.
+    </p>
+    <p>Sincerely,</p>
+    <p>The Auction World Team</p>
+</body>
+</html>

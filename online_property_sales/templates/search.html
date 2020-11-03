@@ -1,79 +1,75 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="content-section">
-        <form action="" method= "POST" style="margin-top: 50px;" novalidate>
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-				<legend class="border-bottom mb-4">Search</legend>
-				
-				<div class="form-group">
-                    {{ form.auction_before.label }}<br>
-                    {% if form.auction_before.errors %}
-						{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.auction_before.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-					{% endif %}	
-                </div>
+		<div class="content-section">
+			<form action="" method= "POST" style="margin-top: 50px;" novalidate>
+				{{ form.hidden_tag() }}
+				<fieldset class="form-group">
+					<legend class="border-bottom mb-4">Search</legend>
+					
+					<div class="form-group">
+						{{ form.auction_before.label }}<br>
+						{% if form.auction_before.errors %}
+							{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.auction_before.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{% endif %}	
+					</div>
 
-                <div class="form-group">
-                    {{ form.auction_after.label }}<br>
-                    {% if form.auction_after.errors %}
-						{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.auction_after.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-					{% endif %}	
-                </div>
+					<div class="form-group">
+						{{ form.auction_after.label }}<br>
+						{% if form.auction_after.errors %}
+							{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.auction_after.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{% endif %}	
+					</div>
 
-                <div class="form-group">
-                    {{ form.suburb.label }}<br>
-                    {% if form.suburb.errors %}
-						{{ form.suburb(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.suburb.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.suburb(class="form-control form-control-lg") }}
-					{% endif %}
-                </div>
+					<div class="form-group">
+						{{ form.suburb.label }}<br>
+						{% if form.suburb.errors %}
+							{{ form.suburb(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.suburb.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{ form.suburb(class="form-control form-control-lg") }}
+						{% endif %}
+					</div>
 
-                <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
-            </fieldset>
-        </form>
+					<div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
+				</fieldset>
+			</form>
+		</div>
+	<div class="row col-xl-100">
+		
+		{% for item in properties %}
+			<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
+				<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+				<img class="card-img-top" src="static/propertyImage/unnamed.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
+				<h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
+				<div class="card-body text-info">
+					<h4 class="card-title">
+						{% if item.add_unit %}
+							{{item.add_unit}} /
+						{% endif %}
+						{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia
+					</h4>
+					<p class="card-text">Type:{{item.property_type}} <br>Bedrooms:{{item.num_bedrooms}} Bathrooms:{{item.num_bedrooms}} <br>Parking:{{item.num_parking}} Features:{{item.parking_features}} </p>
+					<a href={{ url_for("viewProperty", property_id=item.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
-	
-	<table class="table">
-        <tr>
-			<th>SellerID<th>
-			<th>Auction Start<th>
-			<th>Auction End<th>
-			<th>PropertyID</th>
-		</tr>
-		{% if auctions|length == 0 %}
-			<tr>
-				<th>No Results<th>
-			</tr>
-		{% else %}
-			{% for item in auctions %}
-			<tr>
-				<th>{{item.SellerID}}<th>
-				<th>{{item.AuctionStart}}<th>
-				<th>{{item.AuctionEnd}}<th>
-				<th>{{item.PropertyID}}</th>
-			</tr>
-			{% endfor %}
-		{% endif %}
-	</table>
-	
 {% endblock %}

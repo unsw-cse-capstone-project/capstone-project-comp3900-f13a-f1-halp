@@ -1,11 +1,12 @@
 from models import *
-from server import app, db, login_manager
+from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime
 from sqlalchemy import func
 from forms import *
 from validateProperty import *
+from flask_mail import Message
 import random
 import sys
 import os
@@ -15,7 +16,15 @@ import os
 @app.route('/')
 @app.route('/home')
 def home():
-    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia@g",'info')
+
+    # msg = Message("Hello", 
+    #                 sender = 'comp3900@minamamoto.cloud',
+    #                 recipients=["z5135154@student.unsw.edu.au"])
+
+    # msg.body = "Hello Flask message sent from Flask-Mail"
+    # mail.send(msg)
+
+    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
@@ -64,34 +73,67 @@ def signup():
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
 
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 @app.route('/search', methods=['POST','GET'])
-# @login_required
+@login_required
 def search():
     form=searchForm()
-    auctions=[]
-    
-    if form.validate_on_submit():
+    available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
+    #load all suburbs in db and initial with an empty value
+    form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
+    full_list=db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
+                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
+                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
+                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails)
+    property_Id=[]
 
+    #auction time -> auction id list -> property id list
+    #suburb -> property id list
+    #property id list -> property, AuctionDetails objects left?join(AuctionDetails)
+    if form.validate_on_submit():
+        input_form=False
         before=form.auction_before.data
         after=form.auction_after.data
         suburb = form.suburb.data
         
-        if before and not after :
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionStart<=before).all()
-        elif after and not before:
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd>=after).all()
-        elif before and after:
-            auctions = AuctionDetails.query.filter(AuctionDetails.AuctionStart<=before,
-                AuctionDetails.AuctionEnd>=after).all()
+        if before or after:
+            input_form=True
+            if before and not after :
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
+            elif after and not before:
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionEnd>=after)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
+            elif before and after:
+                temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart<=before,
+                    AuctionDetails.AuctionEnd>=after)
+                property_Id = property_Id + [int(i.PropertyID) for i in temp]
 
-        return render_template('search.html', title='search', form=form, auctions=auctions)
+        if suburb:
+            input_form=True
+            temp= db.session.query(Property.id).filter(Property.add_suburb==suburb)
+            property_Id = property_Id + [int(i.id) for i in temp]
+            flash(property_Id)
+        if input_form==True:
+            property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
+                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
+                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
+                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
+                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+        else: 
+            property_with_auction =full_list
+
+        return render_template('search.html', title='search', form=form, properties=property_with_auction)
+
+    return render_template('search.html', title='search', form=form, properties=full_list)
+
+@app.route('/viewProperty/<property_id>', methods=['POST','GET'])
+def viewProperty(property_id):
+    property_info = Property.query.filter_by(id=property_id).first_or_404()
+    seller = User.query.get(property_info.seller)
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId, photos=property_info.photo_collection)
 
 
-    return render_template('search.html', title='search', form=form)
-    
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
 @login_required
 def changePassword(login_name):
@@ -350,6 +392,7 @@ def createAuction():
         flash('Auction created for {form.reservePrice.data}!', 'success')
         return redirect(url_for('home'))
 
+        cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
 
 @app.route("/auction", methods=['GET', 'POST'])
@@ -432,3 +475,29 @@ def viewAuction(AuctionID_):
         flash('Your Bid has been accepted!', 'success')
         return redirect(url_for('home'))
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
+
+# should call this function twice. one for all passed bidders, one for the winner
+# recipients_id should be a list of user id who are bidders in this auction
+# if win is true -> send success email with info
+# else -> bad luck email
+def send_email(recipients_id, win, auctionId):
+
+    auction_info = AuctionDetails.query.get(auctionId)
+    property_info = Property.query.get(auction_info.PropertyID)
+    seller = User.query.get(auction_info.SellerID)
+    recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+
+    if win == True:
+        emails = [i for (i,j) in recipients_info]
+        login_names = [j for (i,j) in recipients_info]
+
+        msg = Message("Congradulations! You win the auction",
+                        recipients=emails)
+        msg.html=render_template('successFeedback.html',
+                                            receiver=login_names, seller=seller, property=property_info, auction=auction_info )
+        mail.send(msg)
+    else:
+        for (x,y) in recipients_info:
+            msg = Message("Unfortunately! You did not win the auction",recipients=[x])
+            msg.html = render_template('unfortunatelyFeedback.html',receiver=y, seller=seller, property=property_info, auction=auction_info )
+            mail.send(msg)

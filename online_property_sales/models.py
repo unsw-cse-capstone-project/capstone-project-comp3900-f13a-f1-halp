@@ -93,7 +93,7 @@ class AuctionDetails(db.Model):
     SellerID = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
 
     def __repr__(self):
-        return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
+        return f"AuctionDetails('{self.id}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
 
 class Bid(db.Model):
     __tablename__ = 'Bid'
@@ -127,7 +127,6 @@ class Property(db.Model):
     #seller
     seller = db.Column(db.Integer, db.ForeignKey('User.id'))
     #one-to-one
-    #backref defines the varible that the other table should call
     auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
     #one-to-many
     photo_collection = db.relationship('Photos', backref='Property', lazy='dynamic')
@@ -213,24 +212,109 @@ def clear_session():
 
 def initial_db():
 
-    # clear_session()
+    clear_session()
     db.create_all()
 
     u1= User(login_name='Tom123@g', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
     u1.set_password('Tom123@g')
-    u2= User(login_name='Cloudia@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
-    u2.set_password('Cloudia@g')
+    u2= User(login_name='Cloudia0@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
+    u2.set_password('Cloudia0@g')
     bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
+    property1 = Property(   property_type = 'House',
+                            add_num = '10', add_name = 'street', add_suburb = 'suburb1',
+                            add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    property2 = Property(   property_type = 'House',
+                            add_num = '99', add_name = 'street', add_suburb = 'suburb2',
+                            add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    property3 = Property(   property_type = 'Unit',
+                            add_unit='01',add_num = '13', add_name = 'some street', add_suburb = 'suburb3',
+                            add_state = 'NSW', add_pc = '2040', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    property4 = Property(   property_type = 'Unit',
+                            add_unit='52', add_num = '23', add_name = 'street', add_suburb = 'suburb4',
+                            add_state = 'NSW', add_pc = '3100', num_bedrooms = '1',
+                            num_parking = '1', num_bathrooms = '1',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019')
+
+    auction1 = AuctionDetails(AuctionStart = datetime.strptime("2020-12-30 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                ReservePrice = 500.0,
+                                MinBiddingGap = 20.0,
+
+                                PropertyID = 1,
+                                SellerID = 1)
 
     db.session.add(u1)
     db.session.add(u2)
     db.session.add(bank1)
     db.session.add(bank2)
+    db.session.add(property1)
+    db.session.add(property2)
+    db.session.add(property3)
+    db.session.add(property4)
+    db.session.add(auction1)
 
     db.session.commit()
 
 # initial_db()
+# recipients_id=[1,2]
+# recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
+# emails = [x for (x,y) in recipients_info]
+# login_names = [y for (x,y) in recipients_info]
+# print(login_names)
+
+# prop_list=[1,2]
+# property_with_auction = db.session.query(Property, AuctionDetails.AuctionStart, 
+#             AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(prop_list))
+# for i in property_with_auction:
+#     print(i.id)
+
+
+# p1=db.session.query(Property).get(1)
+# print(p1.auctionId)
+# seller = db.Column(db.Integer, db.ForeignKey('User.id'))
+# auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
+#queries
+
+# auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before).join(AuctionDetails)
+# prop_auc=db.session.query(Property,AuctionDetails.AuctionStart,AuctionDetails.AuctionEnd).join(AuctionDetails)
+# for i in prop_auc:
+#     print(i)
+# property_Id=[]
+# temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart>=datetime.now())
+# property_Id = property_Id + [int(i.PropertyID) for i in temp]
+# print(property_Id)
+# auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart>=datetime.now()).join(AuctionDetails)
+# list_auc = [i.id for i in auctions]
+# for i in auctions:
+    # print(i)
+
+# cards=db.session.query(User.login_name, BankDetails.id).join(BankDetails)
+# for i in cards:
+#     print(i)
+
+# suburbList= db.session.query(Property.add_suburb).distinct(Property.add_suburb)
+# for i in suburbList:
+#     print(i[2])
+
+# print(BankDetails.query.get('5555444433331111').user_id)
 
 #query examples
 # users= User.query.all()
