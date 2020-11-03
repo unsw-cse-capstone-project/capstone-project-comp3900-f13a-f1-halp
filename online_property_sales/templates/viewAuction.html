@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+	
+    <div class="content-section">
+    	<form action="" method= "POST" style="margin-top: 50px;" novalidate>
+    		{{ form.hidden_tag() }}
+    		<fieldset class="form-group">
+    			<legend class="border-bottom mb-4">Current Highest Bid: {{highestBid}}</legend>
+                <legend class="border-bottom mb-4">My Bid: {{myBid}}</legend>
+                <legend class="border-bottom mb-4">The next lowest possible bid is: {{nextLow}}</legend>
+                {{ form.newBid.label(class="form-control-label") }}
+                {% if form.newBid.errors %}
+                    {{ form.newBid(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.newBid.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.newBid(class="form-control form-control-lg") }}
+                {% endif %} 
+    		</fieldset>
+            <div class="form-group">
+                {{ form.submitBid(class="btn btn-outline-info") }}
+            </div>
+    		
+    	</form>
+    </div>
+
+{% endblock content %}

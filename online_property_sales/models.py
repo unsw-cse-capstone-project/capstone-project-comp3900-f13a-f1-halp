@@ -81,6 +81,7 @@ class BankDetails(db.Model):
         return '<BankDetails %r>' % self.id
 
 class AuctionDetails(db.Model):
+    __tablename__ = 'AuctionDetails'
     id = db.Column(db.Integer, primary_key=True)
     # AuctionID = db.Column(db.String, primary_key=True)
     AuctionStart = db.Column(db.DateTime, nullable=False)
@@ -95,6 +96,7 @@ class AuctionDetails(db.Model):
         return f"AuctionDetails('{self.AuctionID}', '{self.PropertyID}', '{self.SellerID}', {self.AuctionStart}, {self.AuctionEnd}, {self.ReservePrice}, {self.MinBiddingGap})"
 
 class Bid(db.Model):
+    __tablename__ = 'Bid'
     id = db.Column(db.Integer, primary_key=True)
     BidderID = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
     AuctionID = db.Column(db.Integer, db.ForeignKey('AuctionDetails.id'), nullable=False)

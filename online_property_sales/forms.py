@@ -4,6 +4,7 @@ from wtforms.validators import ValidationError, DataRequired, EqualTo, Length, R
 from flask import flash
 from models import User
 from sqlalchemy import func
+import re
 
 class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
@@ -139,6 +140,5 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Save Auction')
 
 class MakeBidForm(FlaskForm):
-    newBid = DecimalField('Bidding Gap', validators=[DataRequired()])
+    newBid = DecimalField('Bidding Amount', validators=[DataRequired()])
     submitBid = SubmitField('Make Bid')
-    refresh = SubmitField('Refresh Page')
