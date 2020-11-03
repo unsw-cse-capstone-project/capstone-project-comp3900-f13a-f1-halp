@@ -8,12 +8,14 @@
             {{ form.hidden_tag() }}
             <div class="form-group">{{ form.image.label }} {{form.image}}</div>
             <div class="form-group">{{ form.submit }}</div>
-        
+                    
             {% if form.errors %}
                 {{ form.errors }}
             {% endif %}
         </fieldset>
     </form>
+    <a href="{{ url_for('property_list') }}"><button class="btn btn-primary">Cancel</button></a>
+
 
     <ul class='list-group'>
         {% for i in image %}
