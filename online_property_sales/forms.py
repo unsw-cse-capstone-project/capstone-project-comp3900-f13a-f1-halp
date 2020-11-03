@@ -93,10 +93,6 @@ class PropertyForm(FlaskForm):
                                  ('rural', 'Rural'),
                                  ('blocks', 'Blocks of Units'),
                                  ('retirement', 'Retirement Living')])
-    # old address version
-    address = StringField('Address')
-
-    # new address version
     add_unit = StringField('Unit Number', validators=[DataRequired()])
     add_num = StringField('Street Number', validators=[DataRequired()])
     add_name = StringField('Street Name', validators=[DataRequired()])
@@ -110,7 +106,6 @@ class PropertyForm(FlaskForm):
                                  ('TAS', 'TAS'),
                                  ('WA', 'WA')])
     add_pc = StringField('Postcode', validators=[DataRequired()])
-
     num_bedrooms = StringField('Number of Bedrooms', validators=[DataRequired()])
     num_bathrooms = StringField('Number of Bathrooms', validators=[DataRequired()])
     num_parking = StringField('Number of Parking', validators=[DataRequired()])
@@ -120,10 +115,12 @@ class PropertyForm(FlaskForm):
     inspection_date = DateField('Date of Inspection')
     description = StringField('Property Description', validators=[DataRequired()])
     year_built = StringField('Year of Built', validators=[DataRequired()])
-    #photos haha
-    
     submit = SubmitField('Submit')
-    
+
+class AddImageForm(FlaskForm):
+    image = FileField('Add Image', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Submit')
+
 class RegistrationForm(FlaskForm):
     auctionStart = DateTimeField('Auction Start Time, Form = "%Y-%m-%d %H:%M:%S"', validators=[DataRequired()])
     auctionEnd = DateTimeField('Auction End Time, Form = "%Y-%m-%d %H:%M:%S"', validators=[DataRequired()])

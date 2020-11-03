@@ -113,13 +113,12 @@ class Property(db.Model):
     add_suburb = db.Column(db.String(100))
     add_state = db.Column(db.String(3))
     add_pc = db.Column(db.String(4))
-    #address = db.Column(db.String(1000))
     num_bedrooms = db.Column(db.Integer)
     num_parking = db.Column(db.Integer)
     num_bathrooms = db.Column(db.Integer)
     parking_features = db.Column(db.String)
-    building_size = db.Column(db.Integer) #is it meant to be float?
-    land_size = db.Column(db.Integer) #float?
+    building_size = db.Column(db.Integer)
+    land_size = db.Column(db.Integer)
     inspection_date = db.Column(db.DateTime)
     description = db.Column(db.String(2000))
     year_built = db.Column(db.Integer)
