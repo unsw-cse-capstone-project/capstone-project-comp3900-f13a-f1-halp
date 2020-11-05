@@ -80,11 +80,7 @@ def search():
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
     #load all suburbs in db and initial with an empty value
     form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
-    full_list=db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
-                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
-                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails)
+    full_list=db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails)
     property_Id=[]
 
     #auction time -> auction id list -> property id list
@@ -134,7 +130,7 @@ def search():
                                     Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
                                     Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
                                     Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                    AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+                                    Property.photo_collection, AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
             else: 
                 property_with_auction =full_list
 
@@ -146,7 +142,7 @@ def search():
 def viewProperty(property_id):
     property_info = Property.query.filter_by(id=property_id).first_or_404()
     seller = User.query.get(property_info.seller)
-    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId, photos=property_info.photo_collection)
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId)
 
 
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
@@ -385,7 +381,7 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
-    properties = Property.query.filter_by(seller=current_user.login_name).all()
+    properties = Property.query.filter_by(seller=current_user.id).all()
     
     return render_template('property.html', properties = properties)
 

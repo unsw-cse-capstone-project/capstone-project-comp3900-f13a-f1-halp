@@ -58,20 +58,29 @@
 			</div>
 			
 		{% else %}
-			{% for item in properties %}
+			{% for (p,a) in properties %}
 				<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
 					<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
-					<img class="card-img-top" src="static/propertyImage/unnamed.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
+					{% if not p.photo_collection.all() %}
+						<img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
+					{% else %}
+						<img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:335.81px; height: 180px;" >
+					{% endif %}
 					<h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
 					<div class="card-body text-info">
 						<h4 class="card-title">
-							{% if item.add_unit %}
-								{{item.add_unit}} /
+							{% if p.add_unit %}
+								{{p.add_unit}} /
 							{% endif %}
-							{{item.add_num}} {{item.add_name}}<br>{{item.add_suburb}} {{item.add_state}} {{item.pc}}, Australia
+							{{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
 						</h4>
-						<p class="card-text">Type:{{item.property_type}} <br>Bedrooms:{{item.num_bedrooms}} Bathrooms:{{item.num_bedrooms}} <br>Parking:{{item.num_parking}} Features:{{item.parking_features}} </p>
-						<a href={{ url_for("viewProperty", property_id=item.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
+						<p class="card-text">
+							<span><img src="/static/propertyImage/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
+							<span><img src="/static/propertyImage/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+							<span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
+							<span style="float: right; margin-top: 7px;">{{p.property_type}}</span>
+						</p>
+						<a href={{ url_for("viewProperty", property_id=p.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
 					</div>
 				</div>
 			{% endfor %}
