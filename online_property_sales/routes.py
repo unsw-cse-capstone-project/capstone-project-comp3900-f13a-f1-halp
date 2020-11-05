@@ -7,9 +7,10 @@ from sqlalchemy import func
 from forms import *
 from validateProperty import *
 from flask_mail import Message
+from PIL import Image
 import random
-import sys
 import os
+import secrets
 
 # initial_db()
 

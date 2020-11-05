@@ -25,7 +25,9 @@
             <p>Inspection Date: {{ p.inspection_date }}</p>
             <p>Photo Collection: TBA</p>
         </li>
-        <form action="{{ url_for('edit_property', p_id = p.id) }}" method="POST"><button type="submit">Edit</button></form>
+        <a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit'>Add/View Image</button></a>
+            <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit'>Edit</button></a>
+            <a href="{{ url_for('remove_property', p_id = p.id) }}"><button class='btn btn-outline-danger btn-lg' type='submit'>Remove</button></a>
     </ul>
     {% endfor %}
 
