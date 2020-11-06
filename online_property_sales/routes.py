@@ -18,8 +18,8 @@ import os
 def home():
 
     # msg = Message("Hello", 
-    #                 sender = 'comp3900@minamamoto.cloud',
-    #                 recipients=["z5135154@student.unsw.edu.au"])
+    #                 sender = 'AuctionWorldWideWeb@gmail.com',
+    #                 recipients=["unswroy@gmail.com"])
 
     # msg.body = "Hello Flask message sent from Flask-Mail"
     # mail.send(msg)
@@ -517,6 +517,17 @@ def viewAuction(AuctionID_):
         return redirect(url_for('login'))
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    if auction.SellerID == current_user.id:
+        return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
+
+    if auction.AuctionEnd > datetime.now():
+        flash('This auction has not started yet')
+        return redirect(url_for('home'))
+
+    if auction.AuctionStart < datetime.now():
+        flash('This auction has already ended')
+        return redirect(url_for('home'))
+
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
     highestAmount = 0
     for amount in highestBid:
