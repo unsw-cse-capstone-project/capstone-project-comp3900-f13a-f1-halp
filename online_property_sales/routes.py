@@ -387,7 +387,7 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
-    properties = Property.query.filter_by(seller=current_user.login_name).all()
+    properties = Property.query.filter_by(seller=current_user.id).all()
     
     return render_template('property.html', properties = properties)
 
