@@ -288,7 +288,7 @@ def add_property():
                             add_state = p_add_state, add_pc = p_add_pc, num_bedrooms = p_n_beds,
                             num_parking = p_n_park, num_bathrooms = p_n_baths,
                             parking_features = p_p_features, building_size = p_b_size,
-                            land_size = p_l_size, seller = current_user.login_name, inspection_date = p_i_date,
+                            land_size = p_l_size, seller = current_user.id, inspection_date = p_i_date,
                             description = p_desc, year_built = p_year)
 
             db.session.add(p_to_db)
@@ -309,7 +309,7 @@ def edit_property(p_id):
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     print(p)
 
     form = PropertyForm()
@@ -403,7 +403,7 @@ def property_image(p_id):
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
     print(address)
 

@@ -27,12 +27,26 @@
         </li>
         <a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit'>Add/View Image</button></a>
         <a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit'>View Property</button></a>
-        <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit'>Edit</button></a>
-        <a href="{{ url_for('remove_property', p_id = p.id) }}"><button class='btn btn-outline-danger btn-lg' type='submit'>Remove</button></a>
+        <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-outline-light text-dark btn-lg' type='submit' onclick="myFunction()">Edit</button></a>
+        <button class='btn btn-outline-light text-dark btn-lg' type='submit' onclick="myFunction()">Edit</button>
+        <a href="{{ url_for('remove_property', p_id = p.id) }}"><button class='btn btn-outline-danger btn-lg'  type='submit'>Remove</button></a>
+        
     </ul>
     {% endfor %}
+    <a href="{{ url_for('add_property') }}"><button class='btn btn-outline-success btn-lg'>Add a Property</button></a>
+    <button class='btn btn-outline-success btn-lg' onclick="myFunction()">Add a Property</button>
 
-</form>
+<script>
+    function myFunction() {
+        var res = confirm("Are you sure?");
+        if (res == true) {
+            window.location.href = "{{ url_for('add_property') }}"
+        } else {
+            return
+        }
+    }
+    
+</script>
 
 </div>
 
