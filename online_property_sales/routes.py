@@ -126,11 +126,7 @@ def search():
                 input_form=True
 
             if input_form==True:
-                property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
-                                    Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
-                                    Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                    Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                    Property.photo_collection, AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+                property_with_auction = db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
             else: 
                 property_with_auction =full_list
 
@@ -158,7 +154,7 @@ def changePassword(login_name):
                 if form.password.data:
                     user.set_password(form.password.data)
                     db.session.commit()
-                    return redirect('home')
+                    return redirect(url_for('home'))
                 else:
                     flash(f'Please input your new password','info')
             else:
@@ -236,7 +232,6 @@ def account(login_name):
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
-        form.login_name.data = current_user.login_name
         form.address.data = current_user.address
         form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
         form.phone_number.data = current_user.phone_number
