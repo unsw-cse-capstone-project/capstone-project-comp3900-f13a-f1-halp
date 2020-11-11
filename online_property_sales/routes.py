@@ -289,7 +289,7 @@ def add_property():
                             num_parking = p_n_park, num_bathrooms = p_n_baths,
                             parking_features = p_p_features, building_size = p_b_size,
                             land_size = p_l_size, seller = current_user.id, inspection_date = p_i_date,
-                            description = p_desc, year_built = p_year)
+                            description = p_desc, year_built = p_year, status = 'auction')
 
             db.session.add(p_to_db)
             db.session.commit()
@@ -390,6 +390,16 @@ def property_list():
     properties = Property.query.filter_by(seller=current_user.id).all()
     
     return render_template('property.html', properties = properties)
+
+@app.route("/changeStatus/<p_id>")
+def change_status(p_id):
+    to_change = Property.query.filter_by(id=p_id).all()
+    if to_change[0].status == "auction":
+        to_change[0].status = "sold"
+    else:
+        to_change[0].status = "auction"
+    db.session.commit()
+    return redirect(url_for('property_list'))
 
 @app.route("/removeProperty/<p_id>")
 def remove_property(p_id):
