@@ -12,19 +12,21 @@ import random
 import os
 import secrets
 from apscheduler.schedulers.background import BackgroundScheduler
+from schedule import hourlyEmail
 
 # initial_db()
 
-def end(AuctionID_):
-    auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
-    seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
+# def end(AuctionID_):
 
-    msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
-    msg.body = "Auction " +  str(AuctionID_) + " has ended"
-    mail.send(msg)
+#     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+#     seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
 
-def hourlyEmail():
-    end(1)
+#     msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
+#     msg.body = "Auction " +  str(AuctionID_) + " has ended"
+#     mail.send(msg)
+
+# def hourlyEmail():
+#     end(1)
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
