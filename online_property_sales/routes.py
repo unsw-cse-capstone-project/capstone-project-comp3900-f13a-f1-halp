@@ -13,6 +13,7 @@ import os
 import secrets
 from apscheduler.schedulers.background import BackgroundScheduler
 from schedule import hourlyEmail
+from datetime import datetime, timedelta
 
 # initial_db()
 
@@ -42,7 +43,10 @@ def home():
 
     # msg.body = "Hello Flask message sent from Flask-Mail"
     # mail.send(msg)
-
+    since = datetime.now() - timedelta(hours=1)
+    auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
+    for auction in auctions:
+        flash(auction.id)
     flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
