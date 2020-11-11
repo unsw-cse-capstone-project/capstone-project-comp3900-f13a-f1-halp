@@ -78,16 +78,16 @@
                 </div>
 
                 <legend class="border-bottom mb-4">Bank Details</legend>
+                <table class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col" >Card Number</th>
+                            <th scope="col">Expire Date</th>
+                            <th scope="col"> </th>
+                            <th scope="col"> </th>
+                        </tr>
+                    </thead>
                 {% if cards %}
-                    <table class="table table-dark">
-                        <thead>
-                            <tr>
-                                <th scope="col" >Card Number</th>
-                                <th scope="col">Expire Date</th>
-                                <th scope="col"> </th>
-                                <th scope="col"> </th>
-                            </tr>
-                        </thead>
                         <tbody>
                         {% for i in cards %}
                             <tr>
@@ -101,14 +101,17 @@
                                 </td>
                             </tr>
                         {% endfor %}
-                        </tbody>
-                    </table>
+                    
                 {% else %}
-                    <h2>No cards, Please add one
-                        <a href={{ url_for("addBankDetail") }} class="btn btn-outline-info">Add</a>
-                    </h2>
+                    <tr>
+                        <td colspan="4"><h5>No cards, Please add one </h5></td>
+                    </tr>
                 {% endif %}
-
+                        <tr>
+                            <td colspan="4" style="float: center;"><a href={{ url_for("addBankDetail") }} class="btn btn-outline-info">Add Bank card</a></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg") }}</div>
             </fieldset>
         </form>
