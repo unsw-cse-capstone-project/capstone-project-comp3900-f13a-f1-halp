@@ -1,9 +1,13 @@
 from models import *
 import smtplib, ssl
 from sqlalchemy import func, desc
+from datetime import datetime
 
 def hourlyEmail():
-    end(1)
+    since = datetime.now() - timedelta(hours=1)
+    bids = Bid.query.filter(AuctionEnd>=datetime.now(), AuctionEnd<=since)
+    for bid in bids:
+        end(bid.id)
 
 def end(AuctionID_):
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(desc(Bid.Amount)).first()
