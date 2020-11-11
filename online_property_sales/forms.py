@@ -6,6 +6,23 @@ from flask import flash
 from models import User
 from sqlalchemy import func
 import re
+from datetime import datetime
+
+
+class BankDetailsForm(FlaskForm):
+    holder_fname = StringField ('Holder First Name', validators=[DataRequired()])
+    holder_lname = StringField ('Holder Last Name', validators=[DataRequired()])
+    card_number = StringField ( 'Card Number',validators=[ DataRequired(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
+    cvc = StringField ( 'CVC', validators=[ DataRequired(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
+    expire_date = DateTimeField('Expire Date', format = "%m/%Y", validators=[DataRequired()])
+
+    submit = SubmitField()
+
+    def validate_expire_date(self, value):
+        if datetime.now() < self.expire_date.data:
+            return True
+        return False
+
 
 class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
@@ -27,18 +44,11 @@ class AccountForm(FlaskForm):
     email = StringField('Email', validators=[Optional(), Email()])
     address = StringField('Address')
     date_of_birth = StringField('Date of Birth',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ')])
-    holder_fname = StringField ('Holder First Name')
-    holder_lname = StringField ('Holder Last Name')
-
-    card_number = StringField ( 'Card Number',validators=[ Optional(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
     phone_number = StringField ('Phone Number',  validators=[ Optional(),Length(min=10, max=10) ] )
     id_confirmation = StringField ('Id Confirmation')
-    cvc = StringField ( 'CVC', validators=[ Optional(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
-    expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
 
-    submit = SubmitField('Edit')
+    submit = SubmitField('Submit')
 
-    # cancel = SubmitField('Cancel')
     def validate_username(self, login_name, user_id):
         user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
         if user is not None:
@@ -59,7 +69,7 @@ class SignupForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     email = StringField('Email address', validators = [DataRequired(), Email()]) 
     address = StringField('address', validators=[DataRequired()])
-    date_of_birth = StringField('date_of_birth', validators=[DataRequired(), Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ') ])
+    date_of_birth = DateTimeField('Date of birth', format = "%d/%m/%Y", validators=[DataRequired()])
     phone_number = StringField('phone_number', validators=[DataRequired(), Length(min=10, max=10),Regexp('^\d{10}$', message='Only numbers')])
 
     submit = SubmitField('Register')
@@ -71,11 +81,9 @@ class SignupForm(FlaskForm):
             return False
         return True
 
-    def validate_DOB(self, data):
-        r=re.compile('.{2}/.{2}/.{4}')
-        if r.match(data):
+    def validate_date_of_birth(self, date_of_birth):
+        if datetime.now() > self.date_of_birth.data:
             return True
-        flash("Please input date with valid format!")
         return False
 
 class LoginForm(FlaskForm):

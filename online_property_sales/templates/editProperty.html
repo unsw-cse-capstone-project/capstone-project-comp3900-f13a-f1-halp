@@ -14,26 +14,228 @@
         <h1>Error: Invalid Property ID</h1>
     {% else %}
         {% for p in property %}
-        <form action="" method="POST" action="/property" style="margin-top: 50px;" novalidate>
+        <form action="" method="POST" action="/addProperty" style="margin-top: 50px;" novalidate>
             <fieldset class="form-group">
                 {{ form.hidden_tag() }}
-                <div class="form-group">{{ form.add_unit.label }} [{{ p.add_unit }}] {{form.add_unit}}</div>
-                <div class="form-group">{{ form.add_num.label }} [{{ p.add_num }}] {{form.add_num}}</div>
-                <div class="form-group">{{ form.add_name.label }} [{{ p.add_name }}] {{form.add_name}}</div>
-                <div class="form-group">{{ form.add_suburb.label }} [{{ p.add_suburb }}] {{form.add_suburb}}</div>
-                <div class="form-group">{{ form.add_state.label }} [{{ p.add_state }}] {{form.add_state}}</div>
-                <div class="form-group">{{ form.add_pc.label }} [{{ p.add_pc }}] {{form.add_pc}}</div>
-                <div class="form-group">{{ form.property_type.label }} [{{ p.property_type }}] {{form.property_type}}</div>
-                <div class="form-group">{{ form.num_bedrooms.label }} [{{ p.num_bedrooms }}] {{form.num_bedrooms}}</div>
-                <div class="form-group">{{ form.num_bathrooms.label }} [{{ p.num_bathrooms }}] {{form.num_bathrooms}}</div>
-                <div class="form-group">{{ form.num_parking.label }} [{{ p.num_parking }}] {{form.num_parking}}</div>
-                <div class="form-group">{{ form.parking_features.label }} [{{ p.parking_features }}] {{form.parking_features}}</div>
-                <div class="form-group">{{ form.building_size.label }} [{{ p.building_size }}] {{form.building_size}}</div>
-                <div class="form-group">{{ form.land_size.label }} [{{ p.land_size }}] {{form.land_size}}</div>
-                <div class="form-group">{{ form.description.label }} [{{ p.description }}] {{form.description}}</div>
-                <div class="form-group">{{ form.year_built.label }} [{{ p.year_built }}] {{form.year_built}}</div>
-                <div class="form-group">{{ form.inspection_date.label }} [{{ p.inspection_date }}] {{form.inspection_date}}</div>
-                <div class="form-group">{{ form.submit }}</div>
+                <div class="form-row">
+                    <div class="col-2">
+                        {{ form.add_unit.label }}<br>
+                        {% if form.add_unit.errors %}
+                            {{ form.add_unit(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.add_unit.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.add_unit(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-2">
+                        {{ form.add_num.label }}<br>
+                        {% if form.add_num.errors %}
+                            {{ form.add_num(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.add_num.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.add_num(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {{ form.add_name.label }}<br>
+                        {% if form.add_name.errors %}
+                            {{ form.add_name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.add_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.add_name(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        {{ form.add_suburb.label }}<br>
+                        {% if form.add_suburb.errors %}
+                            {{ form.add_suburb(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.add_suburb.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.add_suburb(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {{ form.add_pc.label }}<br>
+                        {% if form.add_pc.errors %}
+                            {{ form.add_pc(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.add_pc.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.add_pc(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.add_state.label }}<br>
+                    {% if form.add_state.errors %}
+                        {{ form.add_state(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.add_state.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.add_state(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.property_type.label }}<br>
+                    {% if form.property_type.errors %}
+                        {{ form.property_type(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.property_type.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.property_type(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.num_bedrooms.label }}<br>
+                    {% if form.num_bedrooms.errors %}
+                        {{ form.num_bedrooms(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.num_bedrooms.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.num_bedrooms(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.num_bathrooms.label }}<br>
+                    {% if form.num_bathrooms.errors %}
+                        {{ form.num_bathrooms(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.num_bathrooms.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.num_bathrooms(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-row">
+                    <div class="col-2">
+                        {{ form.num_parking.label }}<br>
+                        {% if form.num_parking.errors %}
+                            {{ form.num_parking(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.num_parking.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.num_parking(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {{ form.parking_features.label }}<br>
+                        {% if form.parking_features.errors %}
+                            {{ form.parking_features(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.parking_features.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.parking_features(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.building_size.label }}<br>
+                    {% if form.building_size.errors %}
+                        {{ form.building_size(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.building_size.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.building_size(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.land_size.label }}<br>
+                    {% if form.land_size.errors %}
+                        {{ form.land_size(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.land_size.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.land_size(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }}<br>
+                    {% if form.description.errors %}
+                        {{ form.description(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.description(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.year_built.label }}<br>
+                    {% if form.year_built.errors %}
+                        {{ form.year_built(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.year_built.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.year_built(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.inspection_date.label }}<br>
+                    {% if form.inspection_date.errors %}
+                        {{ form.inspection_date(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.inspection_date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.inspection_date(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg") }}</div>
+    
+            </fieldset>
+            
+        </form>
         {% endfor %}
         
         {% if form.errors %}
