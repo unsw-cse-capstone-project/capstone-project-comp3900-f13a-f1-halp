@@ -59,8 +59,14 @@ def signup():
     form = SignupForm()
 
     if form.validate_on_submit():
+
         if form.validate_username(form.login_name.data):
-            user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
+
+            if not form.validate_date_of_birth(form.date_of_birth.data):
+                flash(f'The date of birth should be smaller than current time','danger')
+                return render_template('signup.html', title='signup', form=form)
+
+            user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = form.date_of_birth.data, phone_number=form.phone_number.data)
             user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
@@ -208,6 +214,7 @@ def account(login_name):
 @app.route('/editBankDetails/<card_id>', methods=['POST','GET'])
 @login_required
 def editBankDetails(card_id):
+
     form = BankDetailsForm()
     card = db.session.query(BankDetails).get(card_id)
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
@@ -219,6 +226,10 @@ def editBankDetails(card_id):
         cvc =  form.cvc.data
         expire_date =  form.expire_date.data
 
+        if not form.validate_expire_date(expire_date):
+            flash(f'The expire date should be greater than current time','danger')
+            return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
+
         if holder_fname:
             card.set_fname(holder_fname)
         if holder_lname:
@@ -226,7 +237,7 @@ def editBankDetails(card_id):
         if cvc:
             card.set_cvc(cvc)
         if expire_date:
-            card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
+            card.set_expire_date(expire_date)
 
         #only change user details with no errors
         db.session.commit()
@@ -237,7 +248,7 @@ def editBankDetails(card_id):
         form.card_number.data = card.id
         form.holder_fname.data = card.holder_fname
         form.holder_lname.data = card.holder_lname
-        form.expire_date.data = card.expire_date.strftime("%m/%Y")
+        form.expire_date.data = card.expire_date
         form.cvc.data = card.cvc
 
     return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
@@ -257,6 +268,10 @@ def addBankDetail():
         cvc =  form.cvc.data
         expire_date =  form.expire_date.data
 
+        if not form.validate_expire_date(expire_date):
+            flash(f'The expire date should be greater than current time','danger')
+            return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
         if len(card_number)>0:
             new_card=True
             old_card=BankDetails.query.get(card_number)
@@ -269,7 +284,7 @@ def addBankDetail():
             #this is a new card, all the info should be inputed
             if new_card == True:
                 if holder_fname and holder_lname and cvc and expire_date  and expire_date:
-                    bank = BankDetails(id=card_number,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), user=user)
+                    bank = BankDetails(id=card_number,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=expire_date, user=user)
                     flash("Congraduation! you add a new credit card to your account",'success')
                     db.session.add(bank)
                     db.session.commit()
@@ -348,7 +363,7 @@ def edit_property(p_id):
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     print(p)
 
     form = PropertyForm()

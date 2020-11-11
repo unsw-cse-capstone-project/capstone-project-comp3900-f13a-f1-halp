@@ -18,7 +18,7 @@ class BankDetailsForm(FlaskForm):
 
     submit = SubmitField()
 
-    def validate_expire_date(self):
+    def validate_expire_date(self, value):
         if datetime.now() < self.expire_date.data:
             return True
         return False
@@ -69,7 +69,7 @@ class SignupForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     email = StringField('Email address', validators = [DataRequired(), Email()]) 
     address = StringField('address', validators=[DataRequired()])
-    date_of_birth = StringField('date_of_birth', validators=[DataRequired(), Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ') ])
+    date_of_birth = DateTimeField('Date of birth', format = "%d/%m/%Y", validators=[DataRequired()])
     phone_number = StringField('phone_number', validators=[DataRequired(), Length(min=10, max=10),Regexp('^\d{10}$', message='Only numbers')])
 
     submit = SubmitField('Register')
@@ -80,6 +80,11 @@ class SignupForm(FlaskForm):
             flash("Please select another unique name!")
             return False
         return True
+
+    def validate_date_of_birth(self, date_of_birth):
+        if datetime.now() > self.date_of_birth.data:
+            return True
+        return False
 
 class LoginForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
