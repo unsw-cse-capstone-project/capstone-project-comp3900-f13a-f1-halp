@@ -273,10 +273,11 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
-
-user=db.session.query(User).get(2)
-cards = user.cards.count()
-print(cards)
+# cards = BankDetails.query.filter_by(user_id = 1).all()
+# user=db.session.query(User).get(1)
+# cards = user.cards
+# for i in cards:
+#     print(i)
 
 # property_Id=[1]
 # p1=db.session.query(Property).get(1)

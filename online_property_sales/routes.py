@@ -168,21 +168,21 @@ def changePassword(login_name):
 
     return render_template('changePassword.html', title='Change Password', form=form, login_name=login_name)
 
-
 @app.route('/account/<login_name>', methods=['POST','GET'])
 @login_required
 def account(login_name):
     
     form = AccountForm()
     user = User.query.filter_by(login_name=login_name).first_or_404()
-    
+    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+
     if form.validate_on_submit():
         #change password after confirmming old password first
         if form.login_name.data:
             if form.validate_username(form.login_name.data, user.id):
                 user.set_login_name(form.login_name.data)
             else:
-                return render_template('account.html', title='account', form=form, user=user)
+                return render_template('account.html', title='account', form=form, user=user, cards = cards)
 
         user.set_address(form.address.data)
         user.set_phone_number(form.phone_number.data)
@@ -218,7 +218,7 @@ def account(login_name):
                 else:
                     new_card=False
                     flash(f"This card already registered by other user", 'danger')
-                    return render_template('account.html', title='account', form=form, user=user)
+                    return render_template('account.html', title='account', form=form, user=user, cards = cards)
 
             #this is a new card, all the info should be inputed
             if new_card == True:
@@ -229,24 +229,115 @@ def account(login_name):
                 else:
                     flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
                     db.session.commit()
-                    return render_template('account.html', title='account', form=form, user=user)
+                    return render_template('account.html', title='account', form=form, user=user, cards = cards)
 
         #only change user details with no errors
         db.session.commit()
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
-        form.login_name.data = current_user.login_name
+        # form.login_name.data = current_user.login_name
         form.address.data = current_user.address
         form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
         form.phone_number.data = current_user.phone_number
         form.email.data = current_user.email
         if len(current_user.cards.all()) == 0:
             flash(f'You have not inputted a credit card before, please upload one with full bank details.', 'info')
-        else:
-            flash(f'To edit parts or whole details of your uploaded credit cards, you have to input the card name correctly.','info')
 
-    return render_template('account.html', title='account', form=form, user=user)
+    return render_template('account.html', title='account', form=form, user=user, cards = cards)
+
+@app.route('/editBankDetails/<card_id>', methods=['POST','GET'])
+@login_required
+def editBankDetails(card_id):
+    form = editBankDetailsForm()
+    card = db.session.query(BankDetails).get(card_id)
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+
+    if form.validate_on_submit():
+        
+        holder_fname =  form.holder_fname.data
+        holder_lname =  form.holder_lname.data
+        id_confirmation =  form.id_confirmation.data
+        cvc =  form.cvc.data
+        expire_date =  form.expire_date.data
+
+        if holder_fname:
+            card.set_fname(holder_fname)
+        if holder_lname:
+            card.set_lname(holder_lname)
+        if cvc:
+            card.set_cvc(cvc)
+        if expire_date:
+            card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
+        if id_confirmation:
+            card.set_id_confirmation(id_confirmation)
+
+        #only change user details with no errors
+        db.session.commit()
+        cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+        return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+
+    elif request.method == 'GET':
+        form.card_number.data = card.id
+        form.holder_fname.data = card.holder_fname
+        form.holder_lname.data = card.holder_lname
+        form.id_confirmation.data = card.id_confirmation
+        form.expire_date.data = card.expire_date.strftime("%m/%Y")
+        form.cvc.data = card.cvc
+
+    return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
+
+@app.route('/addBankDetail', methods=['POST','GET'])
+@login_required
+def addBankDetail():
+
+    form = addBankDetailsForm()
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+
+    if form.validate_on_submit():
+        
+        card_number = form.card_number.data
+        holder_fname =  form.holder_fname.data
+        holder_lname =  form.holder_lname.data
+        id_confirmation =  form.id_confirmation.data
+        cvc =  form.cvc.data
+        expire_date =  form.expire_date.data
+
+        if len(card_number)>0:
+            new_card=True
+            old_card=BankDetails.query.get(card_number)
+            #this card already in our database
+            if old_card!=None:
+                new_card=False
+                flash(f"This card already registered by other user", 'danger')
+                return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
+            #this is a new card, all the info should be inputed
+            if new_card == True:
+                if holder_fname and holder_lname and cvc and expire_date and id_confirmation and expire_date:
+                    bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), user=user)
+                    flash("Congraduation! you add a new credit card to your account",'success')
+                    db.session.add(bank)
+                    db.session.commit()
+                    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+                    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+                else:
+                    flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
+                    return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
+    return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
+@app.route("/removetBankDetails/<card_id>")
+@login_required
+def removetBankDetails(card_id):
+    BankDetails.query.filter_by(id=card_id).delete()
+    db.session.commit()
+
+    form = AccountForm()
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+
+    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
 
 
 @app.route('/addProperty', methods=['GET', 'POST'])

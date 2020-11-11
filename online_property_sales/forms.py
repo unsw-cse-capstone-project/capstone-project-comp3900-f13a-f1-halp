@@ -7,6 +7,27 @@ from models import User
 from sqlalchemy import func
 import re
 
+
+class editBankDetailsForm(FlaskForm):
+    holder_fname = StringField ('Holder First Name')
+    holder_lname = StringField ('Holder Last Name')
+    card_number = StringField ( 'Card Number',validators=[ Optional(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
+    cvc = StringField ( 'CVC', validators=[ Optional(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
+    expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
+    id_confirmation = StringField ('Id Confirmation')
+
+    submit = SubmitField('Edit')
+
+class addBankDetailsForm(FlaskForm):
+    holder_fname = StringField ('Holder First Name')
+    holder_lname = StringField ('Holder Last Name')
+    card_number = StringField ( 'Card Number',validators=[ Optional(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
+    cvc = StringField ( 'CVC', validators=[ Optional(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
+    expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
+    id_confirmation = StringField ('Id Confirmation')
+
+    submit = SubmitField('Submit')
+
 class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
     auction_after = DateTimeField('Auction After', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
@@ -36,9 +57,8 @@ class AccountForm(FlaskForm):
     cvc = StringField ( 'CVC', validators=[ Optional(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
     expire_date = StringField ('Expire Date',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{4}$', message='Please input following the fomat mm/yyyy e.g. 06/2022 ') ] )
 
-    submit = SubmitField('Edit')
+    submit = SubmitField('Submit')
 
-    # cancel = SubmitField('Cancel')
     def validate_username(self, login_name, user_id):
         user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
         if user is not None:

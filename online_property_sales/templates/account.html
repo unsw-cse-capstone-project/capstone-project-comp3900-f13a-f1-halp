@@ -78,88 +78,38 @@
                 </div>
 
                 <legend class="border-bottom mb-4">Bank Details</legend>
-                <div class="form-group">
-                    {{ form.card_number.label }}<br>
-                    {% if form.card_number.errors %}
-                        {{ form.card_number(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.card_number.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.card_number(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-row">
-                    <div class="col">
-                        {{ form.holder_fname.label }}<br>
-                        {% if form.holder_fname.errors %}
-                            {{ form.holder_fname(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.holder_fname.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.holder_fname(class="form-control form-control-lg") }}
-                        {% endif %}
-                    </div>
-                    <div class="col">
-                        {{ form.holder_lname.label }}<br>
-                        {% if form.holder_lname.errors %}
-                            {{ form.holder_lname(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.holder_lname.errors %}
-                                    <span>{{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.holder_lname(class="form-control form-control-lg") }}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="form-group">
-                    {{ form.id_confirmation.label }}<br>
-                    {% if form.id_confirmation.errors %}
-                        {{ form.id_confirmation(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.id_confirmation.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.id_confirmation(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.cvc.label }}<br>
-                    {% if form.cvc.errors %}
-                        {{ form.cvc(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.cvc.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.cvc(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.expire_date.label }}<br>
-                    {% if form.expire_date.errors %}
-                        {{ form.expire_date(placeholder="mm/yyyy",class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.expire_date.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.expire_date(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>        
+                {% if cards %}
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th scope="col" >Card Number</th>
+                                <th scope="col">Expire Date</th>
+                                <th scope="col"> </th>
+                                <th scope="col"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in cards %}
+                            <tr>
+                                <td>************{{i.id[-4:]}}</td>
+                                <td>{{i.expire_date.strftime("%m/%Y")}}</td>
+                                <td>
+                                    <a href={{ url_for("editBankDetails", card_id=i.id) }} class="btn btn-outline-info">Edit</a>
+                                </td>
+                                <td>
+                                    <a href={{ url_for("removetBankDetails", card_id=i.id) }} class="btn btn-outline-danger">remove</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h2>No cards, Please add one
+                        <a href={{ url_for("addBankDetail") }} class="btn btn-outline-info">Add</a>
+                    </h2>
+                {% endif %}
 
-                <div class="form-group">{{ form.submit(class="btn btn-outline-info") }}</div>
+                <div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg") }}</div>
             </fieldset>
         </form>
     </div>
