@@ -11,8 +11,24 @@ from PIL import Image
 import random
 import os
 import secrets
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # initial_db()
+
+def end(AuctionID_):
+    auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
+
+    msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
+    msg.body = "Auction " +  str(AuctionID_) + " has ended"
+    mail.send(msg)
+
+def hourlyEmail():
+    end(1)
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(hourlyEmail,'interval',minutes=1)
+sched.start()
 
 @app.route('/')
 @app.route('/home')
@@ -557,29 +573,31 @@ def viewAuction(AuctionID_):
 @app.route("/endAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def endAuction(AuctionID_):
-    auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
-    seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
-
-    msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
-    msg.body = "Auction " +  str(AuctionID_) + " has ended"
-    mail.send(msg)
-
-    highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(desc(Bid.Amount)).first()
-    highestBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
-    msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[highestBidder.email])
-    msg.body = "You are highest Bidder for auction " + str(AuctionID_)
-    mail.send(msg)
-
-    otherBids = Bid.query.filter_by(AuctionID = AuctionID_)
-    for otherBid in otherBids:
-        otherBidder = User.query.filter_by(id = otherBid.BidderID).first_or_404()
-        if otherBidder != highestBidder:
-            otherBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
-            msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[otherBidder.email])
-            msg.body = "You have not worn auction " + str(AuctionID_)
-            mail.send(msg)
-
+    hourlyEmail()
     return redirect(url_for('home'))
+    # auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    # seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
+
+    # msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
+    # msg.body = "Auction " +  str(AuctionID_) + " has ended"
+    # mail.send(msg)
+
+    # highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(desc(Bid.Amount)).first()
+    # highestBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
+    # msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[highestBidder.email])
+    # msg.body = "You are highest Bidder for auction " + str(AuctionID_)
+    # mail.send(msg)
+
+    # otherBids = Bid.query.filter_by(AuctionID = AuctionID_)
+    # for otherBid in otherBids:
+    #     otherBidder = User.query.filter_by(id = otherBid.BidderID).first_or_404()
+    #     if otherBidder != highestBidder:
+    #         otherBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
+    #         msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[otherBidder.email])
+    #         msg.body = "You have not worn auction " + str(AuctionID_)
+    #         mail.send(msg)
+
+    # return redirect(url_for('home'))
 
 
 
