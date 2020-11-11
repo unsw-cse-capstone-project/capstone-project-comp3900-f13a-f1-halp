@@ -273,11 +273,16 @@ def initial_db():
     db.session.commit()
 
 # initial_db()
-property_Id=[1]
+
+user=db.session.query(User).get(2)
+cards = user.cards.count()
+print(cards)
+
+# property_Id=[1]
 # p1=db.session.query(Property).get(1)
-property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
-for i in property_with_auction:
-    print(i.photo_collection.first().photo)
+# property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
+# for i in property_with_auction:
+#     print(i.photo_collection.first().photo)
 
 # recipients_id=[1,2]
 # recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))

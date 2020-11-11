@@ -562,3 +562,11 @@ def send_email(recipients_id, win, auctionId):
             msg = Message("Unfortunately! You did not win the auction",recipients=[x])
             msg.html = render_template('unfortunatelyFeedback.html',receiver=y, seller=seller, property=property_info, auction=auction_info )
             mail.send(msg)
+
+def if_have_cards(user_id):
+    user=db.session.query(User).get(user_id)
+    cards = user.cards.count()
+    if cards > 0 :
+        return True
+    else:
+        return False
