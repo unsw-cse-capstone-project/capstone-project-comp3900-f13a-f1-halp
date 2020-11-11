@@ -76,15 +76,27 @@
                         {{ form.phone_number(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <div class="form-group">
+                    {{ form.id_confirmation.label }}<br>
+                    {% if form.id_confirmation.errors %}
+                        {{ form.id_confirmation(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.id_confirmation.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.id_confirmation(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
 
                 <legend class="border-bottom mb-4">Bank Details</legend>
                 <table class="table table-dark">
                     <thead>
                         <tr>
-                            <th scope="col" >Card Number</th>
-                            <th scope="col">Expire Date</th>
-                            <th scope="col"> </th>
-                            <th scope="col"> </th>
+                            <th scope="col" style="width: 50%;" >Card Number</th>
+                            <th scope="col" style="width: 15%;">Expire Date</th>
+                            <th scope="col" style="width: 35%;"> </th>
                         </tr>
                     </thead>
                 {% if cards %}
@@ -94,10 +106,8 @@
                                 <td>************{{i.id[-4:]}}</td>
                                 <td>{{i.expire_date.strftime("%m/%Y")}}</td>
                                 <td>
-                                    <a href={{ url_for("editBankDetails", card_id=i.id) }} class="btn btn-outline-info">Edit</a>
-                                </td>
-                                <td>
-                                    <a href={{ url_for("removetBankDetails", card_id=i.id) }} class="btn btn-outline-danger">remove</a>
+                                    <a href={{ url_for("removetBankDetails", card_id=i.id) }} class="btn btn-outline-danger mr-5" style="float: right;">remove</a>
+                                    <a href={{ url_for("editBankDetails", card_id=i.id) }} class="btn btn-outline-info mr-3" style="float: right;">Edit</a>
                                 </td>
                             </tr>
                         {% endfor %}

@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     address = db.Column(db.String(1000), nullable=False)  
     date_of_birth = db.Column(db.DateTime, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
-
+    id_confirmation = db.Column(db.String(100), nullable=True)
     #one-to-many
     auctionId = db.relationship('AuctionDetails', backref='seller', lazy='dynamic')
     properties = db.relationship('Property', backref='sellerID', lazy='dynamic')
@@ -42,6 +42,9 @@ class User(UserMixin, db.Model):
     
     def set_phone_number(self, value):
         self.phone_number=value
+    
+    def set_id_confirmation(self,value):
+        self.id_confirmation=value
 
     def __repr__(self):
         return '<User %r>' % self.login_name
@@ -58,7 +61,6 @@ class BankDetails(db.Model):
     holder_lname = db.Column(db.String(20), nullable=False)
     cvc = db.Column(db.Integer, nullable=False)
     expire_date = db.Column(db.DateTime, nullable=False)
-    id_confirmation = db.Column(db.String(100), nullable=False)
     
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
 
@@ -73,9 +75,6 @@ class BankDetails(db.Model):
 
     def set_expire_date(self,value):
         self.expire_date=value
-
-    def set_id_confirmation(self,value):
-        self.id_confirmation=value
 
     def __repr__(self):
         return '<BankDetails %r>' % self.id
@@ -218,8 +217,8 @@ def initial_db():
     u1.set_password('Tom123@g')
     u2= User(login_name='Cloudia0@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
     u2.set_password('Cloudia0@g')
-    bank1=BankDetails(id='5555444433331111',id_confirmation='id' ,holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
-    bank2 = BankDetails (id='1111222233334444',id_confirmation='id',holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
+    bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
+    bank2 = BankDetails (id='1111222233334444', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
     property1 = Property(   property_type = 'House',
                             add_num = '10', add_name = 'street', add_suburb = 'suburb1',
                             add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
