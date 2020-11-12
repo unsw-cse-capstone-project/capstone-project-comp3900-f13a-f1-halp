@@ -8,8 +8,8 @@
             </div>
             <p class="article-content">Start Date: {{ auction.AuctionStart }}</p>
             <p class="article-content">End Date: {{ auction.AuctionEnd }}</p>
-            <a class="mr-2" href="{{ url_for('changeAuctionDetails', AuctionID_ = auction.id) }}">Edit</a>
-            <a class="mr-2" href="{{ url_for('deleteAuction', AuctionID_ = auction.id) }}">Delete</a>
+            <a class="btn btn-info mr-2 ", style="width: 100px;" href="{{ url_for('changeAuctionDetails', AuctionID_ = auction.id) }}">Edit</a>
+            <a class="btn btn-danger", style="width: 100px;" href="{{ url_for('deleteAuction', AuctionID_ = auction.id) }}">Delete</a>
           </div>
         </article>
     {% endfor %}

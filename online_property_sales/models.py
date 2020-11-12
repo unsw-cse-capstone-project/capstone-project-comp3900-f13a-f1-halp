@@ -213,9 +213,9 @@ def initial_db():
     clear_session()
     db.create_all()
 
-    u1= User(login_name='Tom123@g', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
+    u1= User(login_name='Tom123@g', id=None, email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
     u1.set_password('Tom123@g')
-    u2= User(login_name='Cloudia0@g', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
+    u2= User(login_name='Cloudia0@g', id=None, email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
     u2.set_password('Cloudia0@g')
     bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
@@ -259,6 +259,10 @@ def initial_db():
                                 PropertyID = 1,
                                 SellerID = 1)
 
+    photo1 = Photos(photo = '1.jpg', property_id = 1 )
+    photo2 = Photos(photo = '1c1f10bb8446c1e3.jpg', property_id = 1 )
+    photo3 = Photos(photo = '3.jpg', property_id = 2 )
+
     db.session.add(u1)
     db.session.add(u2)
     db.session.add(bank1)
@@ -268,12 +272,14 @@ def initial_db():
     db.session.add(property3)
     db.session.add(property4)
     db.session.add(auction1)
+    db.session.add(photo1)
+    db.session.add(photo2)
+    db.session.add(photo3)
 
     db.session.commit()
 
 
-# initial_db()
-<<<<<<< HEAD
+initial_db()
 # cards = BankDetails.query.filter_by(user_id = 1).all()
 # user=db.session.query(User).get(1)
 # cards = user.cards
@@ -282,10 +288,6 @@ def initial_db():
 
 # property_Id=[1]
 # p1=db.session.query(Property).get(1)
-=======
-# property_Id=[1]
-# # p1=db.session.query(Property).get(1)
->>>>>>> f219eb7249367e30815fcbd56d8d59e56a419b98
 # property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
 # for i in property_with_auction:
 #     print(i.photo_collection.first().photo)

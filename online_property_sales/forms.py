@@ -40,7 +40,7 @@ class passwordForm(FlaskForm):
     submit = SubmitField('Edit')
 
 class AccountForm(FlaskForm):
-    login_name = StringField('login_name', validators=[Optional()])
+    login_name = StringField('Login name', validators=[Optional()])
     email = StringField('Email', validators=[Optional(), Email()])
     address = StringField('Address')
     date_of_birth = StringField('Date of Birth',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ')])

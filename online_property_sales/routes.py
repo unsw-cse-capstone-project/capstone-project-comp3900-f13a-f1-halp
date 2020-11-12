@@ -7,7 +7,7 @@ from sqlalchemy import func, desc
 from forms import *
 from validateProperty import *
 from flask_mail import Message
-from PIL import Image
+# from PIL import Image
 import random
 import os
 import secrets
@@ -258,7 +258,6 @@ def editBankDetails(card_id):
         if expire_date:
             card.set_expire_date(expire_date)
 
-        #only change user details with no errors
         db.session.commit()
         cards = BankDetails.query.filter_by(user_id = current_user.id).all()
         return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
@@ -329,13 +328,9 @@ def removetBankDetails(card_id):
 
 
 @app.route('/addProperty', methods=['GET', 'POST'])
+@login_required
 def add_property():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
-
     form = PropertyForm()
-    error = None
 
     if form.validate_on_submit():
         if check_all_details(form):
@@ -370,23 +365,20 @@ def add_property():
             # if everything is successful, redirects to property list
             return redirect(url_for('property_list'))
         else:
-            error = "One or more fields have been entered incorrectly. Please try again."
-            return render_template('addProperty.html', title = 'addProperty', error = error, form = form)
+            flash(f"One or more fields have been entered incorrectly. Please try again.",'danger')
+            return render_template('addProperty.html', title = 'addProperty', form = form)
     
     return render_template('addProperty.html', title = 'addProperty', form = form)
 
 @app.route('/editProperty/<p_id>', methods=['POST','GET'])
+@login_required
 def edit_property(p_id):
     # edits property of selected user's one
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     print(p)
 
     form = PropertyForm()
-    error = None
 
     if form.validate_on_submit():
         if check_edited_updates(form):
@@ -451,8 +443,8 @@ def edit_property(p_id):
             return redirect(url_for('property_list'))
 
         else:
-            error = "One or more fields have been entered incorrectly. Please try again."
-            return render_template('editProperty.html', title = 'editProperty', error = error, form = form, property = p)
+            flash(f'One or more fields have been entered incorrectly. Please try again.','danger')
+            return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
 
     return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
     
@@ -471,19 +463,19 @@ def remove_property(p_id):
     return redirect(url_for('property_list'))
 
 @app.route('/propertyImage/<p_id>', methods=['POST','GET'])
+@login_required
 def property_image(p_id):
     if current_user.is_anonymous:
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
-    address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
-    print(address)
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
+    # address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
+    # print(address)
 
     img = Photos.query.filter_by(property_id=p_id).all()
     
     form = AddImageForm()
-    error = None
     if form.validate_on_submit():
         print("adding Image")
         print(form.image.data)
@@ -493,7 +485,7 @@ def property_image(p_id):
 
         return redirect(url_for('property_list'))
 
-    return render_template('propertyImage.html', form=form, error=error, address=address, image=img, property=p_id)
+    return render_template('propertyImage.html', form=form, image=img, property=p_id)
 
 def save_pic(form_pic):
     random_hex = secrets.token_hex(8)
