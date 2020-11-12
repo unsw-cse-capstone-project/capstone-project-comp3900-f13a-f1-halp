@@ -391,6 +391,8 @@ def property_list():
 
     time_shift_1hr = datetime.now() + timedelta(hours=1)
     
+    # needs to add in auction start time and end time
+
     return render_template('property.html', properties = properties, now_date = time_shift_1hr)
 
 @app.route("/changeStatus/<p_id>")
