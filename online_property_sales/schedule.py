@@ -25,7 +25,9 @@ def end(AuctionID_):
         server.login("AuctionWorldWideWeb@gmail.com", password)
         if highestBid != None:
             server.sendmail('AuctionWorldWideWeb@gmail.com', highestBidder.email, "You are highest Bidder for auction " + str(AuctionID_))
-            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction " + str(AuctionID_) + " has ended, there is a winner")
+            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction " + str(AuctionID_) + " has ended \n" + 
+                highestBidder.login_name + " has won the auction\nYou may contact them via\nEmail: " +
+                highestBidder.email + "\nPhone:" + highestBidder.phone_number)
 
         if highestBid == None:
             server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction " + str(AuctionID_) + " has ended, there is no winner")
