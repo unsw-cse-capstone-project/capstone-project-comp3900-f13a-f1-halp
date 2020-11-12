@@ -2,7 +2,7 @@ from models import *
 from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func
 from forms import *
 from validateProperty import *
@@ -388,8 +388,10 @@ def property_list():
     # returns list of properties from user
 
     properties = Property.query.filter_by(seller=current_user.id).all()
+
+    time_shift_1hr = datetime.now() + timedelta(hours=1)
     
-    return render_template('property.html', properties = properties)
+    return render_template('property.html', properties = properties, now_date = time_shift_1hr)
 
 @app.route("/changeStatus/<p_id>")
 def change_status(p_id):
@@ -447,6 +449,8 @@ def save_pic(form_pic):
 
 @app.route("/removeImage/<p_id>/<i_id>")
 def remove_image(p_id, i_id):
+    img = Photos.query.get(i_id)
+    os.remove(os.path.join('static/propertyImage/', img.photo))
     Photos.query.filter_by(id=i_id).delete()
     db.session.commit()
     return redirect(url_for('property_image', p_id = p_id))
