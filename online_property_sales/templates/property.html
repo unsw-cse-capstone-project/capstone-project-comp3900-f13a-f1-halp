@@ -41,7 +41,9 @@
         <!-- Meant to be actuion date -->
             <div>
                 <span>
-                    {% if now_date > p.inspection_date %}
+                    {% if p.auctionId == None %}
+                        <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>Edit Property</button></a>
+                    {% elif (now_date > p.auctionId.AuctionStart) or (p.auctionId.AuctionEnd > now_date) %}
                         <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit' disabled>Edit Property</button></a>
                     {% else %}
                         <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>Edit Property</button></a>
