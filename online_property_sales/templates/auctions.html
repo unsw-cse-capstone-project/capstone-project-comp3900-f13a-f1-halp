@@ -4,9 +4,10 @@
     {% if not auctions %}
     <article class="media content-section">
     <div class="article-metadata">
-    <h1>No Auctions created, found. Please create an auction from your properties!</h1>
-    <a href="{{ url_for('property_list') }}">Property</a>
-    </div>
+      <h1>No Auctions created, found. Please create an auction from your properties!</h1>
+      <a href="{{ url_for('property_list') }}">
+        <button class='btn btn-primary'  style="font-size: 30px;" type='submit'>Create Property</button>
+      </a>
     </div>
     {% endif %}
 

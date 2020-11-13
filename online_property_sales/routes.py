@@ -465,6 +465,24 @@ def edit_property(p_id):
             flash(f'One or more fields have been entered incorrectly. Please try again.','danger')
             return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
 
+    elif request.method == 'GET':
+            form.property_type.data = p[0].property_type
+            form.add_unit.data = p[0].add_unit
+            form.add_num.data = p[0].add_num
+            form.add_name.data = p[0].add_name
+            form.add_suburb.data = p[0].add_suburb
+            form.add_state.data = p[0].add_state
+            form.add_pc.data = p[0].add_pc
+            form.num_bedrooms.data = p[0].num_bedrooms
+            form.num_bathrooms.data = p[0].num_bathrooms
+            form.num_parking.data = p[0].num_parking
+            form.parking_features.data = p[0].parking_features
+            form.building_size.data = p[0].building_size
+            form.land_size.data = p[0].land_size
+            form.description.data = p[0].description
+            form.year_built.data = p[0].year_built
+            form.inspection_date.data = p[0].inspection_date
+
     return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
     
 @app.route("/property")
@@ -476,7 +494,8 @@ def property_list():
                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
                         .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
                         .group_by(Property.id)
-
+    if my_properties.count() == 0:
+        my_properties=None
     propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=current_user.id).all()
     registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
     if len(registeredID_list) == 0:
