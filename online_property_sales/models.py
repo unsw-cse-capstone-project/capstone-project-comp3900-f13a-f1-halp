@@ -129,6 +129,7 @@ class Property(db.Model):
     auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
     #one-to-many
     photo_collection = db.relationship('Photos', backref='Property', lazy='dynamic')
+    status = db.Column(db.String)
 
     def set_property_type(self, p_type):
         self.property_type = p_type
@@ -226,7 +227,7 @@ def initial_db():
                             num_parking = '1', num_bathrooms = '1',
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019')
+                            description = 'desc', year_built = '2019', status = 'auction')
 
     property2 = Property(   property_type = 'House',
                             add_num = '99', add_name = 'street', add_suburb = 'suburb2',
@@ -234,7 +235,7 @@ def initial_db():
                             num_parking = '1', num_bathrooms = '1',
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019')
+                            description = 'desc', year_built = '2019', status = 'auction')
 
     property3 = Property(   property_type = 'Unit',
                             add_unit='01',add_num = '13', add_name = 'some street', add_suburb = 'suburb3',
@@ -242,7 +243,7 @@ def initial_db():
                             num_parking = '1', num_bathrooms = '1',
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019')
+                            description = 'desc', year_built = '2019', status = 'sold')
 
     property4 = Property(   property_type = 'Unit',
                             add_unit='52', add_num = '23', add_name = 'street', add_suburb = 'suburb4',
@@ -250,7 +251,7 @@ def initial_db():
                             num_parking = '1', num_bathrooms = '1',
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019')
+                            description = 'desc', year_built = '2019', status = 'sold')
 
     auction1 = AuctionDetails(AuctionStart = datetime.strptime("2020-12-30 14:00:00","%Y-%m-%d %H:%M:%S"),
                                 AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),

@@ -2,13 +2,14 @@ from models import *
 from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func
 from forms import *
 from validateProperty import *
 from flask_mail import Message
 from PIL import Image
 import random
+import sys
 import os
 import secrets
 
@@ -287,8 +288,8 @@ def add_property():
                             add_state = p_add_state, add_pc = p_add_pc, num_bedrooms = p_n_beds,
                             num_parking = p_n_park, num_bathrooms = p_n_baths,
                             parking_features = p_p_features, building_size = p_b_size,
-                            land_size = p_l_size, seller = current_user.login_name, inspection_date = p_i_date,
-                            description = p_desc, year_built = p_year)
+                            land_size = p_l_size, seller = current_user.id, inspection_date = p_i_date,
+                            description = p_desc, year_built = p_year, status = 'auction')
 
             db.session.add(p_to_db)
             db.session.commit()
@@ -308,7 +309,7 @@ def edit_property(p_id):
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     print(p)
 
     form = PropertyForm()
@@ -386,9 +387,23 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
-    properties = Property.query.filter_by(seller=current_user.login_name).all()
+    properties = Property.query.filter_by(seller=current_user.id).all()
     
-    return render_template('property.html', properties = properties)
+    time_shift_1hr = datetime.now() + timedelta(hours=1)
+    
+    # needs to add in auction start time and end time
+
+    return render_template('property.html', properties = properties, now_date = time_shift_1hr)
+
+@app.route("/changeStatus/<p_id>")
+def change_status(p_id):
+    to_change = Property.query.filter_by(id=p_id).all()
+    if to_change[0].status == "auction":
+        to_change[0].status = "sold"
+    else:
+        to_change[0].status = "auction"
+    db.session.commit()
+    return redirect(url_for('property_list'))
 
 @app.route("/removeProperty/<p_id>")
 def remove_property(p_id):
@@ -402,7 +417,7 @@ def property_image(p_id):
         flash('Please login first')
         return redirect(url_for('login'))
 
-    p = Property.query.filter_by(seller=current_user.login_name, id=p_id).all()
+    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
     print(address)
 
@@ -436,10 +451,12 @@ def save_pic(form_pic):
 
 @app.route("/removeImage/<p_id>/<i_id>")
 def remove_image(p_id, i_id):
+    img = Photos.query.get(i_id)
+    os.remove(os.path.join('static/propertyImage/', img.photo))
     Photos.query.filter_by(id=i_id).delete()
     db.session.commit()
     return redirect(url_for('property_image', p_id = p_id))
-
+    
 @app.route("/createAuction", methods=['GET', 'POST'])
 @login_required
 def createAuction():
