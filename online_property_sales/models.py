@@ -274,7 +274,6 @@ def initial_db():
 
 
 # initial_db()
-<<<<<<< HEAD
 # cards = BankDetails.query.filter_by(user_id = 1).all()
 # user=db.session.query(User).get(1)
 # cards = user.cards
@@ -283,10 +282,7 @@ def initial_db():
 
 # property_Id=[1]
 # p1=db.session.query(Property).get(1)
-=======
-# property_Id=[1]
-# # p1=db.session.query(Property).get(1)
->>>>>>> f219eb7249367e30815fcbd56d8d59e56a419b98
+
 # property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
 # for i in property_with_auction:
 #     print(i.photo_collection.first().photo)
