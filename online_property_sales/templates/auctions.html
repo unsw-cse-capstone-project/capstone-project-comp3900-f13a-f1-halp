@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+
+    {% if not auctions %}
+    <article class="media content-section">
+    <div class="article-metadata">
+    <h1>No Auctions created, found. Please create an auction from your properties!</h1>
+    <a href="{{ url_for('property_list') }}">Property</a>
+    </div>
+    </div>
+    {% endif %}
+
     {% for auction in auctions %}
         <article class="media content-section">
           <div class="media-body">
