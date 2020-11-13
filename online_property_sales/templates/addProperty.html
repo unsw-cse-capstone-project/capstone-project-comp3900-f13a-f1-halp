@@ -3,11 +3,6 @@
 {% block content %}
 <div class="content-section">
     <h2 class="title">Add a Property</h2>
-
-    {% if error %}
-        <p><strong>Error:</strong> {{ error }}</p>
-    {% endif %}
-
     <form action="" method="POST" action="/addProperty" style="margin-top: 50px;" novalidate>
         <fieldset class="form-group">
             {{ form.hidden_tag() }}
@@ -225,17 +220,9 @@
                     {{ form.inspection_date(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg") }}</div>
-
-            {% if form.errors %}
-                {{ form.errors }}
-            {% endif %}
+            <div class="form-group">{{ form.submit(class="btn btn-info btn-lg") }}</div>
         </fieldset>
-        
     </form>
-
 </div>
-
-
 
 {% endblock %}
