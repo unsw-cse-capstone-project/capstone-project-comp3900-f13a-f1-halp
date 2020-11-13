@@ -48,7 +48,7 @@ def home():
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:
         flash(auction.id)
-    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
+    # flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
@@ -656,6 +656,7 @@ def viewAuction(AuctionID_):
     if form.validate_on_submit():
         if form.newBid.data < nextLow:
             flash(f'Please input the correct amount', 'danger')
+            bid=None
         else:
             bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
             db.session.add(bid)
