@@ -59,7 +59,15 @@
 		{% else %}
 			{% for (p,a) in properties %}
 				<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
-					<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+					<div class="card-header rounded text-center bg-info text-white">
+						{% if p.status == "auction" %}
+                        	To Be Auctioned
+                    	{% elif p.status == "sold" %}
+                        	Sold
+                    	{% else %}
+                        	Error
+                    	{% endif %}
+					</div>
 					{% if not p.photo_collection.all() %}
 						<img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
 					{% else %}
