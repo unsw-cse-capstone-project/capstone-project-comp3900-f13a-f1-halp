@@ -21,6 +21,8 @@ class User(UserMixin, db.Model):
     auctionId = db.relationship('AuctionDetails', backref='seller', lazy='dynamic')
     properties = db.relationship('Property', backref='sellerID', lazy='dynamic')
     cards = db.relationship('BankDetails', backref='user', lazy='dynamic')
+    registeredProperties = db.relationship('Property',secondary=lambda: RegisteredAssociation.__table__, backref="RegisteredBidders")
+
 
     #create hashed password for security
     def set_login_name(self, value):
@@ -50,10 +52,14 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.login_name
 
-
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
+
+class RegisteredAssociation(db.Model):
+    __tablename__ = 'RegisteredAssociation'
+    RegisteredBidderID = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True, nullable=False)
+    PropertyID = db.Column(db.Integer, db.ForeignKey('Property.id'), primary_key=True, nullable=False)
 
 class BankDetails(db.Model):
     __tablename__ = 'BankDetails'
@@ -122,14 +128,16 @@ class Property(db.Model):
     inspection_date = db.Column(db.DateTime)
     description = db.Column(db.String(2000))
     year_built = db.Column(db.Integer)
-
+    status = db.Column(db.String)   
     #seller
     seller = db.Column(db.Integer, db.ForeignKey('User.id'))
     #one-to-one
     auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
     #one-to-many
     photo_collection = db.relationship('Photos', backref='Property', lazy='dynamic')
-    status = db.Column(db.String)
+    #many-to-many
+    registeredBidders = db.relationship('User',secondary=lambda: RegisteredAssociation.__table__, backref="RegisteredProperties")
+    
 
     def set_property_type(self, p_type):
         self.property_type = p_type
@@ -209,6 +217,7 @@ def clear_session():
     db.session.query(Property).delete()
     db.session.query(Photos).delete()
     db.session.query(Bid).delete()
+    db.session.query(RegisteredAssociation).delete()
     db.session.commit()
 
 def initial_db():
@@ -262,9 +271,19 @@ def initial_db():
                                 PropertyID = 1,
                                 SellerID = 1)
 
+    auction2 = AuctionDetails(AuctionStart = datetime.strptime("2020-11-10 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                ReservePrice = 500.0,
+                                MinBiddingGap = 20.0,
+
+                                PropertyID = 3,
+                                SellerID = 1)
+
     bid1 = Bid ( BidderID = 2, AuctionID = 1, Amount = 40)
     bid2 = Bid ( BidderID = 3, AuctionID = 1, Amount = 60)
-   
+    
+    register1 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 1)
+    register2 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 3)
 
     photo1 = Photos(photo = '1.jpg', property_id = 1 )
     photo2 = Photos(photo = '1c1f10bb8446c1e3.jpg', property_id = 1 )
@@ -279,29 +298,33 @@ def initial_db():
     db.session.add(property3)
     db.session.add(property4)
     db.session.add(auction1)
+    db.session.add(auction2)
     db.session.add(bid1)
     db.session.add(bid2)
+    db.session.add(register1)
+    db.session.add(register2)
     db.session.add(photo1)
     db.session.add(photo2)
     db.session.add(photo3)
-
+    
     db.session.commit()
 
 
 # initial_db()
 
-# property_Id=[1]
-# property_with_auction = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
-#                         .filter(Property.id.in_(property_Id))\
-#                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
-#                         .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
-#                         .group_by(Property.id)
-    
-# for (p,a,b) in property_with_auction:
+# propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=1).all()
+# registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
+# registered_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+#                             .filter(Property.id.in_(registeredID_list))\
+#                             .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+#                             .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+#                             .group_by(Property.id)
+# for (p,a,b) in registered_properties:
 #     print(p)
 #     print(a)
 #     print(b)
 #     print("##################################################################")
+
 
 # p1=db.session.query(Property).get(1)
 # property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()

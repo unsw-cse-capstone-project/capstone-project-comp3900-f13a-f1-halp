@@ -132,8 +132,8 @@ class AddImageForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class RegistrationForm(FlaskForm):
-    auctionStart = DateTimeField('Auction Start Time, Form = "%Y-%m-%d %H:%M:%S"', validators=[DataRequired()])
-    auctionEnd = DateTimeField('Auction End Time, Form = "%Y-%m-%d %H:%M:%S"', validators=[DataRequired()])
+    auctionStart = DateTimeField('Auction Start Time', validators=[DataRequired()])
+    auctionEnd = DateTimeField('Auction End Time', validators=[DataRequired()])
     #HouseID = StringField('HouseID',validators=[DataRequired(), Length(min=2, max=20)])
     #SellerID = StringField('SellerID',validators=[DataRequired(), Length(min=2, max=20)])
     reservePrice = DecimalField('Reserve Price', validators=[DataRequired()])

@@ -73,7 +73,7 @@
 					{% else %}
 						<img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:335.81px; height: 180px;" >
 					{% endif %}
-					<h6 class="card-subtitle pt-2 pb-2 text-center bg-danger" style="font-size: 15px;">
+					<h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 15px;">
                         {% if b:%}
                             highestBid: {{b}} $
                         {% else %}
@@ -93,6 +93,7 @@
 							<span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
 							<span style="float: right; margin-top: 7px;">{{p.property_type}}</span>
 						</p>
+						
 						<a href={{ url_for("viewProperty", property_id=p.id) }} class="btn btn-info btn-lg" style="width: 100%;">Property Page</a>
 					</div>
 				</div>

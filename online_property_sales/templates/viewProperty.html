@@ -3,10 +3,11 @@
 <div class="row">
     {% if current_user.id != seller.id %}
         <div class="col-md-8">
+            <div class="card p-2 col-md-3.8 mr-2 mb-3">
     {% else %}
         <div class="col-md-10">
+            <div class="card p-2 col-md-3.8 ml-3 mr-2 mb-3">
     {% endif %}
-                <div class="card p-2 col-md-3.8 ml-3 mr-2 mb-3">
                     <div class="card-header text-center bg-info text-white" style="font-size: 30px;">
                         {% if property.status == "auction" %}
                             To Be Auctioned
@@ -21,7 +22,7 @@
 					{% else %}
 						<img class="card-img-top" src="/static/propertyImage/{{property.photo_collection.first().photo}}" alt="Card image cap" >
 					{% endif %}
-                    <h6 class="card-subtitle pt-2 pb-2 text-center bg-danger" style="font-size: 30px;" >
+                    <h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 30px;" >
                         {% if highestBid:%}
                             highestBid: {{highestBid.Amount}} $
                         {% else %}
@@ -43,9 +44,9 @@
                             <span>Parking Features: {{property.parking_features}}</span>
 						</p>
                         {% if auction.AuctionStart and auction.AuctionEnd %}
-                            <p class="text-dark bg-warning rounded pl-4 pr-4 mr-2 mb-0" style="float: left;"> Auction start: {{auction.AuctionStart}} </p>
+                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
                             <p style="float: left; color: black;" class="mb-0">--</p>
-                            <p class="text-dark bg-warning rounded pl-4 pr-4 ml-2 mb-0" style="float: left;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
+                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
                         {% endif %}
                         <h4 class="card-title"> Desciption </h4>
                         <p class="card-text">{{property.description}}</p>
@@ -64,14 +65,20 @@
                 </p>
             </div>
             {% if auction %}
-            <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
-                <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" > Join in as a bidder</button>
-            </a>
+                {% if registered %}
+                <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                    <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Place a Bid</button>
+                </a>
+                {% else %}
+                <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                    <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" > Join in as a bidder</button>
+                </a>
+                {% endif %}
             {% else %}
-            <p class="bg-info text-white" style="font-size: 20px;">No auction setted up yet, please wait.</p>
-            <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
-                <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled> Join in as a bidder</button>
-            </a>
+                <p class="badge badge-pill badge-info" style="font-size: 18px;">No auction setted up yet, please wait.</p>
+                <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                    <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled> Join in as a bidder</button>
+                </a>
             {% endif %}
         </div>
     {% endif %}
