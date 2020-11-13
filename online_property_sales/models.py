@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func, and_
 from datetime import datetime
 from server import db, login_manager
 
@@ -207,6 +208,7 @@ def clear_session():
     db.session.query(AuctionDetails).delete()
     db.session.query(Property).delete()
     db.session.query(Photos).delete()
+    db.session.query(Bid).delete()
     db.session.commit()
 
 def initial_db():
@@ -287,13 +289,20 @@ def initial_db():
 
 
 # initial_db()
-# cards = BankDetails.query.filter_by(user_id = 1).all()
-# user=db.session.query(User).get(1)
-# cards = user.cards
-# for i in cards:
-#     print(i)
 
 # property_Id=[1]
+# property_with_auction = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+#                         .filter(Property.id.in_(property_Id))\
+#                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+#                         .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+#                         .group_by(Property.id)
+    
+# for (p,a,b) in property_with_auction:
+#     print(p)
+#     print(a)
+#     print(b)
+#     print("##################################################################")
+
 # p1=db.session.query(Property).get(1)
 # property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
 # for i in property_with_auction:
