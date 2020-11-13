@@ -24,4 +24,3 @@ sqlparse==0.4.1
 tzlocal==2.1
 Werkzeug==1.0.1
 WTForms==2.3.3
-
