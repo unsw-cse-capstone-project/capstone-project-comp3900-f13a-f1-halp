@@ -7,7 +7,15 @@
         <div class="col-md-10">
     {% endif %}
                 <div class="card p-2 col-md-3.8 ml-3 mr-2 mb-3">
-                    <div class="card-header text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+                    <div class="card-header text-center bg-info text-white">
+                        {% if property.status == "auction" %}
+                            To Be Auctioned
+                        {% elif property.status == "sold" %}
+                            Sold
+                        {% else %}
+                            Error
+                        {% endif %}
+                    </div>
                     {% if not property.photo_collection.all() %}
 						<img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" >
 					{% else %}

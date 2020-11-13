@@ -6,29 +6,40 @@
     <form action="" method="POST" action="/property" enctype="multipart/form-data" style="margin-top: 50px;" novalidate>
         <fieldset class="form-group">
             {{ form.hidden_tag() }}
-            <div class="form-group">{{ form.image.label }} {{form.image}}</div>
-            <div class="form-group">{{ form.submit }}</div>
+            <div class="form-group">
+                {{ form.image.label }}<br>
+                {% if form.image.errors %}
+                    {{ form.image(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.image.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.image }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">{{ form.submit(class="btn btn-info") }}</div>
                     
             {% if form.errors %}
                 {{ form.errors }}
             {% endif %}
         </fieldset>
     </form>
-    <a href="{{ url_for('property_list') }}"><button class="btn btn-primary">Back</button></a>
+    <a href="{{ url_for('property_list') }}"><button class="btn btn-primary mb-2">Back</button></a>
 
 
     <ul class='list-group'>
         {% for i in image %}
             <li class='list-group-item'>
-                <img src="/static/propertyImage/{{ i.photo }}" alt="">
+                <img src="/static/propertyImage/{{ i.photo }}" alt="" style="width: 100%;">
                 <br>
-                <a href="{{ url_for('remove_image', p_id = property, i_id = i.id) }}"><button class='btn btn-outline-danger btn-lg' type="submit">Remove Image</button></a>
+                <a href="{{ url_for('remove_image', p_id = property, i_id = i.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-outline-danger btn-lg mt-2' type="submit">Remove Image</button></a>
             </li>
             
         {% endfor %}
         </ul>
-
-
 </form>
 
 </div>

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Edit Bank card Detail</legend>
+
+                <div class="form-group" disabled>
+                    {{ form.card_number.label }}<br>
+                    {% if form.card_number.errors %}
+                        {{ form.card_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.card_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.card_number(class="form-control form-control-lg",  readonly=True) }}
+                    {% endif %}
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        {{ form.holder_fname.label }}<br>
+                        {% if form.holder_fname.errors %}
+                            {{ form.holder_fname(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.holder_fname.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.holder_fname(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {{ form.holder_lname.label }}<br>
+                        {% if form.holder_lname.errors %}
+                            {{ form.holder_lname(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.holder_lname.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.holder_lname(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.cvc.label }}<br>
+                    {% if form.cvc.errors %}
+                        {{ form.cvc(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.cvc.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.cvc(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.expire_date.label }}<br>
+                    {% if form.expire_date.errors %}
+                        {{ form.expire_date(placeholder="mm/yyyy",class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.expire_date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.expire_date(class="form-control form-control-lg", placeholder="mm/yyyy") }}
+                    {% endif %}
+                </div>
+                <div class="form-group mr-4" style="float: left;">{{ form.submit(class="btn btn-info btn-lg", style="width:150px") }}</div>
+                <a href={{ url_for("removetBankDetails", card_id=card.id) }} class="btn btn-danger btn-lg" style="width:150px">remove</a>
+            </fieldset>
+        
+    </form>
+</div>
+{% endblock %}

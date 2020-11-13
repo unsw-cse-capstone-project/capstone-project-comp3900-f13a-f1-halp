@@ -1,55 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
-		<div class="content-section">
-			<form action="" method= "POST" style="margin-top: 50px;" novalidate>
-				{{ form.hidden_tag() }}
-				<fieldset class="form-group">
-					<legend class="border-bottom mb-4">Search</legend>
-					<div class="form-row">
-						<div class="col">
-							{{ form.auction_before.label }}<br>
-							{% if form.auction_before.errors %}
-								{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
-								<div class="invalid-feedback">
-									{% for error in form.auction_before.errors %}
-										<span>{{ error }}</span>
-									{% endfor %}
-								</div>
-							{% else %}
-								{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-							{% endif %}	
-						</div>
-						<div class="col">
-							{{ form.auction_after.label }}<br>
-							{% if form.auction_after.errors %}
-								{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
-								<div class="invalid-feedback">
-									{% for error in form.auction_after.errors %}
-										<span>{{ error }}</span>
-									{% endfor %}
-								</div>
-							{% else %}
-								{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
-							{% endif %}	
-						</div>
-					</div>
-					<div class="form-group">
-						{{ form.suburb.label }}<br>
-						{% if form.suburb.errors %}
-							{{ form.suburb(class="form-control form-control-lg is-invalid") }}
+	<div class="content-section">
+		<form action="" method= "POST" style="margin-top: 50px;" novalidate>
+			{{ form.hidden_tag() }}
+			<fieldset class="form-group">
+				<legend class="border-bottom mb-4">Search</legend>
+				<div class="form-row">
+					<div class="col">
+						{{ form.auction_before.label }}<br>
+						{% if form.auction_before.errors %}
+							{{ form.auction_before(class="form-control form-control-lg is-invalid") }}
 							<div class="invalid-feedback">
-								{% for error in form.suburb.errors %}
+								{% for error in form.auction_before.errors %}
 									<span>{{ error }}</span>
 								{% endfor %}
 							</div>
 						{% else %}
-							{{ form.suburb(class="form-control form-control-lg") }}
-						{% endif %}
+							{{ form.auction_before(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{% endif %}	
 					</div>
-					<div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg mr-5") }} {{ form.clear (class="btn btn-outline-warning btn-lg") }}</div>
-				</fieldset>
-			</form>
-		</div>
+					<div class="col">
+						{{ form.auction_after.label }}<br>
+						{% if form.auction_after.errors %}
+							{{ form.auction_after(class="form-control form-control-lg is-invalid") }}
+							<div class="invalid-feedback">
+								{% for error in form.auction_after.errors %}
+									<span>{{ error }}</span>
+								{% endfor %}
+							</div>
+						{% else %}
+							{{ form.auction_after(class="form-control form-control-lg", placeholder="yyyy-mm-dd hh:mm:ss") }}
+						{% endif %}	
+					</div>
+				</div>
+				<div class="form-group">
+					{{ form.suburb.label }}<br>
+					{% if form.suburb.errors %}
+						{{ form.suburb(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.suburb.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.suburb(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="form-group">{{ form.submit(class="btn btn-info btn-lg mr-5" ,style="width:200px") }} {{ form.clear (class="btn btn-warning btn-lg",style="width:200px") }}</div>
+			</fieldset>
+		</form>
+	</div>
 	<div class="row col-xl-15">
 		{% if not properties %}
 				<div style="width:100%; text-align: center;">
@@ -79,7 +79,7 @@
 							<span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
 							<span style="float: right; margin-top: 7px;">{{p.property_type}}</span>
 						</p>
-						<a href={{ url_for("viewProperty", property_id=p.id) }} class="btn btn-outline-info" style="width: 100%;">Property Page</a>
+						<a href={{ url_for("viewProperty", property_id=p.id) }} class="btn btn-info btn-lg" style="width: 100%;">Property Page</a>
 					</div>
 				</div>
 			{% endfor %}
