@@ -56,7 +56,13 @@
                 <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2' style="width: 150px;" type='submit'>Add/View Image</button></a></span>
                 <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 150px;"  type='submit'>Edit Auction</button></a></span>
             </div>
-            <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%" type='submit'>Remove</button></a>
+            {% if p.auctionId == None %}
+                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%" type='submit'>Remove</button></a>
+            {% elif (now_date > p.auctionId.AuctionStart) or (p.auctionId.AuctionEnd > now_date) %}
+                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%" type='submit' disabled>Remove</button></a>
+            {% else %}
+                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%" type='submit'>Remove</button></a>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
