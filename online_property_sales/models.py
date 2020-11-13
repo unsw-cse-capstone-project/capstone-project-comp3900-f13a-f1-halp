@@ -259,6 +259,10 @@ def initial_db():
                                 PropertyID = 1,
                                 SellerID = 1)
 
+    bid1 = Bid ( BidderID = 2, AuctionID = 1, Amount = 40)
+    bid2 = Bid ( BidderID = 3, AuctionID = 1, Amount = 60)
+   
+
     photo1 = Photos(photo = '1.jpg', property_id = 1 )
     photo2 = Photos(photo = '1c1f10bb8446c1e3.jpg', property_id = 1 )
     photo3 = Photos(photo = '3.jpg', property_id = 2 )
@@ -272,6 +276,8 @@ def initial_db():
     db.session.add(property3)
     db.session.add(property4)
     db.session.add(auction1)
+    db.session.add(bid1)
+    db.session.add(bid2)
     db.session.add(photo1)
     db.session.add(photo2)
     db.session.add(photo3)
