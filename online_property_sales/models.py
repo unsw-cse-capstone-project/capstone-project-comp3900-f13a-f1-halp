@@ -229,6 +229,8 @@ def initial_db():
     u1.set_password('Tom123@g')
     u2= User(login_name='Cloudia0@g', id=None, email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
     u2.set_password('Cloudia0@g')
+    u3= User(login_name='Sky123@g', id=None, email="Sky@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999990')
+    u3.set_password('Sky123@g')
     bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
     property1 = Property(   property_type = 'House',
@@ -279,8 +281,8 @@ def initial_db():
                                 PropertyID = 3,
                                 SellerID = 1)
 
-    bid1 = Bid ( BidderID = 2, AuctionID = 1, Amount = 40)
-    bid2 = Bid ( BidderID = 3, AuctionID = 1, Amount = 60)
+    bid1 = Bid ( BidderID = 2, AuctionID = 2, Amount = 40)
+    bid2 = Bid ( BidderID = 3, AuctionID = 2, Amount = 60)
     
     register1 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 1)
     register2 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 3)
@@ -291,6 +293,7 @@ def initial_db():
 
     db.session.add(u1)
     db.session.add(u2)
+    db.session.add(u3)
     db.session.add(bank1)
     db.session.add(bank2)
     db.session.add(property1)

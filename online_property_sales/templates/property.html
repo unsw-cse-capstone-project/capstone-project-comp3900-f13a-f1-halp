@@ -11,8 +11,7 @@
         <div class="content-section">
             {% if not properties %}
                 <h1>No properties found. Add one now!</h1>
-            {% endif %}
-        
+            {% else %}
             <div class="row col-xl-15">
                 {% for (p,a,b) in properties %}
                     <div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3" style="width: 520px;">
@@ -82,6 +81,7 @@
                 </div>
                 {% endfor %}
             </div>
+            {% endif %}
             <a href="{{ url_for('add_property') }}">
                 <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
             </a>
@@ -90,9 +90,8 @@
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <div class="content-section">
             {% if not registered_properties %}
-                <h1>Oh, picky</h1>
-            {% endif %}
-        
+                <h1>Not registered properties for bidding.</h1>
+            {% else %}
             <div class="row col-xl-15">
                 {% for (p,a,b) in registered_properties %}
                     <div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3" style="width: 520px;">
@@ -146,7 +145,7 @@
                     <div>
                         <span><a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 270px; font-size: 20px;" type='submit'>View Property/Place a bid</button></a></span>
                         <span>
-                            <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} ">
+                            <a href="{{ url_for('removeRegisteredProperty', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} ">
                                 <button class='btn btn-danger'  style="width: 220px; float: right;  font-size: 20px;" type='submit'>Remove</button>
                             </a>
                         </span>
@@ -155,8 +154,9 @@
                 </div>
                 {% endfor %}
             </div>
-            <a href="{{ url_for('add_property') }}">
-                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
+            {% endif %}
+            <a href="{{ url_for('search') }}">
+                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Search for Property</button>
             </a>
         </div>
     </div>

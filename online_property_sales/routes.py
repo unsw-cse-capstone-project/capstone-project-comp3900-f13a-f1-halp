@@ -479,14 +479,16 @@ def property_list():
 
     propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=current_user.id).all()
     registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
-    registered_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+    if len(registeredID_list) == 0:
+        registered_properties =None
+    else:
+        registered_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
                                 .filter(Property.id.in_(registeredID_list))\
                                 .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
                                 .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
                                 .group_by(Property.id)
 
     time_shift_1hr = datetime.now() + timedelta(hours=1)
-    
     # needs to add in auction start time and end time
 
     return render_template('property.html', properties = my_properties,registered_properties=registered_properties, now_date = time_shift_1hr)
@@ -507,12 +509,15 @@ def remove_property(p_id):
     db.session.commit()
     return redirect(url_for('property_list'))
 
+@app.route("/removeRegisteredProperty/<p_id>")
+def removeRegisteredProperty(p_id):
+    to_remove = RegisteredAssociation.query.filter_by(PropertyID=p_id, RegisteredBidderID=current_user.id).delete()
+    db.session.commit()
+    return redirect(url_for('property_list'))
+
 @app.route('/propertyImage/<p_id>', methods=['POST','GET'])
 @login_required
 def property_image(p_id):
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     # address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
