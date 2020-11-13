@@ -567,7 +567,7 @@ def createAuction():
             ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
         db.session.add(auctionDetails)
         db.session.commit()
-        flash('Auction created for {form.reservePrice.data}!', 'success')
+        flash('The auction was successfully created.', 'success')
         return redirect(url_for('home'))
 
         cards=BankDetails.query.filter_by(id=card_number).all()
@@ -579,7 +579,7 @@ def auctions():
         flash('Please login first')
         return redirect(url_for('login'))
 
-    auctions = AuctionDetails.query.filter_by(SellerID = current_user.id)
+    auctions = AuctionDetails.query.filter_by(SellerID = current_user.id).all()
     return render_template('auctions.html', auctions=auctions)
 
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
