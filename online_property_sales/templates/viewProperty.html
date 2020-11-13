@@ -4,7 +4,7 @@
     {% if current_user.id != seller.id %}
         <div class="col-md-8">
     {% else %}
-        <div class="col-md-12">
+        <div class="col-md-10">
     {% endif %}
                 <div class="card p-2 col-md-3.8 ml-3 mr-2 mb-3">
                     <div class="card-header text-center bg-info text-white">
@@ -16,7 +16,11 @@
                             Error
                         {% endif %}
                     </div>
-                    <img class="card-img-top rounded" src="/static/propertyImage/unnamed.jpg" alt="Card image cap"  >
+                    {% if not property.photo_collection.all() %}
+						<img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" >
+					{% else %}
+						<img class="card-img-top" src="/static/propertyImage/{{property.photo_collection.first().photo}}" alt="Card image cap" >
+					{% endif %}
                     <h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
                     <div class="card-body text-info">
                         <h4 class="card-title">
@@ -25,8 +29,13 @@
                             {% endif %}
                             {{property.add_num}} {{property.add_name}} {{property.add_suburb}} {{property.add_state}} {{property.pc}}, Australia
                         </h4>
-                        <h4 class="card-title"> Features </h4>
-                        <p class="card-text">Type:{{property.property_type}} <br>Bedrooms:{{property.num_bedrooms}} Bathrooms:{{property.num_bedrooms}} <br>Parking:{{property.num_parking}} Features:{{property.parking_features}} </p>
+                        <h4 class="card-title">{{property.property_type}} Features </h4>
+                        <p class="card-text">
+							<span><img src="/static/propertyImage/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{property.num_bedrooms}}</span>
+							<span><img src="/static/propertyImage/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_bedrooms}}</span>
+                            <span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_parking}}</span> <br>
+                            <span>Parking Features: {{property.parking_features}}</span>
+						</p>
                         {% if auction.AuctionStart and auction.AuctionEnd %}
                             <p class="text-dark bg-warning rounded pl-4 pr-4 mr-2 mb-0" style="float: left;"> Auction start: {{auction.AuctionStart}} </p>
                             <p style="float: left; color: black;" class="mb-0">--</p>

@@ -3,7 +3,7 @@ from server import app, db, login_manager, mail
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import LoginManager,UserMixin, current_user, logout_user, login_required,login_user
 from datetime import datetime, timedelta
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from forms import *
 from validateProperty import *
 from flask_mail import Message
@@ -12,20 +12,42 @@ import random
 import sys
 import os
 import secrets
+from apscheduler.schedulers.background import BackgroundScheduler
+from schedule import hourlyEmail
+from datetime import datetime, timedelta
 
 # initial_db()
+
+# def end(AuctionID_):
+
+#     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+#     seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
+
+#     msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
+#     msg.body = "Auction " +  str(AuctionID_) + " has ended"
+#     mail.send(msg)
+
+# def hourlyEmail():
+#     end(1)
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(hourlyEmail,'interval',minutes=1)
+sched.start()
 
 @app.route('/')
 @app.route('/home')
 def home():
 
     # msg = Message("Hello", 
-    #                 sender = 'comp3900@minamamoto.cloud',
-    #                 recipients=["z5135154@student.unsw.edu.au"])
+    #                 sender = 'AuctionWorldWideWeb@gmail.com',
+    #                 recipients=["unswroy@gmail.com"])
 
     # msg.body = "Hello Flask message sent from Flask-Mail"
     # mail.send(msg)
-
+    since = datetime.now() - timedelta(hours=1)
+    auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
+    for auction in auctions:
+        flash(auction.id)
     flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
@@ -61,16 +83,19 @@ def signup():
     form = SignupForm()
 
     if form.validate_on_submit():
+
         if form.validate_username(form.login_name.data):
-            if form.validate_DOB(form.date_of_birth.data):
-                user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'), phone_number=form.phone_number.data)
-                user.set_password(form.password.data)
-                db.session.add(user)
-                db.session.commit()
-                flash('Congratulations, you are now a registered user!','success')
-                return redirect(url_for('login'))
-            else:
-                flash('Please input DOB with valid format!','danger')
+
+            if not form.validate_date_of_birth(form.date_of_birth.data):
+                flash(f'The date of birth should be smaller than current time','danger')
+                return render_template('signup.html', title='signup', form=form)
+
+            user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = form.date_of_birth.data, phone_number=form.phone_number.data)
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash('Congratulations, you are now a registered user!','success')
+            return redirect(url_for('login'))
         else:
             flash('The username has been taken, please input another one','danger')
     return render_template('signup.html', title='signup', form=form)
@@ -82,11 +107,7 @@ def search():
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
     #load all suburbs in db and initial with an empty value
     form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
-    full_list=db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
-                                Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
-                                Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails)
+    full_list=db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails)
     property_Id=[]
 
     #auction time -> auction id list -> property id list
@@ -132,11 +153,7 @@ def search():
                 input_form=True
 
             if input_form==True:
-                property_with_auction = db.session.query(Property.id, Property.property_type, Property.add_unit, Property.add_num,
-                                    Property.add_name, Property.add_suburb, Property.add_state, Property.add_pc, Property.num_bedrooms,
-                                    Property.num_parking, Property.num_bathrooms, Property.parking_features, Property.building_size,
-                                    Property.land_size, Property.inspection_date, Property.description,Property.year_built, Property.seller,
-                                    AuctionDetails.AuctionStart, AuctionDetails.AuctionEnd).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+                property_with_auction = db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
             else: 
                 property_with_auction =full_list
 
@@ -148,7 +165,7 @@ def search():
 def viewProperty(property_id):
     property_info = Property.query.filter_by(id=property_id).first_or_404()
     seller = User.query.get(property_info.seller)
-    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId, photos=property_info.photo_collection)
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId)
 
 
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
@@ -164,7 +181,7 @@ def changePassword(login_name):
                 if form.password.data:
                     user.set_password(form.password.data)
                     db.session.commit()
-                    return redirect('home')
+                    return redirect(url_for('home'))
                 else:
                     flash(f'Please input your new password','info')
             else:
@@ -174,85 +191,142 @@ def changePassword(login_name):
 
     return render_template('changePassword.html', title='Change Password', form=form, login_name=login_name)
 
-
 @app.route('/account/<login_name>', methods=['POST','GET'])
 @login_required
 def account(login_name):
     
     form = AccountForm()
     user = User.query.filter_by(login_name=login_name).first_or_404()
-    
+    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+
     if form.validate_on_submit():
         #change password after confirmming old password first
         if form.login_name.data:
             if form.validate_username(form.login_name.data, user.id):
                 user.set_login_name(form.login_name.data)
             else:
-                return render_template('account.html', title='account', form=form, user=user)
+                return render_template('account.html', title='account', form=form, user=user, cards = cards)
 
         user.set_address(form.address.data)
         user.set_phone_number(form.phone_number.data)
         user.set_date_of_birth( datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'))
         user.set_email(form.email.data)
+        user.set_id_confirmation(form.id_confirmation.data)
+        db.session.commit()
 
+        if not form.id_confirmation.data or len(cards) == 0:
+            flash(f'To do more actions in our system, it is required to enter the your identification and have at least one card', 'danger')
+            return render_template('account.html', title='account', form=form, user=user, cards = cards)
+        
+        return redirect(url_for('home'))
+
+    elif request.method == 'GET':
+        form.address.data = current_user.address
+        form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
+        form.phone_number.data = current_user.phone_number
+        form.email.data = current_user.email
+        form.id_confirmation.data = current_user.id_confirmation
+        if len(current_user.cards.all()) == 0:
+            flash(f'You have not entered a credit card before, please upload one with full bank details.', 'info')
+
+    return render_template('account.html', title='account', form=form, user=user, cards = cards)
+
+@app.route('/editBankDetails/<card_id>', methods=['POST','GET'])
+@login_required
+def editBankDetails(card_id):
+
+    form = BankDetailsForm()
+    card = db.session.query(BankDetails).get(card_id)
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+
+    if form.validate_on_submit():
+        
+        holder_fname =  form.holder_fname.data
+        holder_lname =  form.holder_lname.data
+        cvc =  form.cvc.data
+        expire_date =  form.expire_date.data
+
+        if not form.validate_expire_date(expire_date):
+            flash(f'The expire date should be greater than current time','danger')
+            return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
+
+        if holder_fname:
+            card.set_fname(holder_fname)
+        if holder_lname:
+            card.set_lname(holder_lname)
+        if cvc:
+            card.set_cvc(cvc)
+        if expire_date:
+            card.set_expire_date(expire_date)
+
+        #only change user details with no errors
+        db.session.commit()
+        cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+        return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+
+    elif request.method == 'GET':
+        form.card_number.data = card.id
+        form.holder_fname.data = card.holder_fname
+        form.holder_lname.data = card.holder_lname
+        form.expire_date.data = card.expire_date
+        form.cvc.data = card.cvc
+
+    return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
+
+@app.route('/addBankDetail', methods=['POST','GET'])
+@login_required
+def addBankDetail():
+
+    form = BankDetailsForm()
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+
+    if form.validate_on_submit():
+        
         card_number = form.card_number.data
         holder_fname =  form.holder_fname.data
         holder_lname =  form.holder_lname.data
-        id_confirmation =  form.id_confirmation.data
         cvc =  form.cvc.data
         expire_date =  form.expire_date.data
+
+        if not form.validate_expire_date(expire_date):
+            flash(f'The expire date should be greater than current time','danger')
+            return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
         if len(card_number)>0:
             new_card=True
             old_card=BankDetails.query.get(card_number)
             #this card already in our database
             if old_card!=None:
-                #this card belongs to current user
-                if old_card.user_id == user.id:
-                    new_card=False 
-                    if holder_fname:
-                        old_card.set_fname(holder_fname)
-                    if holder_lname:
-                        old_card.set_lname(holder_lname)
-                    if cvc:
-                        old_card.set_cvc(cvc)
-                    if expire_date:
-                        old_card.set_expire_date(datetime.strptime(expire_date,'%m/%Y'))
-                    if id_confirmation:
-                        old_card.set_id_confirmation(id_confirmation)
-                #this card does not belong to current user
-                else:
-                    new_card=False
-                    flash(f"This card already registered by other user", 'danger')
-                    return render_template('account.html', title='account', form=form, user=user)
+                new_card=False
+                flash(f"This card already registered by other user", 'danger')
+                return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
             #this is a new card, all the info should be inputed
             if new_card == True:
-                if holder_fname and holder_lname and cvc and expire_date and id_confirmation and expire_date:
-                    bank = BankDetails(id=card_number,id_confirmation=id_confirmation ,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=datetime.strptime(expire_date,'%m/%Y'), author=user)
+                if holder_fname and holder_lname and cvc and expire_date  and expire_date:
+                    bank = BankDetails(id=card_number,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=expire_date, user=user)
                     flash("Congraduation! you add a new credit card to your account",'success')
                     db.session.add(bank)
+                    db.session.commit()
+                    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+                    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
                 else:
                     flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
-                    db.session.commit()
-                    return render_template('account.html', title='account', form=form, user=user)
+                    return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
-        #only change user details with no errors
-        db.session.commit()
-        return redirect(url_for('home'))
+    return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
-    elif request.method == 'GET':
-        form.login_name.data = current_user.login_name
-        form.address.data = current_user.address
-        form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
-        form.phone_number.data = current_user.phone_number
-        form.email.data = current_user.email
-        if len(current_user.cards.all()) == 0:
-            flash(f'You have not inputted a credit card before, please upload one with full bank details.', 'info')
-        else:
-            flash(f'To edit parts or whole details of your uploaded credit cards, you have to input the card name correctly.','info')
+@app.route("/removetBankDetails/<card_id>")
+@login_required
+def removetBankDetails(card_id):
+    BankDetails.query.filter_by(id=card_id).delete()
+    db.session.commit()
 
-    return render_template('account.html', title='account', form=form, user=user)
+    form = AccountForm()
+    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+    cards = BankDetails.query.filter_by(user_id = current_user.id).all()
+
+    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
 
 
 @app.route('/addProperty', methods=['GET', 'POST'])
@@ -464,11 +538,21 @@ def createAuction():
         flash('Please login first')
         return redirect(url_for('login'))
 
+    PropertyID_ = request.args.get('PropertyID')
+
+    if PropertyID_ == None:
+        flash('Please Create the property first')
+        return redirect(url_for('add_property'))
+
+    auction = AuctionDetails.query.filter_by(PropertyID = PropertyID_).first()
+    if auction != None:
+        return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
+
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
         #id is automatically generated by database
-        auctionDetails = AuctionDetails(PropertyID = random.random(), SellerID = current_user.login_name, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
+        auctionDetails = AuctionDetails(PropertyID = PropertyID_, SellerID = current_user.id, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
             ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
         db.session.add(auctionDetails)
         db.session.commit()
@@ -484,7 +568,7 @@ def auctions():
         flash('Please login first')
         return redirect(url_for('login'))
 
-    auctions = AuctionDetails.query.filter_by(SellerID = current_user.login_name)
+    auctions = AuctionDetails.query.filter_by(SellerID = current_user.id)
     return render_template('auctions.html', auctions=auctions)
 
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
@@ -535,6 +619,17 @@ def viewAuction(AuctionID_):
         return redirect(url_for('login'))
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    if auction.SellerID == current_user.id:
+        return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
+
+    if auction.AuctionStart > datetime.now():
+        flash('This auction has not started yet')
+        return redirect(url_for('home'))
+
+    if auction.AuctionEnd < datetime.now():
+        flash('This auction has already ended')
+        return redirect(url_for('home'))
+
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
     highestAmount = 0
     for amount in highestBid:
@@ -558,6 +653,37 @@ def viewAuction(AuctionID_):
         flash('Your Bid has been accepted!', 'success')
         return redirect(url_for('home'))
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
+
+@app.route("/endAuction/<AuctionID_>", methods=['GET', 'POST'])
+@login_required
+def endAuction(AuctionID_):
+    hourlyEmail()
+    return redirect(url_for('home'))
+    # auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    # seller =  User.query.filter_by(id = auction.SellerID).first_or_404()
+
+    # msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[seller.email])
+    # msg.body = "Auction " +  str(AuctionID_) + " has ended"
+    # mail.send(msg)
+
+    # highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(desc(Bid.Amount)).first()
+    # highestBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
+    # msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[highestBidder.email])
+    # msg.body = "You are highest Bidder for auction " + str(AuctionID_)
+    # mail.send(msg)
+
+    # otherBids = Bid.query.filter_by(AuctionID = AuctionID_)
+    # for otherBid in otherBids:
+    #     otherBidder = User.query.filter_by(id = otherBid.BidderID).first_or_404()
+    #     if otherBidder != highestBidder:
+    #         otherBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
+    #         msg = Message("Hello", sender = 'AuctionWorldWideWeb@gmail.com', recipients=[otherBidder.email])
+    #         msg.body = "You have not worn auction " + str(AuctionID_)
+    #         mail.send(msg)
+
+    # return redirect(url_for('home'))
+
+
 
 # should call this function twice. one for all passed bidders, one for the winner
 # recipients_id should be a list of user id who are bidders in this auction
@@ -584,3 +710,11 @@ def send_email(recipients_id, win, auctionId):
             msg = Message("Unfortunately! You did not win the auction",recipients=[x])
             msg.html = render_template('unfortunatelyFeedback.html',receiver=y, seller=seller, property=property_info, auction=auction_info )
             mail.send(msg)
+
+def if_have_cards(user_id):
+    user=db.session.query(User).get(user_id)
+    cards = user.cards.count()
+    if cards > 0 and user.id_confirmation:
+        return True
+    else:
+        return False
