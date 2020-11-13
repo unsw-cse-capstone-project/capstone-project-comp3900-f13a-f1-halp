@@ -628,15 +628,16 @@ def viewAuction(AuctionID_):
 
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    property_ = Property.query.get(auction.PropertyID)
     if auction.SellerID == current_user.id:
         return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
 
     if auction.AuctionStart > datetime.now():
-        flash('This auction has not started yet')
+        flash(f'This auction has not started yet', 'warning')
         return redirect(url_for('home'))
 
     if auction.AuctionEnd < datetime.now():
-        flash('This auction has already ended')
+        flash(f'This auction has already ended', 'warning')
         return redirect(url_for('home'))
 
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
@@ -654,13 +655,14 @@ def viewAuction(AuctionID_):
     form = MakeBidForm()
     if form.validate_on_submit():
         if form.newBid.data < nextLow:
-            flash('Please input the correct amount')
-            return redirect(url_for('login', AuctionID_ = auction.id))
-        bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
-        db.session.add(bid)
-        db.session.commit()
-        flash('Your Bid has been accepted!', 'success')
-        return redirect(url_for('home'))
+            flash(f'Please input the correct amount', 'danger')
+        else:
+            bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
+            db.session.add(bid)
+            db.session.commit()
+            flash(f'Your Bid has been accepted!', 'success')
+
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid)
 
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
 

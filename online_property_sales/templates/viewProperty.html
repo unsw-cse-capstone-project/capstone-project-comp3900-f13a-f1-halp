@@ -63,7 +63,16 @@
                 </ul>
                 </p>
             </div>
-            <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" ><button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Join in as a bidder</button></a>
+            {% if auction %}
+            <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" > Join in as a bidder</button>
+            </a>
+            {% else %}
+            <p class="bg-info text-white" style="font-size: 20px;">No auction setted up yet, please wait.</p>
+            <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled> Join in as a bidder</button>
+            </a>
+            {% endif %}
         </div>
     {% endif %}
 </div>
