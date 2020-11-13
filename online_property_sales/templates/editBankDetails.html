@@ -73,10 +73,10 @@
                         {{ form.expire_date(class="form-control form-control-lg", placeholder="mm/yyyy") }}
                     {% endif %}
                 </div>
-
+                <div class="form-group mr-4" style="float: left;">{{ form.submit(class="btn btn-info btn-lg", style="width:150px") }}</div>
+                <a href={{ url_for("removetBankDetails", card_id=card.id) }} class="btn btn-danger btn-lg" style="width:150px">remove</a>
             </fieldset>
-        <div class="form-group mr-5" style="float: left;">{{ form.submit(class="btn btn-outline-info") }}</div>
-        <a href={{ url_for("removetBankDetails", card_id=card.id) }} class="btn btn-outline-danger">remove</a>
+        
     </form>
 </div>
 {% endblock %}

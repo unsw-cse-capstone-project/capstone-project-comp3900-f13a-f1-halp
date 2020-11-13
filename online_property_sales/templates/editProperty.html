@@ -6,10 +6,6 @@
 
     <h2 class="title">Edit Property</h2>
 
-    {% if error %}
-        <p><strong>Error:</strong> {{ error }}</p>
-    {% endif %}
-
     {% if not property %}
         <h1>Error: Invalid Property ID</h1>
     {% else %}
@@ -231,25 +227,14 @@
                         {{ form.inspection_date(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-                <div class="form-group">{{ form.submit(class="btn btn-outline-info btn-lg") }}</div>
+                <div class="form-group">{{ form.submit(class="btn btn-info btn-lg") }}</div>
     
             </fieldset>
             
         </form>
         {% endfor %}
-        
-        {% if form.errors %}
-            {{ form.errors }}
-        {% endif %}
         </fieldset>
-        
     </form>
     {% endif %}
-
-    
-
 </div>
-
-
-
 {% endblock %}
