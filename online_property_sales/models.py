@@ -286,7 +286,7 @@ def initial_db():
     db.session.commit()
 
 
-initial_db()
+# initial_db()
 # cards = BankDetails.query.filter_by(user_id = 1).all()
 # user=db.session.query(User).get(1)
 # cards = user.cards
