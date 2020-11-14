@@ -30,9 +30,25 @@ import humanfriendly
 
 # def hourlyEmail():
 #     end(1)
+def endProperty():
+    since = datetime.now() - timedelta(minutes=1)
+    auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
+    for i in auctions:
+        highestBid = Bid.query.filter_by(AuctionID = i.id).order_by(Bid.Amount).first()
+        property_ = Property.query.filter_by(auctionId = i.id)
+        if highestBid:
+            if highestBid.Amount >= i.ReservePrice:
+                property_.status = "sold"
+            else:
+                property_.status = "Under Offer"
+        else:
+            property_.status = "Under Offer"
+        db.session.delete(i)
+        db.session.commit()
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
+sched.add_job(endProperty, 'interval', minutes=1)
 sched.start()
 
 @app.route('/')
@@ -45,10 +61,10 @@ def home():
 
     # msg.body = "Hello Flask message sent from Flask-Mail"
     # mail.send(msg)
-    since = datetime.now() - timedelta(hours=1)
+    since = datetime.now() - timedelta(minutes=1)
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:
-        flash("Auction "+ str(auction.id)+" finished in last hour",'info')
+        flash("Auction "+ str(auction.id)+" finished in last minutes",'info')
     # flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
@@ -688,7 +704,7 @@ def viewAuction(AuctionID_):
     if auction.AuctionStart > datetime.now():
         flash(f'This auction has not started yet', 'info')
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
-        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= None, registered=registered)
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= None, registered=registered, remainingTime=None)
 
 
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
@@ -705,16 +721,23 @@ def viewAuction(AuctionID_):
 
     form = MakeBidForm()
     if form.validate_on_submit():
+
+        if datetime.now() < auction.AuctionStart or datetime.now()>auction.AuctionEnd:
+            remainingTime = None
+        else:
+            remainingTime = humanfriendly.format_timespan(auction.AuctionEnd - datetime.now())
+
         if form.newBid.data < nextLow:
             flash(f'Please input the correct amount', 'danger')
             bid=None
         else:
             bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
+            
             db.session.add(bid)
             db.session.commit()
             flash(f'Your Bid has been accepted!', 'success')
 
-        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid)
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid, remainingTime=remainingTime)
 
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
 
