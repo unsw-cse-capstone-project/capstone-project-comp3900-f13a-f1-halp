@@ -10,7 +10,7 @@
         <h1>Error: Invalid Property ID</h1>
     {% else %}
         {% for p in property %}
-        <form action="" method="POST" action="/addProperty" style="margin-top: 50px;" novalidate>
+        <form action="" method="POST" action="" style="margin-top: 50px;" novalidate>
             <fieldset class="form-group">
                 {{ form.hidden_tag() }}
                 <div class="form-row">
@@ -233,8 +233,6 @@
             
         </form>
         {% endfor %}
-        </fieldset>
-    </form>
     {% endif %}
     <a href="{{ url_for('property_list') }}"><button class='btn-lg btn-danger'>Cancel</button></a>
 </div>

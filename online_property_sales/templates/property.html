@@ -50,6 +50,7 @@
                     {% endif %}
                 </span>
                 <span><a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>View Property</button></a></span>
+                <span><a href="{{ url_for('inspection_time', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>Inspection Time</button></a></span>
             </div>
             <div class="mt-2 mb-2">
                 <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2 ' style="width: 150px;" type='submit'>Change Status</button></a></span>
