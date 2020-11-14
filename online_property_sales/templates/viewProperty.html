@@ -47,6 +47,9 @@
                             <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
                             <p style="float: left; color: black;" class="mb-0">--</p>
                             <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
+                            {% if remainingTime %}
+                                <p class="rounded bg-danger text-white pl-2 text-center" style="font-size: 20px; width: 646.17px;">Auction Remaining: {{remainingTime}}</p>
+                                {% endif %}
                         {% endif %}
                         
                         <h4 class="card-title">Inspection date</h4>

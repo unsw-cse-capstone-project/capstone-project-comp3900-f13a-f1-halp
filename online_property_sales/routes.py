@@ -15,6 +15,7 @@ import secrets
 from apscheduler.schedulers.background import BackgroundScheduler
 from schedule import hourlyEmail
 from datetime import datetime, timedelta
+import humanfriendly
 
 # initial_db()
 
@@ -47,7 +48,7 @@ def home():
     since = datetime.now() - timedelta(hours=1)
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:
-        flash(auction.id)
+        flash("Auction "+ str(auction.id)+" finished in last hour",'info')
     # flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
@@ -179,11 +180,16 @@ def viewProperty(property_id):
     if auction:
         highestBid = Bid.query.filter_by(AuctionID = auction.id).order_by(desc(Bid.Amount)).first()
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_id, RegisteredBidderID=current_user.id).first()
+        if datetime.now() < auction.AuctionStart or datetime.now()>auction.AuctionEnd:
+            remainingTime = None
+        else:
+            remainingTime = humanfriendly.format_timespan(auction.AuctionEnd - datetime.now())
     else:
         highestBid = None
         registered = None
+        remainingTime = None
     
-    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered)
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered, remainingTime=remainingTime)
 
 
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
@@ -620,10 +626,8 @@ def createAuction():
 #     return render_template('auctions.html', auctions=auctions)
 
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
+@login_required
 def changeAuctionDetails(AuctionID_):
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
 
@@ -635,7 +639,7 @@ def changeAuctionDetails(AuctionID_):
         auction.ReservePrice = form.reservePrice.data
         auction.MinBiddingGap = form.minBiddingGap.data
         db.session.commit()
-        flash(f'Auction edited for {form.reservePrice.data}!', 'success')
+        flash(f'Auction edited successful!', 'success')
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
