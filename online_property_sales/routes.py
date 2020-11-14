@@ -32,37 +32,14 @@ import humanfriendly
 #     end(1)
 
 
-def endProperty():
-    since = datetime.now() - timedelta(minutes=1)
-    auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
-    for i in auctions:
-        highestBid = Bid.query.filter_by(AuctionID = i.id).order_by(Bid.Amount).first()
-        property_ = Property.query.get(i.PropertyID)
-        if highestBid:
-            if highestBid.Amount >= i.ReservePrice:
-                property_.status = "sold"
-            else:
-                property_.status = "Under Offer"
-        else:
-            property_.status = "Under Offer"
-        flash("The auction ends","info")
-        db.session.commit()
-
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
-# sched.add_job(endProperty, 'interval', minutes=1)
 sched.start()
 
 @app.route('/')
 @app.route('/home')
 def home():
-    endProperty()
-    # msg = Message("Hello", 
-    #                 sender = 'AuctionWorldWideWeb@gmail.com',
-    #                 recipients=["unswroy@gmail.com"])
 
-    # msg.body = "Hello Flask message sent from Flask-Mail"
-    # mail.send(msg)
     since = datetime.now() - timedelta(minutes=1)
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:

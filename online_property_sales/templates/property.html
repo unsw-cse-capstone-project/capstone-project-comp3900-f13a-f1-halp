@@ -22,7 +22,7 @@
                             {% elif p.status == "sold" %}
                                 Sold
                             {% else %}
-                                Error
+                                Under Offer
                             {% endif %}
                         </div>
                         {% if not p.photo_collection.all() %}
@@ -52,39 +52,73 @@
                             </p>
                         </div>
                 <!-- Meant to be actuion date -->
-                    {% if a.AuctionStart and a.AuctionEnd %}
-                    <div class="mb-2" style="font-size: 20px; width: 350px;">
-                        <p class="bg-primary text-white rounded pl-3  mb-1"> Auction start: {{a.AuctionStart}} </p>
-                        <p class="bg-primary text-white rounded pl-3 "> Auction End:   {{a.AuctionEnd}} </p>
-                    </div>
-                    {% else%}
-                        <div style="height: 79.2px;width: 350px;">
-                            <p class="bg-secondary text-white rounded pl-3  mb-1" style="font-size: 35px;">No Auction Details</p>
+                        {% if a.AuctionStart and a.AuctionEnd %}
+                        <div class="mb-2" style="font-size: 20px; width: 350px;">
+                            <p class="bg-primary text-white rounded pl-3  mb-1"> Auction start: {{a.AuctionStart}} </p>
+                            <p class="bg-primary text-white rounded pl-3 "> Auction End:   {{a.AuctionEnd}} </p>
                         </div>
-                    {% endif %}
-                    <div>
-                        <span>
-                            {% if now_date > p.inspection_date %}
-                                <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px; font-size: 20px;" type='submit' disabled>Edit Property</button></a>
+                        {% else%}
+                            <div style="height: 79.2px;width: 350px;">
+                                <p class="bg-secondary text-white rounded pl-3  mb-1" style="font-size: 35px;">No Auction Details</p>
+                            </div>
+                        {% endif %}
+                        <a href="{{ url_for('viewProperty', property_id = p.id) }}">
+                            <button class='btn btn-info text-white mr-2 ' style="width: 100%; font-size: 20px;" type='submit'>View Property</button>
+                        </a>
+                        
+                        {% if a %}
+                            {% if (now_date >= a.AuctionStart and now_date <= a.AuctionEnd) or now_date > p.inspection_date %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' disabled>Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' disabled>Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " disabled><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
                             {% else %}
-                                <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px; font-size: 20px;" type='submit'>Edit Property</button></a>
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' >Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' >Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% endif %} 
+                        {% else %}
+                            {% if now_date > p.inspection_date %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' disabled>Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' disabled>Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " disabled><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% else %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' >Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' >Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
                             {% endif %}
-                        </span>
-                        <span><a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 170px; font-size: 20px;" type='submit'>View Property</button></a></span>
+                        {% endif %} 
+
                     </div>
-                    <div class="mt-2 mb-2">
-                        <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2 ' style="width: 150px; font-size: 20px;" type='submit'>Change Status</button></a></span>
-                        <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2' style="width: 170px; font-size: 20px;" type='submit'>Add/View Image</button></a></span>
-                        <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 150px; font-size: 20px;"  type='submit'>Edit Auction</button></a></span>
-                    </div>
-                    <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
-                </div>
                 {% endfor %}
             </div>
             {% endif %}
-            <a href="{{ url_for('add_property') }}">
-                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
-            </a>
+        <a href="{{ url_for('add_property') }}">
+            <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
+        </a>
         </div>
     </div>
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -102,7 +136,7 @@
                             {% elif p.status == "sold" %}
                                 Sold
                             {% else %}
-                                Error
+                                Under Offer
                             {% endif %}
                         </div>
                         {% if not p.photo_collection.all() %}
