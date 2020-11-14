@@ -38,3 +38,21 @@ Short meeting about the progression and keep doing our work.
 week5 Fri 16/10
 
 Present our demon to tutors, we are slight behind the schedule but going to keep up by the end of this weed.
+
+week6 Tue
+
+week6 Fri
+
+week7 Tue
+
+week7 Fri
+
+week8 Tue
+
+week8 Fri
+
+week9 Tue
+Assigned tasks to each one about check system integrity, html styles and links
+
+week9 Fri
+together and merge all branches to master to check the consistancy and if all functions are implemented

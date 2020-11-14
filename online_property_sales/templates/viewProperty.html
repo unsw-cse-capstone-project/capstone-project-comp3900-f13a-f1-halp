@@ -42,12 +42,20 @@
 							<span><img src="/static/propertyImage/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_bedrooms}}</span>
                             <span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_parking}}</span> <br>
                             <span>Parking Features: {{property.parking_features}}</span>
-						</p>
+                        </p>
                         {% if auction.AuctionStart and auction.AuctionEnd %}
                             <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
                             <p style="float: left; color: black;" class="mb-0">--</p>
                             <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
                         {% endif %}
+                        
+                        <h4 class="card-title">Inspection date</h4>
+                        {% if property.inspection_date %}
+                            <p class="card-text">{{property.inspection_date}}</p>
+                        {% else %}
+                            <p class="card-text">The inspection date has not been setted up yet, please wait or you can contact us to make a schedule for you to visit.</p>
+                        {% endif %}
+
                         <h4 class="card-title"> Desciption </h4>
                         <p class="card-text">{{property.description}}</p>
                     </div>

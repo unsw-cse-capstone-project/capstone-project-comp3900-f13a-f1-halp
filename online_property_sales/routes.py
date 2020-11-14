@@ -610,14 +610,14 @@ def createAuction():
         cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
 
-@app.route("/auction", methods=['GET', 'POST'])
-def auctions():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
+# @app.route("/auction", methods=['GET', 'POST'])
+# def auctions():
+#     if current_user.is_anonymous:
+#         flash('Please login first')
+#         return redirect(url_for('login'))
 
-    auctions = AuctionDetails.query.filter_by(SellerID = current_user.id).all()
-    return render_template('auctions.html', auctions=auctions)
+#     auctions = AuctionDetails.query.filter_by(SellerID = current_user.id).all()
+#     return render_template('auctions.html', auctions=auctions)
 
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
 def changeAuctionDetails(AuctionID_):

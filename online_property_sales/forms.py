@@ -103,7 +103,7 @@ class PropertyForm(FlaskForm):
                                  ('rural', 'Rural'),
                                  ('blocks', 'Blocks of Units'),
                                  ('retirement', 'Retirement Living')])
-    add_unit = StringField('Unit Number', validators=[DataRequired()])
+    add_unit = StringField('Unit Number', validators=[Optional()])
     add_num = StringField('Street Number', validators=[DataRequired()])
     add_name = StringField('Street Name', validators=[DataRequired()])
     add_suburb = StringField('Suburb', validators=[DataRequired()])
