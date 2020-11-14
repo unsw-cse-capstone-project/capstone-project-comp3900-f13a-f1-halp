@@ -673,8 +673,8 @@ def viewAuction(AuctionID_):
         registeredBefore = RegisteredAssociation.query.filter_by(RegisteredBidderID=user.id, PropertyID =property_.id).first()
         if not registeredBefore:
             flash(f'Congrats! You registered the auction successfully, this property is in your watching list right now.', 'success')
-            register = RegisteredAssociation(RegisteredBidderID=user.id, PropertyID = property_.id)
-            db.session.add(register)
+            registered = RegisteredAssociation(RegisteredBidderID=user.id, PropertyID = property_.id)
+            db.session.add(registered)
             db.session.commit()
     else:
         flash(f'This auction has already ended', 'warning')
@@ -715,8 +715,9 @@ def viewAuction(AuctionID_):
             db.session.add(bid)
             db.session.commit()
             flash(f'Your Bid has been accepted!', 'success')
-
-        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid, remainingTime=remainingTime)
+        registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
+        
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid, registered=registered,remainingTime=remainingTime)
 
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
 

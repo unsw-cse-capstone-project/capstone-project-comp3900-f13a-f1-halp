@@ -1,4 +1,5 @@
 from models import *
+from server import db
 import smtplib, ssl
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
