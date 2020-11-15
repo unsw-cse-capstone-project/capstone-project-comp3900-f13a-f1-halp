@@ -76,16 +76,16 @@ class AccountForm(FlaskForm):
         return True
 
 class SignupForm(FlaskForm):
-    login_name = StringField('login_name', validators=[DataRequired()])
+    login_name = StringField('Login Name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(),
         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
         message="Minimum 8 letters and should contain at least one number, one lowercase letter, one Uppercase letter and one special character @$!%*?&")])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    email = StringField('Email address', validators = [DataRequired(), Email()]) 
-    address = StringField('address', validators=[DataRequired()])
-    date_of_birth = DateTimeField('Date of birth', format = "%d/%m/%Y", validators=[DataRequired()])
-    phone_number = StringField('phone_number', validators=[DataRequired(), Length(min=10, max=10),Regexp('^\d{10}$', message='Only numbers')])
+    email = StringField('Email Address', validators = [DataRequired(), Email()]) 
+    address = StringField('Address', validators=[DataRequired()])
+    date_of_birth = DateTimeField('Date of Birth', format = "%d/%m/%Y", validators=[DataRequired()])
+    phone_number = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=10),Regexp('^\d{10}$', message='Only numbers')])
 
     submit = SubmitField('Register')
 
@@ -113,10 +113,10 @@ class SignupForm(FlaskForm):
         return True
 
 class LoginForm(FlaskForm):
-    login_name = StringField('login_name', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    login_name = StringField('Login Name', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('logIn')
+    submit = SubmitField('Log In')
 
 class PropertyForm(FlaskForm):
     property_type = SelectField('Property Type', [DataRequired()],

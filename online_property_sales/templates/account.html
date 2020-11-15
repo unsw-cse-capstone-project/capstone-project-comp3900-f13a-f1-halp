@@ -111,7 +111,7 @@
                             <td>************{{i.id[-4:]}}</td>
                             <td>{{i.expire_date.strftime("%m/%Y")}}</td>
                             <td>
-                                <a href={{ url_for("removetBankDetails", card_id=i.id) }} class="btn btn-outline-danger mr-5" style="float: right; width: 100px;">remove</a>
+                                <a href={{ url_for("removetBankDetails", card_id=i.id) }} onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " class="btn btn-outline-danger mr-5" style="float: right; width: 100px;">Remove</a>
                                 <a href={{ url_for("editBankDetails", card_id=i.id) }} class="btn btn-outline-info mr-3" style="float: right; width: 80px;">Edit</a>
                             </td>
                         </tr>
@@ -122,7 +122,7 @@
                     </tr>
                 {% endif %}
                         <tr>
-                            <td colspan="4" style="float: center;"><a href={{ url_for("addBankDetail") }} class="btn btn-outline-info" style="width:150px">Add Bank card</a></td>
+                            <td colspan="4" style="float: center;"><a href={{ url_for("addBankDetail") }} class="btn btn-outline-info" style="width:150px">Add Bank Card</a></td>
                         </tr>
                     </tbody>
                 </table>
