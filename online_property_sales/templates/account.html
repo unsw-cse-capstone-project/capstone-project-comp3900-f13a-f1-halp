@@ -5,7 +5,7 @@
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Edit Account: {{current_user.login_name}}
-                    <a class="btn btn-info btn-lg" style="float: right; margin-bottom: 5px;" href="{{url_for('changePassword', login_name=current_user.login_name)}}">Change Password</a>
+                    <a class="btn btn-info btn-lg" style="float: right; margin-bottom: 5px;" href="{{url_for('changePassword', user_id=current_user.id)}}">Change Password</a>
                 </legend>
 
                 <div class="form-row">
@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="form-group">
-                    {{ form.date_of_birth.label }}<br>
+                    {{ form.date_of_birth.label(class="form-control-label") }}<br>
                     {% if form.date_of_birth.errors %}
 						{{ form.date_of_birth(class="form-control form-control-lg is-invalid") }}
 						<div class="invalid-feedback">
@@ -63,9 +63,10 @@
 							{% endfor %}
 						</div>
 					{% else %}
-						{{ form.date_of_birth(class="form-control form-control-lg") }}
+						{{ form.date_of_birth(class="form-control form-control-lg", placeholder="dd/mm/yyyy") }}
 					{% endif %}
                 </div>
+
                 <div class="form-group">
                     {{ form.phone_number.label }}<br>
                     {% if form.phone_number.errors %}

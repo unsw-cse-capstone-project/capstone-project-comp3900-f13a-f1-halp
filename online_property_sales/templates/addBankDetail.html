@@ -9,7 +9,7 @@
                 <div class="form-group" disabled>
                     {{ form.card_number.label }}<br>
                     {% if form.card_number.errors %}
-                        {{ form.card_number(disabled=True) }}
+                        {{ form.card_number(class="form-control form-control-lg is-invalid")}}
                         <div class="invalid-feedback">
                             {% for error in form.card_number.errors %}
                                 <span>{{ error }}</span>
@@ -19,6 +19,7 @@
                         {{ form.card_number(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                
                 <div class="form-row">
                     <div class="col">
                         {{ form.holder_fname.label }}<br>

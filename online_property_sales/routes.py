@@ -77,23 +77,35 @@ def signup():
         return redirect(url_for('home'))
 
     form = SignupForm()
-
+    fail=False
     if form.validate_on_submit():
 
-        if form.validate_username(form.login_name.data):
+        if not form.validate_email(form.email.data):
+            flash(f'The email has been used by other users, please enter another one','danger')
+            fail=True
 
-            if not form.validate_date_of_birth(form.date_of_birth.data):
-                flash(f'The date of birth should be smaller than current time','danger')
-                return render_template('signup.html', title='signup', form=form)
+        if not form.validate_username(form.login_name.data):
+            flash(f'The username has been taken, please input another one','danger')
+            fail=True
 
-            user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = form.date_of_birth.data, phone_number=form.phone_number.data)
-            user.set_password(form.password.data)
-            db.session.add(user)
-            db.session.commit()
-            flash('Congratulations, you are now a registered user!','success')
-            return redirect(url_for('login'))
-        else:
-            flash('The username has been taken, please input another one','danger')
+        if not form.validate_date_of_birth(form.date_of_birth.data):
+            flash(f'The phone number has been used by other users, please enter another one','danger')
+            fail=True
+
+        if not form.validate_phone_number(form.phone_number.data):
+            flash(f'The date of birth should be smaller than current time','danger')
+            fail=True
+        
+        if fail:
+            return render_template('signup.html', title='signup', form=form)
+
+        user = User(login_name=form.login_name.data, email=form.email.data, address = form.address.data, date_of_birth = form.date_of_birth.data, phone_number=form.phone_number.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!','success')
+        return redirect(url_for('login'))
+            
     return render_template('signup.html', title='signup', form=form)
 
 @app.route('/search', methods=['POST','GET'])
@@ -187,12 +199,12 @@ def viewProperty(property_id):
     return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered, remainingTime=remainingTime)
 
 
-@app.route('/changePassword/<login_name>', methods=['POST','GET'])
+@app.route('/changePassword/<user_id>', methods=['POST','GET'])
 @login_required
-def changePassword(login_name):
+def changePassword(user_id):
 
     form = passwordForm()
-    user = User.query.filter_by(login_name=login_name).first_or_404()
+    user = User.query.get(user_id)
 
     if form.validate_on_submit():
         if form.old_password.data:
@@ -200,48 +212,69 @@ def changePassword(login_name):
                 if form.password.data:
                     user.set_password(form.password.data)
                     db.session.commit()
+                    flash(f'Congrats! You password has been updated','success')
                     return redirect(url_for('home'))
                 else:
-                    flash(f'Please input your new password','info')
+                    flash(f'Please input your new password','danger')
             else:
                 flash(f'Please input correct original password','danger')
         else:
-            flash(f'Please input correct original password and new password','info')
+            flash(f'Please input correct original password and new password','danger')
 
-    return render_template('changePassword.html', title='Change Password', form=form, login_name=login_name)
+    return render_template('changePassword.html', title='Change Password', form=form, user_id=user_id)
 
-@app.route('/account/<login_name>', methods=['POST','GET'])
+@app.route('/account/<user_id>', methods=['POST','GET'])
 @login_required
-def account(login_name):
+def account(user_id):
     
     form = AccountForm()
-    user = User.query.filter_by(login_name=login_name).first_or_404()
+    user = User.query.get(user_id)
     cards = BankDetails.query.filter_by(user_id = current_user.id).all()
-
+    fail=False
     if form.validate_on_submit():
-        #change password after confirmming old password first
+
+        if not form.validate_email(user_id):
+            flash(f'The email has been used by other users, please enter another one','danger')
+            fail=True
+
+        if not form.validate_username(form.login_name.data, user_id):
+            flash(f"Please select another unique name or leave the slot empty for not changing your login name.\nPay attention that login name is case insensitive which means TOM123 and tOm123 are for same login name, only change capitals will not work ", 'danger')
+            fail=True
+
+        if not form.validate_phone_number(user_id):
+            flash(f'The phone number has been used by other users, please enter another one','danger')
+            fail=True
+        
+        if not form.validate_date_of_birth(form.date_of_birth.data):
+            flash(f'The date of birth should be smaller than current time','danger')
+            fail=True
+        
+        if fail:
+             return render_template('account.html', title='account', form=form, user=user, cards = cards, user_id = current_user.id)
+
         if form.login_name.data:
             if form.validate_username(form.login_name.data, user.id):
+                flash('Congrats! The login name has been changed to '+ form.login_name.data, 'success')
                 user.set_login_name(form.login_name.data)
             else:
-                return render_template('account.html', title='account', form=form, user=user, cards = cards)
+                return render_template('account.html', title='account', form=form, user=user, cards = cards, user_id = current_user.id)
 
         user.set_address(form.address.data)
         user.set_phone_number(form.phone_number.data)
-        user.set_date_of_birth( datetime.strptime(form.date_of_birth.data,'%d/%m/%Y'))
+        user.set_date_of_birth(form.date_of_birth.data)
         user.set_email(form.email.data)
         user.set_id_confirmation(form.id_confirmation.data)
         db.session.commit()
 
         if not form.id_confirmation.data or len(cards) == 0:
-            flash(f'To do more actions in our system, it is required to enter the your identification and have at least one card', 'danger')
+            flash(f'To do more actions in our system, it is required to enter the your identification and have at least one card', 'info')
             return render_template('account.html', title='account', form=form, user=user, cards = cards)
         
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
         form.address.data = current_user.address
-        form.date_of_birth.data = current_user.date_of_birth.strftime("%d/%m/%Y")
+        form.date_of_birth.data = current_user.date_of_birth
         form.phone_number.data = current_user.phone_number
         form.email.data = current_user.email
         form.id_confirmation.data = current_user.id_confirmation
@@ -268,6 +301,10 @@ def editBankDetails(card_id):
         if not form.validate_expire_date(expire_date):
             flash(f'The expire date should be greater than current time','danger')
             return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
+            
+        if not form.validate_cvc(form.cvc.data):
+            flash(f"Please input valid CVC number",'danger')
+            return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
 
         if holder_fname:
             card.set_fname(holder_fname)
@@ -280,7 +317,7 @@ def editBankDetails(card_id):
 
         db.session.commit()
         cards = BankDetails.query.filter_by(user_id = current_user.id).all()
-        return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+        return redirect(url_for('account', form=form, user=user, cards = cards, user_id = current_user.id))
 
     elif request.method == 'GET':
         form.card_number.data = card.id
@@ -310,24 +347,29 @@ def addBankDetail():
             flash(f'The expire date should be greater than current time','danger')
             return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
-        if len(card_number)>0:
+        if len(card_number)==16:
             new_card=True
             old_card=BankDetails.query.get(card_number)
             #this card already in our database
             if old_card!=None:
                 new_card=False
-                flash(f"This card already registered by other user", 'danger')
+                flash(f"This card already registered in our system", 'danger')
                 return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
             #this is a new card, all the info should be inputed
             if new_card == True:
+
+                if not form.validate_cvc(form.cvc.data):
+                    flash(f"Please input valid CVC number",'danger')
+                    return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
                 if holder_fname and holder_lname and cvc and expire_date  and expire_date:
                     bank = BankDetails(id=card_number,holder_fname=holder_fname, holder_lname=holder_lname,cvc=cvc, expire_date=expire_date, user=user)
                     flash("Congraduation! you add a new credit card to your account",'success')
                     db.session.add(bank)
                     db.session.commit()
                     cards = BankDetails.query.filter_by(user_id = current_user.id).all()
-                    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+                    return redirect(url_for('account', form=form, user=user, cards = cards, user_id = current_user.id))
                 else:
                     flash(f"This is a new card, the full info of the card should be inserted! And please make sure the date format is correct",'danger')
                     return render_template('addBankDetail.html', title='addBankDetail', form=form)
@@ -344,7 +386,7 @@ def removetBankDetails(card_id):
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     cards = BankDetails.query.filter_by(user_id = current_user.id).all()
 
-    return redirect(url_for('account', form=form, user=user, cards = cards, login_name = current_user.login_name))
+    return redirect(url_for('account', form=form, user=user, cards = cards, user_id = current_user.id))
 
 
 @app.route('/addProperty', methods=['GET', 'POST'])

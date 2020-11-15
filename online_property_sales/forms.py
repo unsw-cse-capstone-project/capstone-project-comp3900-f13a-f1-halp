@@ -15,14 +15,17 @@ class BankDetailsForm(FlaskForm):
     card_number = StringField ( 'Card Number',validators=[ DataRequired(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
     cvc = StringField ( 'CVC', validators=[ DataRequired(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
     expire_date = DateTimeField('Expire Date', format = "%m/%Y", validators=[DataRequired()])
-
     submit = SubmitField()
 
     def validate_expire_date(self, value):
-        if datetime.now() < self.expire_date.data:
-            return True
-        return False
+        if datetime.now() > self.expire_date.data:
+            return False
+        return True
 
+    def validate_cvc(self, value):
+        if self.cvc.data == '000':
+            return False
+        return True
 
 class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
@@ -41,24 +44,36 @@ class passwordForm(FlaskForm):
 
 class AccountForm(FlaskForm):
     login_name = StringField('Login name', validators=[Optional()])
-    email = StringField('Email', validators=[Optional(), Email()])
-    address = StringField('Address')
-    date_of_birth = StringField('Date of Birth',validators=[ Optional(),Regexp('^[0-9]{2}/[0-9]{2}/[0-9]{4}$', message='Please input following the fomat dd/mm/yyyy e.g. 01/06/2022 ')])
-    phone_number = StringField ('Phone Number',  validators=[ Optional(),Length(min=10, max=10) ] )
-    id_confirmation = StringField ('Id Confirmation')
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    address = StringField('Address', validators=[DataRequired()])
+    date_of_birth = DateTimeField('Date of birth', format = "%d/%m/%Y", validators=[DataRequired()])
+    phone_number = StringField ('Phone Number',  validators=[ DataRequired(),Length(min=10, max=10) ] )
+    id_confirmation = StringField ('Id Confirmation', validators=[Optional()])
 
     submit = SubmitField('Submit')
 
     def validate_username(self, login_name, user_id):
         user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
-        if user is not None:
-            if user.id == user_id:
-                flash(f"Please select another unique name or leave the slot empty for not changing your login name", 'danger')
-            else:
-                flash(f"Please select another unique name!", 'danger')
+        if user is not None and str(user.id) != user_id:
+            return False
+        return True
+        
+    def validate_email(self, user_id):
+        user = User.query.filter( User.email == self.email.data).first()
+        if user is not None and str(user.id) != user_id:
             return False
         return True
     
+    def validate_phone_number(self, user_id):
+        user = User.query.filter( User.phone_number == self.phone_number.data).first()
+        if user is not None and str(user.id) != user_id:
+            return False
+        return True
+
+    def validate_date_of_birth(self, date_of_birth):
+        if datetime.now() <= self.date_of_birth.data:
+            return False
+        return True
 
 class SignupForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
@@ -77,14 +92,25 @@ class SignupForm(FlaskForm):
     def validate_username(self, login_name):
         user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
         if user is not None:
-            flash("Please select another unique name!")
+            return False
+        return True
+
+    def validate_email(self, email):
+        user = User.query.filter( User.email == self.email.data).first()
+        if user is not None:
+            return False
+        return True
+    
+    def validate_phone_number(self, phone_number):
+        user = User.query.filter( User.phone_number == self.phone_number.data).first()
+        if user is not None:
             return False
         return True
 
     def validate_date_of_birth(self, date_of_birth):
-        if datetime.now() > self.date_of_birth.data:
-            return True
-        return False
+        if datetime.now() <= self.date_of_birth.data:
+            return False
+        return True
 
 class LoginForm(FlaskForm):
     login_name = StringField('login_name', validators=[DataRequired()])
