@@ -488,6 +488,7 @@ def edit_property(p_id):
     return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
     
 @app.route("/property")
+@login_required
 def property_list():
     # returns list of properties from user
 
@@ -515,6 +516,7 @@ def property_list():
     return render_template('property.html', properties = my_properties,registered_properties=registered_properties, now_date = time_shift_1hr)
 
 @app.route("/changeStatus/<p_id>")
+@login_required
 def change_status(p_id):
     to_change = Property.query.filter_by(id=p_id).all()
     if to_change[0].status == "auction":
@@ -524,7 +526,24 @@ def change_status(p_id):
     db.session.commit()
     return redirect(url_for('property_list'))
 
+@app.route("/inspectionTime/<p_id>", methods=['GET', 'POST'])
+@login_required
+def inspection_time(p_id):
+    p = Property.query.filter_by(id=p_id).all()
+    form = EditInspectionDate()
+
+    if form.validate_on_submit():
+        new_time = form.inspection_date.data
+        q = Property.query.filter_by(id = p_id).all()
+        q[0].inspection_date = new_time
+        db.session.commit()
+        return render_template('inspection.html', p = p[0], form = form)
+
+    return render_template('inspection.html', p = p[0], form = form)
+
+
 @app.route("/removeProperty/<p_id>")
+@login_required
 def remove_property(p_id):
     to_remove = Property.query.filter_by(id=p_id).delete()
     db.session.commit()
@@ -572,6 +591,7 @@ def save_pic(form_pic):
     return pic_fmt
 
 @app.route("/removeImage/<p_id>/<i_id>")
+@login_required
 def remove_image(p_id, i_id):
     img = Photos.query.get(i_id)
     os.remove(os.path.join('static/propertyImage/', img.photo))
