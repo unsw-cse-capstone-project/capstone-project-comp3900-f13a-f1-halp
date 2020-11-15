@@ -31,6 +31,9 @@ class searchForm(FlaskForm):
     auction_before =  DateTimeField('Auction Before', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
     auction_after = DateTimeField('Auction After', format='%Y-%m-%d %H:%M:%S',validators=[Optional()])
     suburb = SelectField('Suburb', validators=[Optional()])
+    state = SelectField('State', validators=[Optional()])
+    street = StringField('Street Name',validators=[Optional()])
+    postcode = StringField('Postcode', validators=[Optional()])
     submit = SubmitField('Search')
     clear = SubmitField('Clear Filter')
 

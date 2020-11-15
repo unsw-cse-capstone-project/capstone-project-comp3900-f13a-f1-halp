@@ -7,7 +7,7 @@ from sqlalchemy import func, desc
 from forms import *
 from validateProperty import *
 from flask_mail import Message
-# from PIL import Image
+from PIL import Image
 import random
 import sys
 import os
@@ -113,8 +113,10 @@ def signup():
 def search():
     form=searchForm()
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
+    available_states=db.session.query(Property.add_state).distinct(Property.add_state)
     #load all suburbs in db and initial with an empty value
     form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
+    form.state.choices=[("")]+[(i.add_state) for i in available_states]
 
     full_list = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
@@ -130,6 +132,10 @@ def search():
             form.auction_before.raw_data=['']
             form.auction_after.raw_data=['']
             form.suburb.data=''
+            form.state.data=''
+            form.street.data=''
+            form.postcode.data=''
+
             return render_template('search.html', title='search', form=form, properties=full_list)
 
         elif form.submit.data:
@@ -137,7 +143,10 @@ def search():
             before=form.auction_before.data
             after=form.auction_after.data
             suburb = form.suburb.data
-            
+            state = form.state.data
+            street = form.street.data
+            postcode = form.postcode.data
+
             if before or after:
                 input_form=True
                 if before and not after :
@@ -161,6 +170,45 @@ def search():
                     property_Id= list(intersection)
                 else:
                     property_Id = property_Id + suburb_Id
+
+                input_form=True
+            
+            if state:
+                temp= db.session.query(Property.id).filter(Property.add_state==state)
+                state_Id=[int(i.id) for i in temp]
+
+                if input_form==True:
+                    list_as_set=set(property_Id)
+                    intersection = list_as_set.intersection(state_Id)
+                    property_Id= list(intersection)
+                else:
+                    property_Id = property_Id + state_Id
+
+                input_form=True
+
+            if street:
+                temp= db.session.query(Property.id).filter(Property.add_name==street)
+                street_Id=[int(i.id) for i in temp]
+
+                if input_form==True:
+                    list_as_set=set(property_Id)
+                    intersection = list_as_set.intersection(street_Id)
+                    property_Id= list(intersection)
+                else:
+                    property_Id = property_Id + street_Id
+
+                input_form=True
+
+            if postcode:
+                temp= db.session.query(Property.id).filter(Property.add_pc == postcode)
+                postcode_Id=[int(i.id) for i in temp]
+
+                if input_form==True:
+                    list_as_set=set(property_Id)
+                    intersection = list_as_set.intersection(postcode_Id)
+                    property_Id= list(intersection)
+                else:
+                    property_Id = property_Id + postcode_Id
 
                 input_form=True
 
@@ -187,6 +235,11 @@ def viewProperty(property_id):
     if auction:
         highestBid = Bid.query.filter_by(AuctionID = auction.id).order_by(desc(Bid.Amount)).first()
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_id, RegisteredBidderID=current_user.id).first()
+        if datetime.now() >= auction.AuctionEnd:
+            end=True
+        else:
+            end=False
+
         if datetime.now() < auction.AuctionStart or datetime.now()>auction.AuctionEnd:
             remainingTime = None
         else:
@@ -195,8 +248,9 @@ def viewProperty(property_id):
         highestBid = None
         registered = None
         remainingTime = None
-    
-    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered, remainingTime=remainingTime)
+        end=False
+
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered, remainingTime=remainingTime, end=end)
 
 
 @app.route('/changePassword/<user_id>', methods=['POST','GET'])
@@ -301,7 +355,7 @@ def editBankDetails(card_id):
         if not form.validate_expire_date(expire_date):
             flash(f'The expire date should be greater than current time','danger')
             return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
-            
+
         if not form.validate_cvc(form.cvc.data):
             flash(f"Please input valid CVC number",'danger')
             return render_template('editBankDetails.html', title='editBankDetails', form=form, card = card)
@@ -427,7 +481,6 @@ def add_property():
             # if everything is successful, redirects to property list
             return redirect(url_for('property_list'))
         else:
-            flash(f"One or more fields have been entered incorrectly. Please try again.",'danger')
             return render_template('addProperty.html', title = 'addProperty', form = form)
     
     return render_template('addProperty.html', title = 'addProperty', form = form)
@@ -443,7 +496,7 @@ def edit_property(p_id):
     form = PropertyForm()
 
     if form.validate_on_submit():
-        if check_edited_updates(form):
+        if check_all_details(form):
             # Success
             p_type = form.property_type.data
             p_add_unit = form.add_unit.data
@@ -463,49 +516,48 @@ def edit_property(p_id):
             p_i_date = form.inspection_date.data
 
             # Cheap hack
-            if p_type:
-                p[0].property_type = p_type
-            
-            if p_add_unit or p_add_num or p_add_name or p_add_suburb or p_add_state or p_add_pc:
-                p[0].add_unit = p_add_unit
-                p[0].add_num = p_add_num
-                p[0].add_name = p_add_name
-                p[0].add_suburb = p_add_suburb
-                p[0].add_state = p_add_state
-                p[0].add_pc = p_add_pc
+            # if p_type:
+            p[0].property_type = p_type
+        
+        # if p_add_unit or p_add_num or p_add_name or p_add_suburb or p_add_state or p_add_pc:
+            p[0].add_unit = p_add_unit
+            p[0].add_num = p_add_num
+            p[0].add_name = p_add_name
+            p[0].add_suburb = p_add_suburb
+            p[0].add_state = p_add_state
+            p[0].add_pc = p_add_pc
 
-            if p_n_beds:
-                p[0].num_bedrooms = p_n_beds
+        # if p_n_beds:
+            p[0].num_bedrooms = p_n_beds
 
-            if p_n_baths:
-                p[0].num_bathrooms = p_n_baths
+        # if p_n_baths:
+            p[0].num_bathrooms = p_n_baths
 
-            if p_n_park:
-                p[0].num_parking = p_n_park
+        # if p_n_park:
+            p[0].num_parking = p_n_park
 
-            if p_p_features:
-                p[0].parking_features = p_p_features
+        # if p_p_features:
+            p[0].parking_features = p_p_features
 
-            if p_b_size:
-                p[0].building_size = p_b_size
+        # if p_b_size:
+            p[0].building_size = p_b_size
 
-            if p_l_size:
-                p[0].land_size = p_l_size
+        # if p_l_size:
+            p[0].land_size = p_l_size
 
-            if p_desc:
-                p[0].description = p_desc
+        # if p_desc:
+            p[0].description = p_desc
 
-            if p_year:
-                p[0].year_built = p_year
+        # if p_year:
+            p[0].year_built = p_year
 
-            if p_i_date:
-                p[0].inspection_date = p_i_date
+        # if p_i_date:
+            p[0].inspection_date = p_i_date
 
             db.session.commit()
             return redirect(url_for('property_list'))
 
         else:
-            flash(f'One or more fields have been entered incorrectly. Please try again.','danger')
             return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
 
     elif request.method == 'GET':
@@ -601,22 +653,22 @@ def removeRegisteredProperty(p_id):
 @login_required
 def property_image(p_id):
 
-    p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
-    # address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
-    # print(address)
-
-    img = Photos.query.filter_by(property_id=p_id).all()
     
     form = AddImageForm()
+
     if form.validate_on_submit():
-        print("adding Image")
-        print(form.image.data)
-        pic = Photos(photo = save_pic(form.image.data), property_id = p_id)
-        db.session.add(pic)
-        db.session.commit()
+        if form.image.data:
+            print("adding Image")
+            print(form.image.data)
+            pic = Photos(photo = save_pic(form.image.data), property_id = p_id)
+            db.session.add(pic)
+            db.session.commit()
+        else:
+            flash(f'Please upload an image', 'warning')
 
-        return redirect(url_for('property_list'))
-
+        img = Photos.query.filter_by(property_id=p_id).all()
+        return render_template('propertyImage.html', form=form, image=img, property=p_id)
+    img = Photos.query.filter_by(property_id=p_id).all()
     return render_template('propertyImage.html', form=form, image=img, property=p_id)
 
 def save_pic(form_pic):
@@ -636,7 +688,7 @@ def save_pic(form_pic):
 @login_required
 def remove_image(p_id, i_id):
     img = Photos.query.get(i_id)
-    os.remove(os.path.join('static/propertyImage/', img.photo))
+    os.remove(os.path.join(app.root_path, 'static/propertyImage', img.photo))
     Photos.query.filter_by(id=i_id).delete()
     db.session.commit()
     return redirect(url_for('property_image', p_id = p_id))
@@ -663,6 +715,10 @@ def createAuction():
         if form.auctionStart.data < datetime.now() or form.auctionStart.data > form.auctionEnd.data:
             flash('Please set valid auction time', 'danger')
             return render_template('createAuction.html', form = form)
+        if form.reservePrice.data <= 0:
+            flash('The reserve price has to be greater than 0', 'danger')
+            return render_template('createAuction.html', form = form)
+
         user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
         auctionDetails = AuctionDetails(PropertyID = PropertyID_, SellerID = current_user.id, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
             ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
@@ -692,6 +748,13 @@ def changeAuctionDetails(AuctionID_):
     form = RegistrationForm()
     if form.validate_on_submit():
         auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+        if form.auctionStart.data >= form.auctionEnd.data:
+            flash(f'Start time has to be eariler than End time', 'danger')
+            return render_template('changeAuctionDetails.html', form=form)
+        if form.reservePrice.data <= 0:
+            flash('The reserve price has to be greater than 0', 'danger')
+            return render_template('createAuction.html', form = form)
+
         auction.AuctionStart = form.auctionStart.data
         auction.AuctionEnd = form.auctionEnd.data
         auction.ReservePrice = form.reservePrice.data

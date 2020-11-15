@@ -30,16 +30,17 @@
     <a href="{{ url_for('property_list') }}"><button class="btn btn-primary mb-2">Back</button></a>
 
 
-    <ul class='list-group'>
+    <div class='row'>
         {% for i in image %}
-            <li class='list-group-item'>
+            <div class='col-5 border mb-2 pl-0 pr-0 ml-5 mr-4'>
                 <img src="/static/propertyImage/{{ i.photo }}" alt="" style="width: 100%;">
                 <br>
-                <a href="{{ url_for('remove_image', p_id = property, i_id = i.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-outline-danger btn-lg mt-2' type="submit">Remove Image</button></a>
-            </li>
-            
+                <a href="{{ url_for('remove_image', p_id = property, i_id = i.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} ">
+                    <button class='btn btn-outline-danger mt-2' style="width: 100%;" type="submit">Remove Image</button>
+                </a>
+            </div>
         {% endfor %}
-        </ul>
+    </div>
 </form>
 
 </div>

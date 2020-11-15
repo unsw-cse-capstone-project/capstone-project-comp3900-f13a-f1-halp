@@ -63,14 +63,13 @@
                             {% if property.add_unit %}
                                 {{property.add_unit}} /
                             {% endif %}
-                            {{property.add_num}} {{property.add_name}} {{property.add_suburb}} {{property.add_state}} {{property.pc}}, Australia
+                            {{property.add_num}} {{property.add_name}}, {{property.add_suburb}}, {{property.add_state}} {{property.add_pc}}, Australia
                         </h4>
                         <h4 class="card-title">{{property.property_type}} Features </h4>
                         <p class="card-text">
 							<span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{property.num_bedrooms}}</span>
-							<span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_bedrooms}}</span>
+							<span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_bathrooms}}</span>
                             <span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{property.num_parking}}</span> <br>
-                            <span>Parking Features: {{property.parking_features}}</span>
                         </p>
                         {% if auction.AuctionStart and auction.AuctionEnd %}
                             <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0 text-center" style="width: 49%; float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
@@ -83,13 +82,14 @@
                         
                         <h4 class="card-title">Inspection date</h4>
                         {% if property.inspection_date %}
-                            <p class="card-text">{{property.inspection_date}}</p>
+                            <p class="card-text">{{property.inspection_date.year}}-{{property.inspection_date.month}}-{{property.inspection_date.day}} 9am to 5pm</p>
                         {% else %}
                             <p class="card-text">The inspection date has not been setted up yet, please wait or you can contact us to make a schedule for you to visit.</p>
                         {% endif %}
 
                         <h4 class="card-title"> Desciption </h4>
                         <p class="card-text">{{property.description}}</p>
+                        <p style="font-size: 18px;"> <strong>Parking Features: </strong>  {{property.parking_features}}</p>
                     </div>
                 </div>
     </div>
@@ -105,7 +105,7 @@
                 </p>
             </div>
             {% if auction %}
-                {% if not remainingTime %}
+                {% if property.status=='sold' or end %}
                 <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
                     <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled>Auction Ends</button>
                 </a>

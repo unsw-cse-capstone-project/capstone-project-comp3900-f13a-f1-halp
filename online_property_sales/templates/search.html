@@ -33,7 +33,21 @@
 						{% endif %}	
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group mt-2">
+					{{ form.street.label }}<br>
+					{% if form.street.errors %}
+						{{ form.street(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.street.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.street(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="form-row">
+					<div class="col">
 					{{ form.suburb.label }}<br>
 					{% if form.suburb.errors %}
 						{{ form.suburb(class="form-control form-control-lg is-invalid") }}
@@ -45,16 +59,45 @@
 					{% else %}
 						{{ form.suburb(class="form-control form-control-lg") }}
 					{% endif %}
+					</div>
+					<div class="col">
+					{{ form.state.label }}<br>
+					{% if form.state.errors %}
+						{{ form.state(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.state.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.state(class="form-control form-control-lg") }}
+					{% endif %}
+					</div>
+					<div class="col">
+					{{ form.postcode.label }}<br>
+					{% if form.postcode.errors %}
+						{{ form.postcode(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.postcode.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.postcode(class="form-control form-control-lg", placeholder="e.g. 2033") }}
+					{% endif %}
+					</div>
 				</div>
-				<div class="form-group">{{ form.submit(class="btn btn-info btn-lg mr-5" ,style="width:200px") }} {{ form.clear (class="btn btn-warning btn-lg",style="width:200px") }}</div>
+				<div class="form-group mt-4 mb-0">
+					{{ form.submit(class="btn btn-info btn-lg mr-5" ,style="width:200px") }} 
+					{{ form.clear (class="btn btn-warning btn-lg",style="width:200px") }}
+				</div>
 			</fieldset>
 		</form>
 	</div>
 	<div class="row col-xl-15">
-		{% if not properties %}
-				<div style="width:100%; text-align: center;">
-				<h2 class="text-info">No results found.</h2>
-				</div>
+		{% if properties.count() == 0 %}
+			<div style="width:100%; text-align: center; margin-bottom: 100px;">
+				<h1 class="text-info">No results found.</h1>
 			</div>
 		{% else %}
 			{% for (p,a,b) in properties %}
@@ -81,15 +124,15 @@
                         {% endif%}
                     </h6>
 					<div class="card-body text-info">
-						<h4 class="card-title">
+						<h4 class="card-title" style="font-size: 20px;">
 							{% if p.add_unit %}
 								{{p.add_unit}} /
 							{% endif %}
-							{{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
+							{{p.add_num}} {{p.add_name}}, {{p.add_suburb}} <br> {{p.add_state}}, {{p.add_pc}}, Australia
 						</h4>
 						<p class="card-text">
 							<span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
-							<span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+							<span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bathrooms}}</span>
 							<span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
 							<span style="float: right; margin-top: 7px;">{{p.property_type}}</span>
 						</p>
@@ -99,6 +142,6 @@
 				</div>
 			{% endfor %}
 		{% endif %}
-		
 	</div>
+</div>
 {% endblock %}

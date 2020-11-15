@@ -10,7 +10,9 @@
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
         <div class="content-section">
             {% if not properties %}
-                <h1>No properties found. Add one now!</h1>
+            <div style="width:100%; text-align: center;">
+				<h1 class="text-info">No properties found. Add one now!</h1>
+			</div>
             {% else %}
             <div class="row col-xl-15">
                 {% for (p,a,b) in properties %}
@@ -32,21 +34,21 @@
                         {% endif %}
                         <h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 30px;" >
                             {% if b:%}
-                                highestBid: {{b}} $
+                                Highest Bid: {{b}} $
                             {% else %}
                                 No bids
                             {% endif%}
                         </h6>
                         <div class="card-body text-info">
-                            <h4 class="card-title">
+                            <h4 class="card-title" style="font-size: 25px;">
                                 {% if p.add_unit %}
                                     {{p.add_unit}} /
                                 {% endif %}
-                                {{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
+                                {{p.add_num}} {{p.add_name}}, {{p.add_suburb}} <br> {{p.add_state}}, {{p.add_pc}}, Australia
                             </h4>
                             <p class="card-text">
                                 <span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
-                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bathrooms}}</span>
                                 <span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
                                 <span style="margin-top: 7px; margin-left: 10px;">{{p.property_type}}</span>
                             </p>
@@ -76,7 +78,7 @@
                                     <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Add/View Image</button></a></span>
                                     <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' disabled>Edit Auction</button></a></span>
                                 </div>
-                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " disabled><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit' disabled>Remove</button></a>
                             {% else %}
                                 <div class="mt-2 mb-2"> 
                                     <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Edit Property</button></a></span>
@@ -117,14 +119,16 @@
             </div>
             {% endif %}
         <a href="{{ url_for('add_property') }}">
-            <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
+            <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px; margin-left: 440px;" type='submit'>Add a Property</button>
         </a>
         </div>
     </div>
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <div class="content-section">
             {% if not registered_properties %}
-                <h1>Not registered properties for bidding.</h1>
+                <div style="width:100%; text-align: center;">
+                    <h1 class="text-info">Not registered properties for bidding.</h1>
+                </div>
             {% else %}
             <div class="row col-xl-15">
                 {% for (p,a,b) in registered_properties %}
@@ -146,21 +150,21 @@
                         {% endif %}
                         <h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 30px;" >
                             {% if b:%}
-                                highestBid: {{b}} $
+                                Highest Bid: {{b}} $
                             {% else %}
                                 No bids
                             {% endif%}
                         </h6>
                         <div class="card-body text-info">
-                            <h4 class="card-title">
+                            <h4 class="card-title" style="font-size: 25px;">
                                 {% if p.add_unit %}
                                     {{p.add_unit}} /
                                 {% endif %}
-                                {{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
+                                {{p.add_num}} {{p.add_name}}, {{p.add_suburb}} <br> {{p.add_state}}, {{p.add_pc}}, Australia
                             </h4>
                             <p class="card-text">
                                 <span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
-                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bathrooms}}</span>
                                 <span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
                                 <span style="margin-top: 7px; margin-left: 10px;">{{p.property_type}}</span>
                             </p>
@@ -190,7 +194,7 @@
             </div>
             {% endif %}
             <a href="{{ url_for('search') }}">
-                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Search for Property</button>
+                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px; margin-left: 440px;">Search for Property</button>
             </a>
         </div>
     </div>
