@@ -61,7 +61,7 @@ class AccountForm(FlaskForm):
     
 
 class SignupForm(FlaskForm):
-    login_name = StringField('login_name', validators=[DataRequired()])
+    login_name = StringField('Login Name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(),
         Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
         message="Minimum 8 letters and should contain at least one number, one lowercase letter, one Uppercase letter and one special character @$!%*?&")])
@@ -87,8 +87,8 @@ class SignupForm(FlaskForm):
         return False
 
 class LoginForm(FlaskForm):
-    login_name = StringField('login_name', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    login_name = StringField('Login Name', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('logIn')
 
