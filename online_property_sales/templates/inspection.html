@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-section">
+    <br><br><br>
+
+    <h2 class="title">Inspection Time</h2>
+    <h3>Your current inspection date is: <b>{{ p.inspection_date }}</b></h3>
+    
+    <form action="" method="POST" action="inspectionTime/{{p.id}}" style="margin-top: 50px;" novalidate>
+        <fieldset class="form-group">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.inspection_date.label }}<br>
+                {% if form.inspection_date.errors %}
+                    {{ form.inspection_date(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.inspection_date.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.inspection_date(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">{{ form.submit(class="btn btn-info btn-lg") }}</div>
+            
+        </fieldset>
+        
+    </form>
+</div>
+
+
+{% endblock content %}
