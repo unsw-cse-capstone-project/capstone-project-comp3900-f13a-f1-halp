@@ -131,6 +131,10 @@ class AddImageForm(FlaskForm):
     image = FileField('Add Image', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Submit')
 
+class EditInspectionDate(FlaskForm):
+    inspection_date = DateField('Date of Inspection')
+    submit = SubmitField('Submit')
+
 class RegistrationForm(FlaskForm):
     auctionStart = DateTimeField('Auction Start Time', validators=[DataRequired()])
     auctionEnd = DateTimeField('Auction End Time', validators=[DataRequired()])
