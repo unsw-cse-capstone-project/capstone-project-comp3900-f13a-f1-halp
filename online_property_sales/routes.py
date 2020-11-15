@@ -35,6 +35,7 @@ import humanfriendly
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
 sched.start()
+print("!!!!!!!!!!!")
 
 @app.route('/')
 @app.route('/home')
