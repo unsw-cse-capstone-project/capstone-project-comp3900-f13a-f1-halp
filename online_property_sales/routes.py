@@ -35,7 +35,6 @@ import humanfriendly
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
 sched.start()
-print("!!!!!!!!!!!")
 
 @app.route('/')
 @app.route('/home')
@@ -511,9 +510,10 @@ def property_list():
                                 .group_by(Property.id)
 
     time_shift_1hr = datetime.now() + timedelta(hours=1)
+    Onehr=timedelta(hours=1)
     # needs to add in auction start time and end time
 
-    return render_template('property.html', properties = my_properties,registered_properties=registered_properties, now_date = time_shift_1hr)
+    return render_template('property.html', properties = my_properties,registered_properties=registered_properties, now_date = time_shift_1hr, Onehr=Onehr)
 
 @app.route("/changeStatus/<p_id>")
 @login_required

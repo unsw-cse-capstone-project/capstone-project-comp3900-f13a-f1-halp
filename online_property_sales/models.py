@@ -222,7 +222,7 @@ def clear_session():
 
 def initial_db():
 
-    clear_session()
+    # clear_session()
     db.create_all()
 
     u1= User(login_name='Tom123@g', id=None, email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')

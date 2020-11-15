@@ -73,12 +73,12 @@
                             <span>Parking Features: {{property.parking_features}}</span>
                         </p>
                         {% if auction.AuctionStart and auction.AuctionEnd %}
-                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
+                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0 text-center" style="width: 49%; float: left; font-size: 20px;"> Auction start: {{auction.AuctionStart}} </p>
                             <p style="float: left; color: black;" class="mb-0">--</p>
-                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0" style="float: left; font-size: 20px;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
+                            <p class="text-dark bg-warning rounded pl-2 pr-2 mb-0 text-center" style="width: 49%; float: right; font-size: 20px;"> Auction End: {{auction.AuctionEnd}} </p> <br><br>
                             {% if remainingTime %}
-                                <p class="rounded bg-danger text-white pl-2 text-center" style="font-size: 20px; width: 646.17px;">Auction Remaining: {{remainingTime}}</p>
-                                {% endif %}
+                                <p class="rounded bg-danger text-white pl-2 text-center" style="font-size: 20px; width: 100%;">Auction Remaining: {{remainingTime}}</p>
+                            {% endif %}
                         {% endif %}
                         
                         <h4 class="card-title">Inspection date</h4>
@@ -105,7 +105,11 @@
                 </p>
             </div>
             {% if auction %}
-                {% if registered %}
+                {% if not remainingTime %}
+                <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
+                    <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled>Auction Ends</button>
+                </a>
+                {% elif registered %}
                 <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
                     <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" >Place a Bid</button>
                 </a>

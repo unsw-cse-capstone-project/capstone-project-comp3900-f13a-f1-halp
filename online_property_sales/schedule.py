@@ -25,7 +25,7 @@ def end(AuctionID_):
             property_.status = "Under Offer"
     else:
         property_.status = "Under Offer"
-
+        
     db.session.commit()
     otherBids = Bid.query.filter_by(AuctionID = AuctionID_)
 
