@@ -15,6 +15,7 @@ import secrets
 from apscheduler.schedulers.background import BackgroundScheduler
 from schedule import hourlyEmail
 from datetime import datetime, timedelta
+import humanfriendly
 
 # initial_db()
 
@@ -30,6 +31,7 @@ from datetime import datetime, timedelta
 # def hourlyEmail():
 #     end(1)
 
+
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
 sched.start()
@@ -38,17 +40,11 @@ sched.start()
 @app.route('/home')
 def home():
 
-    # msg = Message("Hello", 
-    #                 sender = 'AuctionWorldWideWeb@gmail.com',
-    #                 recipients=["unswroy@gmail.com"])
-
-    # msg.body = "Hello Flask message sent from Flask-Mail"
-    # mail.send(msg)
-    since = datetime.now() - timedelta(hours=1)
+    since = datetime.now() - timedelta(minutes=1)
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:
-        flash(auction.id)
-    flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
+        flash("Auction "+ str(auction.id)+" finished in last minutes",'info')
+    # flash(f"Users are able to login with case insensitive login name, which means Tom123@g and tOM123@G is the same user. We have two users who have same password as their login_name in our db: Tom123@g and Cloudia0@g",'info')
     return render_template('home.html')
 
 @app.route('/login', methods = ['GET','POST'])
@@ -107,7 +103,11 @@ def search():
     available_suburbs=db.session.query(Property.add_suburb).distinct(Property.add_suburb)
     #load all suburbs in db and initial with an empty value
     form.suburb.choices=[("")]+[(i.add_suburb) for i in available_suburbs]
-    full_list=db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails)
+
+    full_list = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+                        .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+                        .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+                        .group_by(Property.id)
     property_Id=[]
 
     #auction time -> auction id list -> property id list
@@ -153,7 +153,12 @@ def search():
                 input_form=True
 
             if input_form==True:
-                property_with_auction = db.session.query(Property,AuctionDetails).outerjoin(AuctionDetails).filter(Property.id.in_(property_Id)).all()
+                property_with_auction = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+                                                    .filter(Property.id.in_(property_Id))\
+                                                    .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+                                                    .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+                                                    .group_by(Property.id)
+                        
             else: 
                 property_with_auction =full_list
 
@@ -163,9 +168,23 @@ def search():
 
 @app.route('/viewProperty/<property_id>', methods=['POST','GET'])
 def viewProperty(property_id):
+    
     property_info = Property.query.filter_by(id=property_id).first_or_404()
     seller = User.query.get(property_info.seller)
-    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=property_info.auctionId)
+    auction = AuctionDetails.query.filter_by(PropertyID = property_id).first()
+    if auction:
+        highestBid = Bid.query.filter_by(AuctionID = auction.id).order_by(desc(Bid.Amount)).first()
+        registered = RegisteredAssociation.query.filter_by(PropertyID = property_id, RegisteredBidderID=current_user.id).first()
+        if datetime.now() < auction.AuctionStart or datetime.now()>auction.AuctionEnd:
+            remainingTime = None
+        else:
+            remainingTime = humanfriendly.format_timespan(auction.AuctionEnd - datetime.now())
+    else:
+        highestBid = None
+        registered = None
+        remainingTime = None
+    
+    return render_template('viewProperty.html', title='View Property', property=property_info, seller= seller, auction=auction, highestBid=highestBid, registered=registered, remainingTime=remainingTime)
 
 
 @app.route('/changePassword/<login_name>', methods=['POST','GET'])
@@ -447,6 +466,24 @@ def edit_property(p_id):
             flash(f'One or more fields have been entered incorrectly. Please try again.','danger')
             return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
 
+    elif request.method == 'GET':
+            form.property_type.data = p[0].property_type
+            form.add_unit.data = p[0].add_unit
+            form.add_num.data = p[0].add_num
+            form.add_name.data = p[0].add_name
+            form.add_suburb.data = p[0].add_suburb
+            form.add_state.data = p[0].add_state
+            form.add_pc.data = p[0].add_pc
+            form.num_bedrooms.data = p[0].num_bedrooms
+            form.num_bathrooms.data = p[0].num_bathrooms
+            form.num_parking.data = p[0].num_parking
+            form.parking_features.data = p[0].parking_features
+            form.building_size.data = p[0].building_size
+            form.land_size.data = p[0].land_size
+            form.description.data = p[0].description
+            form.year_built.data = p[0].year_built
+            form.inspection_date.data = p[0].inspection_date
+
     return render_template('editProperty.html', title = 'editProperty', form = form, property = p)
     
 @app.route("/property")
@@ -454,13 +491,28 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
-    properties = Property.query.filter_by(seller=current_user.id).all()
-    
+    my_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+                        .filter(Property.seller==current_user.id)\
+                        .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+                        .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+                        .group_by(Property.id)
+    if my_properties.count() == 0:
+        my_properties=None
+    propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=current_user.id).all()
+    registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
+    if len(registeredID_list) == 0:
+        registered_properties =None
+    else:
+        registered_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
+                                .filter(Property.id.in_(registeredID_list))\
+                                .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
+                                .outerjoin(Bid, Bid.AuctionID == AuctionDetails.id)\
+                                .group_by(Property.id)
+
     time_shift_1hr = datetime.now() + timedelta(hours=1)
-    
     # needs to add in auction start time and end time
 
-    return render_template('property.html', properties = properties, now_date = time_shift_1hr)
+    return render_template('property.html', properties = my_properties,registered_properties=registered_properties, now_date = time_shift_1hr)
 
 @app.route("/changeStatus/<p_id>")
 @login_required
@@ -496,12 +548,15 @@ def remove_property(p_id):
     db.session.commit()
     return redirect(url_for('property_list'))
 
+@app.route("/removeRegisteredProperty/<p_id>")
+def removeRegisteredProperty(p_id):
+    to_remove = RegisteredAssociation.query.filter_by(PropertyID=p_id, RegisteredBidderID=current_user.id).delete()
+    db.session.commit()
+    return redirect(url_for('property_list'))
+
 @app.route('/propertyImage/<p_id>', methods=['POST','GET'])
 @login_required
 def property_image(p_id):
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     p = Property.query.filter_by(seller=current_user.id, id=p_id).all()
     # address = p[0].add_unit + '/' + p[0].add_num + ' ' + p[0].add_name + ' ' + p[0].add_suburb + ' ' + p[0].add_state + ' ' + p[0].add_pc
@@ -562,8 +617,10 @@ def createAuction():
 
     form = RegistrationForm()
     if form.validate_on_submit():
+        if form.auctionStart.data < datetime.now() or form.auctionStart.data > form.auctionEnd.data:
+            flash('Please set valid auction time', 'danger')
+            return render_template('createAuction.html', form = form)
         user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
-        #id is automatically generated by database
         auctionDetails = AuctionDetails(PropertyID = PropertyID_, SellerID = current_user.id, AuctionStart = form.auctionStart.data, AuctionEnd = form.auctionEnd.data, 
             ReservePrice = form.reservePrice.data, MinBiddingGap = form.minBiddingGap.data)
         db.session.add(auctionDetails)
@@ -574,21 +631,18 @@ def createAuction():
         cards=BankDetails.query.filter_by(id=card_number).all()
     return render_template('createAuction.html', form = form)
 
-@app.route("/auction", methods=['GET', 'POST'])
-def auctions():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
+# @app.route("/auction", methods=['GET', 'POST'])
+# def auctions():
+#     if current_user.is_anonymous:
+#         flash('Please login first')
+#         return redirect(url_for('login'))
 
-    auctions = AuctionDetails.query.filter_by(SellerID = current_user.id).all()
-    return render_template('auctions.html', auctions=auctions)
+#     auctions = AuctionDetails.query.filter_by(SellerID = current_user.id).all()
+#     return render_template('auctions.html', auctions=auctions)
 
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def changeAuctionDetails(AuctionID_):
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
 
@@ -600,7 +654,7 @@ def changeAuctionDetails(AuctionID_):
         auction.ReservePrice = form.reservePrice.data
         auction.MinBiddingGap = form.minBiddingGap.data
         db.session.commit()
-        flash(f'Auction edited for {form.reservePrice.data}!', 'success')
+        flash(f'Auction edited successful!', 'success')
         return redirect(url_for('home'))
 
     elif request.method == 'GET':
@@ -627,21 +681,30 @@ def deleteAuction(AuctionID_):
 @app.route("/viewAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def viewAuction(AuctionID_):
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
+
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
+    property_ = Property.query.get(auction.PropertyID)
+
     if auction.SellerID == current_user.id:
         return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
 
-    if auction.AuctionStart > datetime.now():
-        flash('This auction has not started yet')
+    if auction.AuctionEnd > datetime.now():
+        registeredBefore = RegisteredAssociation.query.filter_by(RegisteredBidderID=user.id, PropertyID =property_.id).first()
+        if not registeredBefore:
+            flash(f'Congrats! You registered the auction successfully, this property is in your watching list right now.', 'success')
+            registered = RegisteredAssociation(RegisteredBidderID=user.id, PropertyID = property_.id)
+            db.session.add(registered)
+            db.session.commit()
+    else:
+        flash(f'This auction has already ended', 'warning')
         return redirect(url_for('home'))
 
-    if auction.AuctionEnd < datetime.now():
-        flash('This auction has already ended')
-        return redirect(url_for('home'))
+    if auction.AuctionStart > datetime.now():
+        flash(f'This auction has not started yet', 'info')
+        registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= None, registered=registered, remainingTime=None)
+
 
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
     highestAmount = 0
@@ -657,14 +720,25 @@ def viewAuction(AuctionID_):
 
     form = MakeBidForm()
     if form.validate_on_submit():
+
+        if datetime.now() < auction.AuctionStart or datetime.now()>auction.AuctionEnd:
+            remainingTime = None
+        else:
+            remainingTime = humanfriendly.format_timespan(auction.AuctionEnd - datetime.now())
+
         if form.newBid.data < nextLow:
-            flash('Please input the correct amount')
-            return redirect(url_for('login', AuctionID_ = auction.id))
-        bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
-        db.session.add(bid)
-        db.session.commit()
-        flash('Your Bid has been accepted!', 'success')
-        return redirect(url_for('home'))
+            flash(f'Please input the correct amount', 'danger')
+            bid=None
+        else:
+            bid = Bid(BidderID = current_user.id, AuctionID = AuctionID_, Amount = form.newBid.data)
+            
+            db.session.add(bid)
+            db.session.commit()
+            flash(f'Your Bid has been accepted!', 'success')
+        registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
+        
+        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid, registered=registered,remainingTime=remainingTime)
+
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
 
 @app.route("/endAuction/<AuctionID_>", methods=['GET', 'POST'])

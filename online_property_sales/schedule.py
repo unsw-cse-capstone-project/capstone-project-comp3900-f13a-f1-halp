@@ -1,7 +1,9 @@
 from models import *
+from server import db
 import smtplib, ssl
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
+from flask import render_template, request, redirect, url_for, flash
 
 def hourlyEmail():
     since = datetime.now() - timedelta(hours=1)
@@ -12,9 +14,19 @@ def hourlyEmail():
 def end(AuctionID_):
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first()
     seller =  User.query.filter_by(id = auction.SellerID).first()
+    property_ = Property.query.get(auction.PropertyID)
+
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(desc(Bid.Amount)).first()
     if highestBid != None:
         highestBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
+        if highestBid.Amount >= auction.ReservePrice:
+            property_.status = "sold"
+        else:
+            property_.status = "Under Offer"
+    else:
+        property_.status = "Under Offer"
+
+    db.session.commit()
     otherBids = Bid.query.filter_by(AuctionID = AuctionID_)
 
     port = 465

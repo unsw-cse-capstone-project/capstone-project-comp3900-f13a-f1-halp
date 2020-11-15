@@ -1,66 +1,201 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content-section">
-    {% if not properties %}
-        <h1>No properties found. Add one now!</h1>
-    {% endif %}
-
-    <div class="row col-xl-15">
-        {% for p in properties %}
-            <div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3" style="width: 520px;">
-                
-                <div class="card-header rounded text-center bg-info text-white"> 
-                    {% if p.status == "auction" %}
-                        To Be Auctioned
-                    {% elif p.status == "sold" %}
-                        Sold
-                    {% else %}
-                        Error
-                    {% endif %}
-                </div>
-                {% if not p.photo_collection.all() %}
-                    <img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" style="width:502px; height: 300px;" >
-                {% else %}
-                    <img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:502px; height: 300px;" >
-                {% endif %}
-                <h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
-                <div class="card-body text-info">
-                    <h4 class="card-title">
-                        {% if p.add_unit %}
-                            {{p.add_unit}} /
-                        {% endif %}
-                        {{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
-                    </h4>
-                    <p class="card-text">
-                        <span><img src="/static/propertyImage/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
-                        <span><img src="/static/propertyImage/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
-                        <span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
-                        <span style="margin-top: 7px; margin-left: 10px;">{{p.property_type}}</span>
-                    </p>
-                </div>
-        <!-- Meant to be actuion date -->
-            <div>
-                <span>
-                    {% if now_date > p.inspection_date %}
-                        <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit' disabled>Edit Property</button></a>
-                    {% else %}
-                        <a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>Edit Property</button></a>
-                    {% endif %}
-                </span>
-                <span><a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 150px;" type='submit'>View Property</button></a></span>
-            </div>
-            <div class="mt-2 mb-2">
-                <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2 ' style="width: 150px;" type='submit'>Change Status</button></a></span>
-                <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-primary text-white mr-2' style="width: 150px;" type='submit'>Add/View Image</button></a></span>
-                <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 150px;"  type='submit'>Edit Auction</button></a></span>
-            </div>
-            <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%" type='submit'>Remove</button></a>
-        </div>
-        {% endfor %}
+<nav>
+    <div class="nav nav-tabs justify-content-end" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link text-info active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">My Property</a>
+      <a class="nav-item nav-link text-info" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Registered Properties</a>
     </div>
-    <a href="{{ url_for('add_property') }}">
-        <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
-    </a>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="content-section">
+            {% if not properties %}
+                <h1>No properties found. Add one now!</h1>
+            {% else %}
+            <div class="row col-xl-15">
+                {% for (p,a,b) in properties %}
+                    <div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3" style="width: 520px;">
+                        
+                        <div class="card-header rounded text-center bg-info text-white" style="font-size: 30px;"> 
+                            {% if p.status == "auction" %}
+                                To Be Auctioned
+                            {% elif p.status == "sold" %}
+                                Sold
+                            {% else %}
+                                Under Offer
+                            {% endif %}
+                        </div>
+                        {% if not p.photo_collection.all() %}
+                            <img class="card-img-top" src="/static/propertyImage/Sample.jpg" alt="Card image cap" style="width:502px; height: 300px;" >
+                        {% else %}
+                            <img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:502px; height: 300px;" >
+                        {% endif %}
+                        <h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 30px;" >
+                            {% if b:%}
+                                highestBid: {{b}} $
+                            {% else %}
+                                No bids
+                            {% endif%}
+                        </h6>
+                        <div class="card-body text-info">
+                            <h4 class="card-title">
+                                {% if p.add_unit %}
+                                    {{p.add_unit}} /
+                                {% endif %}
+                                {{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
+                            </h4>
+                            <p class="card-text">
+                                <span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
+                                <span style="margin-top: 7px; margin-left: 10px;">{{p.property_type}}</span>
+                            </p>
+                        </div>
+                <!-- Meant to be actuion date -->
+                        {% if a.AuctionStart and a.AuctionEnd %}
+                        <div class="mb-2" style="font-size: 20px; width: 350px;">
+                            <p class="bg-primary text-white rounded pl-3  mb-1"> Auction start: {{a.AuctionStart}} </p>
+                            <p class="bg-primary text-white rounded pl-3 "> Auction End:   {{a.AuctionEnd}} </p>
+                        </div>
+                        {% else%}
+                            <div style="height: 79.2px;width: 350px;">
+                                <p class="bg-secondary text-white rounded pl-3  mb-1" style="font-size: 35px;">No Auction Details</p>
+                            </div>
+                        {% endif %}
+                        <a href="{{ url_for('viewProperty', property_id = p.id) }}">
+                            <button class='btn btn-info text-white mr-2 ' style="width: 100%; font-size: 20px;" type='submit'>View Property</button>
+                        </a>
+                        
+                        {% if a %}
+                            {% if (now_date >= a.AuctionStart and now_date <= a.AuctionEnd) or now_date > p.inspection_date %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' disabled>Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' disabled>Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " disabled><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% else %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' >Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' >Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% endif %} 
+                        {% else %}
+                            {% if now_date > p.inspection_date %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' disabled>Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' disabled>Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} " disabled><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% else %}
+                                <div class="mt-2 mb-2"> 
+                                    <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Edit Property</button></a></span>
+                                    <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' >Change Status</button></a></span>
+                                </div>
+                                <div class="mt-2 mb-2">
+                                    <span><a href="{{ url_for('property_image', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' >Add/View Image</button></a></span>
+                                    <span><a href="{{ url_for('createAuction', PropertyID = p.id) }}"><button class='btn btn-primary text-white ' style="width: 49%; font-size: 17px;  float: right;"  type='submit' >Edit Auction</button></a></span>
+                                </div>
+                                <a href="{{ url_for('remove_property', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} "><button class='btn btn-danger'  style="width: 100%; font-size: 20px;" type='submit'>Remove</button></a>
+                            {% endif %}
+                        {% endif %} 
+
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        <a href="{{ url_for('add_property') }}">
+            <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Add a Property</button>
+        </a>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="content-section">
+            {% if not registered_properties %}
+                <h1>Not registered properties for bidding.</h1>
+            {% else %}
+            <div class="row col-xl-15">
+                {% for (p,a,b) in registered_properties %}
+                    <div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3" style="width: 520px;">
+                        
+                        <div class="card-header rounded text-center bg-info text-white" style="font-size: 30px;"> 
+                            {% if p.status == "auction" %}
+                                To Be Auctioned
+                            {% elif p.status == "sold" %}
+                                Sold
+                            {% else %}
+                                Under Offer
+                            {% endif %}
+                        </div>
+                        {% if not p.photo_collection.all() %}
+                            <img class="card-img-top" src="/static/propertyImage/Sample.jpg" alt="Card image cap" style="width:502px; height: 300px;" >
+                        {% else %}
+                            <img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:502px; height: 300px;" >
+                        {% endif %}
+                        <h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 30px;" >
+                            {% if b:%}
+                                highestBid: {{b}} $
+                            {% else %}
+                                No bids
+                            {% endif%}
+                        </h6>
+                        <div class="card-body text-info">
+                            <h4 class="card-title">
+                                {% if p.add_unit %}
+                                    {{p.add_unit}} /
+                                {% endif %}
+                                {{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
+                            </h4>
+                            <p class="card-text">
+                                <span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+                                <span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
+                                <span style="margin-top: 7px; margin-left: 10px;">{{p.property_type}}</span>
+                            </p>
+                        </div>
+                <!-- Meant to be actuion date -->
+                    {% if a.AuctionStart and a.AuctionEnd %}
+                    <div class="mb-2" style="font-size: 20px; width: 350px;">
+                        <p class="bg-primary text-white rounded pl-3  mb-1"> Auction start: {{a.AuctionStart}} </p>
+                        <p class="bg-primary text-white rounded pl-3 "> Auction End:   {{a.AuctionEnd}} </p>
+                    </div>
+                    {% else%}
+                        <div style="height: 79.2px;width: 350px;">
+                            <p class="bg-secondary text-white rounded pl-3  mb-1" style="font-size: 35px;">No Auction Details</p>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <span><a href="{{ url_for('viewProperty', property_id = p.id) }}"><button class='btn btn-info text-white mr-2 ' style="width: 270px; font-size: 20px;" type='submit'>View Property/Place a bid</button></a></span>
+                        <span>
+                            <a href="{{ url_for('removeRegisteredProperty', p_id = p.id) }}" onclick = "{if (confirm ( 'Are you sure?')) {this. document.formname.submit (); return true;} return false;} ">
+                                <button class='btn btn-danger'  style="width: 220px; float: right;  font-size: 20px;" type='submit'>Remove</button>
+                            </a>
+                        </span>
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <a href="{{ url_for('search') }}">
+                <button class='btn btn-primary btn-lg text-white mt-2 mb-2' style="width: 200px;" type='submit'>Search for Property</button>
+            </a>
+        </div>
+    </div>
 </div>
+
+
 
 {% endblock %}

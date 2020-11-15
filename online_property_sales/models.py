@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func, and_
 from datetime import datetime
 from server import db, login_manager
 
@@ -20,6 +21,8 @@ class User(UserMixin, db.Model):
     auctionId = db.relationship('AuctionDetails', backref='seller', lazy='dynamic')
     properties = db.relationship('Property', backref='sellerID', lazy='dynamic')
     cards = db.relationship('BankDetails', backref='user', lazy='dynamic')
+    registeredProperties = db.relationship('Property',secondary=lambda: RegisteredAssociation.__table__, backref="RegisteredBidders")
+
 
     #create hashed password for security
     def set_login_name(self, value):
@@ -49,10 +52,14 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.login_name
 
-
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
+
+class RegisteredAssociation(db.Model):
+    __tablename__ = 'RegisteredAssociation'
+    RegisteredBidderID = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True, nullable=False)
+    PropertyID = db.Column(db.Integer, db.ForeignKey('Property.id'), primary_key=True, nullable=False)
 
 class BankDetails(db.Model):
     __tablename__ = 'BankDetails'
@@ -121,14 +128,16 @@ class Property(db.Model):
     inspection_date = db.Column(db.DateTime)
     description = db.Column(db.String(2000))
     year_built = db.Column(db.Integer)
-
+    status = db.Column(db.String)   
     #seller
     seller = db.Column(db.Integer, db.ForeignKey('User.id'))
     #one-to-one
     auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
     #one-to-many
     photo_collection = db.relationship('Photos', backref='Property', lazy='dynamic')
-    status = db.Column(db.String)
+    #many-to-many
+    registeredBidders = db.relationship('User',secondary=lambda: RegisteredAssociation.__table__, backref="RegisteredProperties")
+    
 
     def set_property_type(self, p_type):
         self.property_type = p_type
@@ -207,6 +216,8 @@ def clear_session():
     db.session.query(AuctionDetails).delete()
     db.session.query(Property).delete()
     db.session.query(Photos).delete()
+    db.session.query(Bid).delete()
+    db.session.query(RegisteredAssociation).delete()
     db.session.commit()
 
 def initial_db():
@@ -218,6 +229,8 @@ def initial_db():
     u1.set_password('Tom123@g')
     u2= User(login_name='Cloudia0@g', id=None, email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
     u2.set_password('Cloudia0@g')
+    u3= User(login_name='Sky123@g', id=None, email="Sky@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999990')
+    u3.set_password('Sky123@g')
     bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc=123, expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444', holder_fname='Tom', holder_lname='Han', cvc=123, expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
     property1 = Property(   property_type = 'House',
@@ -260,16 +273,29 @@ def initial_db():
                                 PropertyID = 1,
                                 SellerID = 1)
 
-    bid1 = Bid ( BidderID = 2, AuctionID = 1, Amount = 40)
-    bid2 = Bid ( BidderID = 3, AuctionID = 1, Amount = 60)
-   
+    auction2 = AuctionDetails(AuctionStart = datetime.strptime("2020-11-10 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                ReservePrice = 500.0,
+                                MinBiddingGap = 20.0,
+
+                                PropertyID = 3,
+                                SellerID = 1)
+
+    bid1 = Bid ( BidderID = 2, AuctionID = 2, Amount = 40)
+    bid2 = Bid ( BidderID = 3, AuctionID = 2, Amount = 60)
+    
+    register1 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 1)
+    register2 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 3)
 
     photo1 = Photos(photo = '1.jpg', property_id = 1 )
-    photo2 = Photos(photo = '1c1f10bb8446c1e3.jpg', property_id = 1 )
-    photo3 = Photos(photo = '3.jpg', property_id = 2 )
+    photo2 = Photos(photo = '1-bedroom.jpg', property_id = 1 )
+    photo3 = Photos(photo = '2.jpg', property_id = 2 )
+    photo4 = Photos(photo = '2-bathroom.jpg', property_id = 2 )
+    photo5 = Photos(photo = '03.jpg', property_id = 3 )
 
     db.session.add(u1)
     db.session.add(u2)
+    db.session.add(u3)
     db.session.add(bank1)
     db.session.add(bank2)
     db.session.add(property1)
@@ -277,69 +303,21 @@ def initial_db():
     db.session.add(property3)
     db.session.add(property4)
     db.session.add(auction1)
+    db.session.add(auction2)
     db.session.add(bid1)
     db.session.add(bid2)
+    db.session.add(register1)
+    db.session.add(register2)
     db.session.add(photo1)
     db.session.add(photo2)
     db.session.add(photo3)
+    db.session.add(photo4)
+    db.session.add(photo5)
 
     db.session.commit()
 
 
 # initial_db()
-# cards = BankDetails.query.filter_by(user_id = 1).all()
-# user=db.session.query(User).get(1)
-# cards = user.cards
-# for i in cards:
-#     print(i)
-
-# property_Id=[1]
-# p1=db.session.query(Property).get(1)
-# property_with_auction = db.session.query(Property).filter(Property.id.in_(property_Id)).all()
-# for i in property_with_auction:
-#     print(i.photo_collection.first().photo)
-
-# recipients_id=[1,2]
-# recipients_info = db.session.query(User.email,User.login_name).filter(User.id.in_(recipients_id))
-# emails = [x for (x,y) in recipients_info]
-# login_names = [y for (x,y) in recipients_info]
-# print(login_names)
-
-
-# p1=db.session.query(Property).get(1)
-# print(p1.auctionId)
-# seller = db.Column(db.Integer, db.ForeignKey('User.id'))
-# auctionId = db.relationship('AuctionDetails', backref='Property', uselist=False)
-#queries
-
-# auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart<=before).join(AuctionDetails)
-# prop_auc=db.session.query(Property,AuctionDetails.AuctionStart,AuctionDetails.AuctionEnd).join(AuctionDetails)
-# for i in prop_auc:
-#     print(i)
-# property_Id=[]
-# temp = db.session.query(AuctionDetails.PropertyID).filter(AuctionDetails.AuctionStart>=datetime.now())
-# property_Id = property_Id + [int(i.PropertyID) for i in temp]
-# print(property_Id)
-# auctions = db.session.query(Property,AuctionDetails).filter(AuctionDetails.AuctionStart>=datetime.now()).join(AuctionDetails)
-# list_auc = [i.id for i in auctions]
-# for i in auctions:
-    # print(i)
-
-# cards=db.session.query(User.login_name, BankDetails.id).join(BankDetails)
-# for i in cards:
-#     print(i)
-
-# suburbList= db.session.query(Property.add_suburb).distinct(Property.add_suburb)
-# for i in suburbList:
-#     print(i[2])
-
-# print(BankDetails.query.get('5555444433331111').user_id)
-
-#query examples
-# users= User.query.all()
-# cards= BankDetails.query.all()
-# for u in users:
-#     print(u.id, u.login_name, u.cards.all())
 
 #buyers and sellers all have to add extral bank details at some point, and all their attributes are the same,
 #So I just treat them all as users, They just need to input the extral details at different time. 

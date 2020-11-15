@@ -57,15 +57,29 @@
 				</div>
 			</div>
 		{% else %}
-			{% for (p,a) in properties %}
+			{% for (p,a,b) in properties %}
 				<div class="card border-info p-2 col-md-3.8 ml-3 mr-2 mb-3">
-					<div class="card-header rounded text-center bg-info text-white"> PROPERTY STATUE (TO BE IMPLEMENTED)</div>
+					<div class="card-header rounded text-center bg-info text-white" style="font-size: 15px;"> 
+						{% if p.status == "auction" %}
+							To Be Auctioned
+						{% elif p.status == "sold" %}
+							Sold
+						{% else %}
+							Under Offer
+						{% endif %}
+					</div>
 					{% if not p.photo_collection.all() %}
-						<img class="card-img-top" src="/static/propertyImage/4.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
+						<img class="card-img-top" src="/static/propertyImage/Sample.jpg" alt="Card image cap" style="width:335.81px; height: 180px;" >
 					{% else %}
 						<img class="card-img-top" src="/static/propertyImage/{{p.photo_collection.first().photo}}" alt="Card image cap" style="width:335.81px; height: 180px;" >
 					{% endif %}
-					<h6 class="card-subtitle pt-2 pb-2 text-center bg-secondary text-white" >CURRENT BID (TO BE IMPLEMENTED)</h6>
+					<h6 class="card-subtitle pt-2 pb-2 text-center bg-warning" style="font-size: 15px;">
+                        {% if b:%}
+                            highestBid: {{b}} $
+                        {% else %}
+                            No bids
+                        {% endif%}
+                    </h6>
 					<div class="card-body text-info">
 						<h4 class="card-title">
 							{% if p.add_unit %}
@@ -74,11 +88,12 @@
 							{{p.add_num}} {{p.add_name}}<br>{{p.add_suburb}} {{p.add_state}} {{p.pc}}, Australia
 						</h4>
 						<p class="card-text">
-							<span><img src="/static/propertyImage/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
-							<span><img src="/static/propertyImage/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
-							<span><img src="/static/propertyImage/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
+							<span><img src="/static/icons/bedicon.png" alt="Card image cap" style="width:40px; height: 40px;"> {{p.num_bedrooms}}</span>
+							<span><img src="/static/icons/restroom.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_bedrooms}}</span>
+							<span><img src="/static/icons/car.png" alt="Card image cap" style="width:30px; height: 30px;"> {{p.num_parking}}</span>
 							<span style="float: right; margin-top: 7px;">{{p.property_type}}</span>
 						</p>
+						
 						<a href={{ url_for("viewProperty", property_id=p.id) }} class="btn btn-info btn-lg" style="width: 100%;">Property Page</a>
 					</div>
 				</div>

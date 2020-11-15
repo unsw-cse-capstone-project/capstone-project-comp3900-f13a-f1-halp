@@ -204,7 +204,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.year_built(class="form-control form-control-lg") }}
+                    {{ form.year_built(class="form-control form-control-lg", placeholder="YYYY") }}
                 {% endif %}
             </div>
             <div class="form-group">
@@ -217,7 +217,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.inspection_date(class="form-control form-control-lg") }}
+                    {{ form.inspection_date(class="form-control form-control-lg", placeholder="YYYY-MM-DD") }}
                 {% endif %}
             </div>
             <div class="form-group">{{ form.submit(class="btn btn-info btn-lg") }}</div>
