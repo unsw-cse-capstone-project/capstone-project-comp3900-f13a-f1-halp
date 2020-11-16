@@ -390,6 +390,8 @@ def addBankDetail():
     form = BankDetailsForm()
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
 
+    
+
     if form.validate_on_submit():
         
         card_number = form.card_number.data
@@ -449,6 +451,10 @@ def removetBankDetails(card_id):
 def add_property():
     form = PropertyForm()
 
+    if not if_have_cards(current_user.id):
+        flash(f'Please enter id information and at least one card to process bidding', 'warning')
+        return redirect(url_for('account', user_id=current_user.id))
+        
     if form.validate_on_submit():
         if check_all_details(form):
             p_type = form.property_type.data
@@ -593,8 +599,10 @@ def property_list():
                         .group_by(Property.id)
     if my_properties.count() == 0:
         my_properties=None
+
     propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=current_user.id).all()
     registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
+
     if len(registeredID_list) == 0:
         registered_properties =None
     else:
@@ -789,9 +797,13 @@ def deleteAuction(AuctionID_):
 @login_required
 def viewAuction(AuctionID_):
 
-    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+    user = User.query.get(current_user.id)
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
     property_ = Property.query.get(auction.PropertyID)
+
+    if not if_have_cards(current_user.id):
+        flash(f'Please enter id information and at least one card to process bidding', 'warning')
+        return redirect(url_for('account', user_id=current_user.id))
 
     if auction.SellerID == current_user.id:
         return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
@@ -811,7 +823,6 @@ def viewAuction(AuctionID_):
         flash(f'This auction has not started yet', 'info')
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
         return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= None, registered=registered, remainingTime=None)
-
 
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
     highestAmount = 0
@@ -910,5 +921,4 @@ def if_have_cards(user_id):
     cards = user.cards.count()
     if cards > 0 and user.id_confirmation:
         return True
-    else:
-        return False
+    return False
