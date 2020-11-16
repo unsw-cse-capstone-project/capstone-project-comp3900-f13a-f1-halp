@@ -106,7 +106,7 @@
                 </p>
             </div>
             {% if auction %}
-                {% if property.status=='sold' or end %}
+                {% if property.status=='sold' or property.status=='Under Offer' or end %}
                 <a href="{{ url_for( 'viewAuction', AuctionID_= auction.id ) }}" > 
                     <button class ="btn btn-outline-info btn-lg" style="width: 100%;" type="submit" disabled>Auction Ends</button>
                 </a>

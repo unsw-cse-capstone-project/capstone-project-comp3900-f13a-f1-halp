@@ -69,7 +69,7 @@
                         </a>
                         
                         {% if a %}
-                            {% if (now_date >= a.AuctionStart and a.AuctionEnd >= (now_date-Onehr)) or now_date > p.inspection_date %}
+                            {% if (now_date >= a.AuctionStart and a.AuctionEnd >= (now_date-Onehr)) or now_date > p.inspection_date or p.status=='sold' %}
                                 <div class="mt-2 mb-2"> 
                                     <span><a href="{{ url_for('edit_property', p_id = p.id) }}"><button class='btn btn-info text-white' style="width: 49%; font-size: 17px;" type='submit' disabled>Edit Property</button></a></span>
                                     <span><a href="{{ url_for('change_status', p_id = p.id) }}"><button class='btn btn-primary text-white' style="width: 49%; font-size: 17px; float: right;" type='submit' disabled>Change Status</button></a></span>
