@@ -30,3 +30,32 @@ Week 2
   Me
   - Creating System architecture diagram for proposal
   - Editing User stories and explaining how user stories satisfy project objectives
+
+Week 3
+- This week, we were discussing and changing around our user stories as one of our group members left
+- Finalized the proposal and submitted it
+- Started looking through the first sprint
+
+Week 4
+- Started working with the database and construct database objects in SQLite
+- Watched a series of tutorial on Flask and SQLAlchemy
+
+Week 5
+- Finished the tasks of the first sprint
+- Looked thorugh HTML code for other auction sites, for use in Auction world design
+- Linking together tables using foreign keys in the database
+
+Week 6
+- Starting the Second sprint
+- Completing the retrospective from the first sprint
+
+Week 7
+- Trying to finish the tasks of the second sprint
+- Preparing for presentation in tutorial times
+
+Week 8
+- Starting the third sprint, finishing the tasks of the second sprint
+- Preparing the retrospective.
+
+Week 9
+- Preparing for final submission

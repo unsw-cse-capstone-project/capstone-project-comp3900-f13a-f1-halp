@@ -390,6 +390,8 @@ def addBankDetail():
     form = BankDetailsForm()
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
 
+    
+
     if form.validate_on_submit():
         
         card_number = form.card_number.data
@@ -447,12 +449,13 @@ def removetBankDetails(card_id):
 @app.route('/addProperty', methods=['GET', 'POST'])
 @login_required
 def add_property():
+
     if if_have_cards(current_user.id) is False:
-        flash('Please enter your banking detail before adding this property')
+        flash(f'Please enter your banking detail before adding this property','warning')
         return redirect(url_for('account', user_id = current_user.id))
 
     form = PropertyForm()
-
+        
     if form.validate_on_submit():
         if check_all_details(form):
             p_type = form.property_type.data
@@ -591,7 +594,7 @@ def property_list():
     # returns list of properties from user
 
     if if_have_cards(current_user.id) is False:
-        flash('Please enter your banking detail before adding property')
+        flash('Please enter your banking detail before adding property', 'warning')
         return redirect(url_for('account', user_id = current_user.id))
 
     my_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
@@ -601,8 +604,10 @@ def property_list():
                         .group_by(Property.id)
     if my_properties.count() == 0:
         my_properties=None
+
     propertiesID_registered=RegisteredAssociation.query.filter_by(RegisteredBidderID=current_user.id).all()
     registeredID_list = [ i.PropertyID for i in propertiesID_registered ]
+
     if len(registeredID_list) == 0:
         registered_properties =None
     else:
@@ -705,12 +710,9 @@ def remove_image(p_id, i_id):
 @app.route("/createAuction", methods=['GET', 'POST'])
 @login_required
 def createAuction():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
 
-    if if_have_cards(current_user.id):
-        flash('Please enter your banking detail before creating this property')
+    if not if_have_cards(current_user.id):
+        flash(f'Please enter your banking detail before creating this property', 'warning')
         return redirect(url_for('account', user_id = current_user.id))
 
     PropertyID_ = request.args.get('PropertyID')
@@ -805,13 +807,13 @@ def deleteAuction(AuctionID_):
 @login_required
 def viewAuction(AuctionID_):
 
-    if if_have_cards(current_user.id) is False:
-        flash('Please enter your banking detail before placing a bid')
-        return redirect(url_for('account', user_id = current_user.id))
-
-    user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
+    user = User.query.get(current_user.id)
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
     property_ = Property.query.get(auction.PropertyID)
+
+    if not if_have_cards(current_user.id):
+        flash(f'Please enter id information and at least one card to process bidding', 'warning')
+        return redirect(url_for('account', user_id=current_user.id))
 
     if auction.SellerID == current_user.id:
         return redirect(url_for('changeAuctionDetails', AuctionID_ = auction.id))
@@ -831,7 +833,6 @@ def viewAuction(AuctionID_):
         flash(f'This auction has not started yet', 'info')
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
         return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= None, registered=registered, remainingTime=None)
-
 
     highestBid = Bid.query.filter_by(AuctionID = AuctionID_).order_by(Bid.Amount)
     highestAmount = 0
@@ -928,7 +929,6 @@ def send_email(recipients_id, win, auctionId):
 def if_have_cards(user_id):
     user=db.session.query(User).get(user_id)
     cards = user.cards.count()
-    if cards > 0 and user.id_confirmation:
+    if cards > 0 and len(user.id_confirmation)>0:
         return True
-    else:
-        return False
+    return False
