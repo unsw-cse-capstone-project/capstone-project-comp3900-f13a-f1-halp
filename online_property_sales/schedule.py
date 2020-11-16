@@ -36,16 +36,21 @@ def end(AuctionID_):
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login("AuctionWorldWideWeb@gmail.com", password)
         if highestBid != None:
-            server.sendmail('AuctionWorldWideWeb@gmail.com', highestBidder.email, "You are highest Bidder for auction " + str(AuctionID_))
-            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction " + str(AuctionID_) + " has ended \n" + 
+            address=''
+            if property_.add_unit:
+                address = property_.add_unit + "/"
+            address+= property_.add_num +', '+ property_.add_suburb+', ' +property_.add_state + ', ' + property_.add_pc + ', Australia '
+
+            server.sendmail('AuctionWorldWideWeb@gmail.com', highestBidder.email, "You are highest Bidder for auction of" + address)
+            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction of" + address + " has ended \n" + 
                 highestBidder.login_name + " has won the auction\nYou may contact them via\nEmail: " +
                 highestBidder.email + "\nPhone:" + highestBidder.phone_number)
 
         if highestBid == None:
-            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction " + str(AuctionID_) + " has ended, there is no winner")
+            server.sendmail('AuctionWorldWideWeb@gmail.com', seller.email, "Auction of " + address + " has ended, there is no winner")
 
         for otherBid in otherBids:
             otherBidder = User.query.filter_by(id = otherBid.BidderID).first_or_404()
             if otherBidder != highestBidder:
                 otherBidder = User.query.filter_by(id = highestBid.BidderID).first_or_404()
-                server.sendmail('AuctionWorldWideWeb@gmail.com', otherBidder.email, "You have not worn auction " + str(AuctionID_))
+                server.sendmail('AuctionWorldWideWeb@gmail.com', otherBidder.email, "You have not worn auction " + address)
