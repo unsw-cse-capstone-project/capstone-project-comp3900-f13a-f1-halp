@@ -449,11 +449,12 @@ def removetBankDetails(card_id):
 @app.route('/addProperty', methods=['GET', 'POST'])
 @login_required
 def add_property():
-    form = PropertyForm()
 
-    if not if_have_cards(current_user.id):
-        flash(f'Please enter id information and at least one card to process bidding', 'warning')
-        return redirect(url_for('account', user_id=current_user.id))
+    if if_have_cards(current_user.id) is False:
+        flash(f'Please enter your banking detail before adding this property','warning')
+        return redirect(url_for('account', user_id = current_user.id))
+
+    form = PropertyForm()
         
     if form.validate_on_submit():
         if check_all_details(form):
@@ -592,6 +593,10 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before adding property', 'warning')
+        return redirect(url_for('account', user_id = current_user.id))
+
     my_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
                         .filter(Property.seller==current_user.id)\
                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
@@ -705,9 +710,10 @@ def remove_image(p_id, i_id):
 @app.route("/createAuction", methods=['GET', 'POST'])
 @login_required
 def createAuction():
-    if current_user.is_anonymous:
-        flash('Please login first')
-        return redirect(url_for('login'))
+
+    if not if_have_cards(current_user.id):
+        flash(f'Please enter your banking detail before creating this property', 'warning')
+        return redirect(url_for('account', user_id = current_user.id))
 
     PropertyID_ = request.args.get('PropertyID')
 
@@ -751,6 +757,10 @@ def createAuction():
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def changeAuctionDetails(AuctionID_):
+
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before creating this auction')
+        return redirect(url_for('account', user_id = current_user.id))
 
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
 
@@ -919,6 +929,6 @@ def send_email(recipients_id, win, auctionId):
 def if_have_cards(user_id):
     user=db.session.query(User).get(user_id)
     cards = user.cards.count()
-    if cards > 0 and user.id_confirmation:
+    if cards > 0 and len(user.id_confirmation)>0:
         return True
     return False
