@@ -447,6 +447,10 @@ def removetBankDetails(card_id):
 @app.route('/addProperty', methods=['GET', 'POST'])
 @login_required
 def add_property():
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before adding this property')
+        return redirect(url_for('account', user_id = current_user.id))
+
     form = PropertyForm()
 
     if form.validate_on_submit():
@@ -701,6 +705,10 @@ def createAuction():
         flash('Please login first')
         return redirect(url_for('login'))
 
+    if if_have_cards(current_user.id):
+        flash('Please enter your banking detail before creating this property')
+        return redirect(url_for('account', user_id = current_user.id))
+
     PropertyID_ = request.args.get('PropertyID')
 
     if PropertyID_ == None:
@@ -743,6 +751,10 @@ def createAuction():
 @app.route("/editAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def changeAuctionDetails(AuctionID_):
+
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before creating this auction')
+        return redirect(url_for('account', user_id = current_user.id))
 
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
 
@@ -788,6 +800,10 @@ def deleteAuction(AuctionID_):
 @app.route("/viewAuction/<AuctionID_>", methods=['GET', 'POST'])
 @login_required
 def viewAuction(AuctionID_):
+
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before placing a bid')
+        return redirect(url_for('account', user_id = current_user.id))
 
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
     auction = AuctionDetails.query.filter_by(id = AuctionID_).first_or_404()
