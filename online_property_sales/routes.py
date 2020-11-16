@@ -590,6 +590,10 @@ def edit_property(p_id):
 def property_list():
     # returns list of properties from user
 
+    if if_have_cards(current_user.id) is False:
+        flash('Please enter your banking detail before adding property')
+        return redirect(url_for('account', user_id = current_user.id))
+
     my_properties = db.session.query(Property,AuctionDetails,func.max(Bid.Amount).label('highestBid'))\
                         .filter(Property.seller==current_user.id)\
                         .outerjoin(AuctionDetails, AuctionDetails.PropertyID==Property.id)\
