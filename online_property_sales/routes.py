@@ -654,6 +654,7 @@ def inspection_time(p_id):
 @login_required
 def remove_property(p_id):
     to_remove = Property.query.filter_by(id=p_id).delete()
+    auctions = AuctionDetails.query.filter_by(PropertyID=p_id).delete()
     db.session.commit()
     return redirect(url_for('property_list'))
 
