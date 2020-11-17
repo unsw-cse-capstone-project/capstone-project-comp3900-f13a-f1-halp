@@ -31,7 +31,7 @@ import humanfriendly
 # def hourlyEmail():
 #     end(1)
 
-
+hourlyEmail()
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(hourlyEmail,'interval',minutes=1)
 sched.start()

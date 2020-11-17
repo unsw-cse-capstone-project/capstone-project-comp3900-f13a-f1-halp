@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import render_template, request, redirect, url_for, flash
 
 def hourlyEmail():
-    since = datetime.now() - timedelta(hours=1)
+    since = datetime.now() - timedelta(minutes=1)
     auctions = AuctionDetails.query.filter(AuctionDetails.AuctionEnd<=datetime.now(), AuctionDetails.AuctionEnd>=since)
     for auction in auctions:
         end(auction.id)
