@@ -867,7 +867,7 @@ def viewAuction(AuctionID_):
             flash(f'Your Bid has been accepted!', 'success')
         registered = RegisteredAssociation.query.filter_by(PropertyID = property_.id, RegisteredBidderID=current_user.id).first()
         
-        return render_template('viewProperty.html', title='View Property', property=property_, seller= auction.SellerID, auction=auction, highestBid= bid, registered=registered,remainingTime=remainingTime)
+        return redirect(url_for("viewProperty", property_id=property_.id))
 
     return render_template('viewAuction.html', form = form, highestBid = highestAmount, myBid = myBid, nextLow = nextLow)
 
