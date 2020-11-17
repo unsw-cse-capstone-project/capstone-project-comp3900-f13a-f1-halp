@@ -32,3 +32,46 @@ Friday
 Short meeting. Most memebers have not done a lot since last meeting due to commitments on other subjects. A lab demonstration is required for next Firday to show our work. Serious progress must be achieved throughout the next few days.
 
 Week 5
+Wednesday
+Still struggling with databases. I have made some progress into how data would be laid out. I am beginning to understand how to create databases but I am constantly failing to build the database properly.
+
+Friday
+Lab demo displays how behind we are in terms of progress of overall stories. Jiayi has finished her components and is well ahead of schedule. Roy and I are behind our sprint run. Progress will need to be made. It also became a wake up call to Roy and I.
+
+Week 6 - Flexi Week
+Tuesday
+Had a discussion and created our retrospective. We have started to talk about our issues we are facing and we began to pinpoint where our problems may be at. We also discovered that we did not initiate the database correctly as we initiated the database directly from the database.
+
+Friday
+Progress was made to the property page and had begun working to edit property and list property. Removal of property was yet to be implemented as well as displaying images. All other members began their second sprint.
+
+Week 7
+Tuesday
+Checked on the progress of each member. Photos is still incomplete. Removal of property has been completed however a form of confirmation dialogue will be nice to add.
+
+Friday
+Checked on the progress of each member. Photo still incomplete. Will need to be setted up as Roy is waiting to use images for his auction details. I am still waiting for auctions to be implemented on the database.
+
+Week 8
+Tuesday
+Checked on the progress of each member. Photo is implemented but adding images only. Need to add remove image. Disabling edit auction still needs to be done.
+
+Friday
+Second demo. Due to some implementation changes such as changing from current_user.login_name to current_user.id many links were broken as we were performing th demo. Quick fixes were done to fix the demo. Final sprint and functions need to be implemented.
+
+Weekend
+Checked on the progress of each member. Starting to prepare final report and standardising the template of the website.
+
+Week 9
+Tuesday
+Checked on progress of each other. Retrospetive 2 was submitted. Roy begins to work on final report whilst Jiayi and I work on finalising the website system. Missing links were found.
+
+Friday
+Checked on progress of each other. Problems on the website were reported as well as missing links were patched. Jiayi has made good progress on the html changes of the website. Final report is going good whilst I work on links as well on the website.
+
+Weekend
+Meeting to discuss the progress of each other. Templates of website have changed drastically and some implementations were reassigned for better code visibility. Final report is making steady progress.
+
+Week 10
+Monday
+Final report and submission of project is due. Worked together to fix any reamining layout issues and bugs as well as completing the final report.
