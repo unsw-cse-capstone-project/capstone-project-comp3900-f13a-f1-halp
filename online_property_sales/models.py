@@ -255,7 +255,7 @@ def initial_db():
                             add_state = 'NSW', add_pc = '2000', num_bedrooms = '3',
                             num_parking = '3', num_bathrooms = '3',
                             parking_features = 'park features', building_size = '200',
-                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
                             description = 'desc', year_built = '2019', status = 'auction')
     #auction holding
     auction2 = AuctionDetails(AuctionStart = datetime.strptime("2020-11-10 14:00:00","%Y-%m-%d %H:%M:%S"),
@@ -271,7 +271,7 @@ def initial_db():
                             add_state = 'NSW', add_pc = '2616', num_bedrooms = '3',
                             num_parking = '3', num_bathrooms = '3',
                             parking_features = 'park features', building_size = '200',
-                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
                             description = 'desc', year_built = '2019', status = 'auction')
  
 
@@ -280,7 +280,7 @@ def initial_db():
                             add_state = 'NSW', add_pc = '2040', num_bedrooms = '5',
                             num_parking = '5', num_bathrooms = '5',
                             parking_features = 'park features', building_size = '1000',
-                            land_size = '1000', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            land_size = '1000', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
                             description = 'desc', year_built = '2019', status = 'sold')
     #auction ends and sold
     auction4 = AuctionDetails(AuctionStart = datetime.strptime("2020-10-30 14:00:00","%Y-%m-%d %H:%M:%S"),
