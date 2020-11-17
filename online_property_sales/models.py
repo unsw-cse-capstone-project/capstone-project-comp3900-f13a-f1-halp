@@ -308,11 +308,9 @@ def initial_db():
                                 SellerID = 2)
 
 
-    bid1 = Bid ( BidderID = 3, AuctionID = 2, Amount = 100)
     bid2 = Bid ( BidderID = 3, AuctionID = 3, Amount = 600) #sold
     bid3 = Bid ( BidderID = 3, AuctionID = 4, Amount = 400) #under offer
 
-    register1 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 2)
     register2 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 4)
     register3 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 5)
 
@@ -336,10 +334,8 @@ def initial_db():
     db.session.add(auction2)
     db.session.add(auction4)
     db.session.add(auction5)
-    db.session.add(bid1)
     db.session.add(bid2)
     db.session.add(bid3)
-    db.session.add(register1)
     db.session.add(register2)
     db.session.add(register3)
     db.session.add(photo1)
