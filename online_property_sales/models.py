@@ -225,14 +225,15 @@ def initial_db():
     clear_session()
     db.create_all()
 
-    u1= User(login_name='Tom123@g', id=None, email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
+    u1= User(login_name='Tom123@g', id_confirmation='id1', email="tom@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1844444444')
     u1.set_password('Tom123@g')
-    u2= User(login_name='Cloudia0@g', id=None, email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
+    u2= User(login_name='Cloudia0@g', id_confirmation='id2', email="Couldia@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999999')
     u2.set_password('Cloudia0@g')
-    u3= User(login_name='Sky123@g', id=None, email="sky@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999990')
+    #professional bidder
+    u3= User(login_name='Sky123@g', id_confirmation='id3', email="sky@gmail.com", address='address', date_of_birth= datetime.strptime("01/01/1999","%d/%m/%Y"),phone_number='1899999990')
     u3.set_password('Sky123@g')
     bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc='123', expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
-    bank2 = BankDetails (id='1111222233334444', holder_fname='Tom', holder_lname='Han', cvc='123', expire_date=datetime.strptime("12/2021","%m/%Y"), user=u1)
+    bank2 = BankDetails (id='1111222233334444', holder_fname='Sky', holder_lname='Sky', cvc='123', expire_date=datetime.strptime("12/2021","%m/%Y"), user=u3)
     property1 = Property(   property_type = 'House',
                             add_num = '10', add_name = 'street', add_suburb = 'suburb1',
                             add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
@@ -240,31 +241,7 @@ def initial_db():
                             parking_features = 'park features', building_size = '200',
                             land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
                             description = 'desc', year_built = '2019', status = 'auction')
-
-    property2 = Property(   property_type = 'House',
-                            add_num = '99', add_name = 'street', add_suburb = 'suburb2',
-                            add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
-                            num_parking = '1', num_bathrooms = '1',
-                            parking_features = 'park features', building_size = '200',
-                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019', status = 'auction')
-
-    property3 = Property(   property_type = 'Unit',
-                            add_unit='01',add_num = '13', add_name = 'some street', add_suburb = 'suburb3',
-                            add_state = 'NSW', add_pc = '2040', num_bedrooms = '1',
-                            num_parking = '1', num_bathrooms = '1',
-                            parking_features = 'park features', building_size = '200',
-                            land_size = '200', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019', status = 'auction')
-
-    property4 = Property(   property_type = 'Unit',
-                            add_unit='52', add_num = '23', add_name = 'street', add_suburb = 'suburb4',
-                            add_state = 'NSW', add_pc = '3100', num_bedrooms = '1',
-                            num_parking = '1', num_bathrooms = '1',
-                            parking_features = 'park features', building_size = '200',
-                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
-                            description = 'desc', year_built = '2019', status = 'sold')
-
+    #auction not start
     auction1 = AuctionDetails(AuctionStart = datetime.strptime("2020-12-30 14:00:00","%Y-%m-%d %H:%M:%S"),
                                 AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),
                                 ReservePrice = 500.0,
@@ -273,19 +250,71 @@ def initial_db():
                                 PropertyID = 1,
                                 SellerID = 1)
 
+    property2 = Property(   property_type = 'House',
+                            add_num = '99', add_name = 'street', add_suburb = 'suburb2',
+                            add_state = 'NSW', add_pc = '2000', num_bedrooms = '3',
+                            num_parking = '3', num_bathrooms = '3',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019', status = 'auction')
+    #auction holding
     auction2 = AuctionDetails(AuctionStart = datetime.strptime("2020-11-10 14:00:00","%Y-%m-%d %H:%M:%S"),
                                 AuctionEnd = datetime.strptime("2020-12-31 14:00:00","%Y-%m-%d %H:%M:%S"),
                                 ReservePrice = 500.0,
                                 MinBiddingGap = 20.0,
 
-                                PropertyID = 3,
+                                PropertyID = 2,
                                 SellerID = 1)
 
-    bid1 = Bid ( BidderID = 2, AuctionID = 2, Amount = 40)
-    bid2 = Bid ( BidderID = 3, AuctionID = 2, Amount = 60)
-    
-    register1 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 1)
-    register2 = RegisteredAssociation(RegisteredBidderID=2, PropertyID = 3)
+    property3 = Property(   property_type = 'House',
+                            add_num = '56', add_name = 'some street', add_suburb = 'suburb2',
+                            add_state = 'NSW', add_pc = '2616', num_bedrooms = '3',
+                            num_parking = '3', num_bathrooms = '3',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019', status = 'auction')
+ 
+
+    property4 = Property(   property_type = 'Unit',
+                            add_unit='01',add_num = '13', add_name = 'some street', add_suburb = 'suburb3',
+                            add_state = 'NSW', add_pc = '2040', num_bedrooms = '5',
+                            num_parking = '5', num_bathrooms = '5',
+                            parking_features = 'park features', building_size = '1000',
+                            land_size = '1000', seller = 1, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019', status = 'sold')
+    #auction ends and sold
+    auction4 = AuctionDetails(AuctionStart = datetime.strptime("2020-10-30 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                AuctionEnd = datetime.strptime("2020-10-31 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                ReservePrice = 500.0,
+                                MinBiddingGap = 20.0,
+
+                                PropertyID = 4,
+                                SellerID = 2)
+
+    property5 = Property(   property_type = 'Unit',
+                            add_unit='52', add_num = '23', add_name = 'street', add_suburb = 'suburb4',
+                            add_state = 'NSW', add_pc = '3100', num_bedrooms = '3',
+                            num_parking = '2', num_bathrooms = '3',
+                            parking_features = 'park features', building_size = '200',
+                            land_size = '200', seller = 2, inspection_date = datetime.strptime('2020-12-12',"%Y-%m-%d"),
+                            description = 'desc', year_built = '2019', status = 'Under Offer')
+    #auction ends and under offer
+    auction5 = AuctionDetails(AuctionStart = datetime.strptime("2020-10-30 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                AuctionEnd = datetime.strptime("2020-11-01 14:00:00","%Y-%m-%d %H:%M:%S"),
+                                ReservePrice = 500.0,
+                                MinBiddingGap = 20.0,
+
+                                PropertyID = 5,
+                                SellerID = 2)
+
+
+    bid1 = Bid ( BidderID = 3, AuctionID = 2, Amount = 100)
+    bid2 = Bid ( BidderID = 3, AuctionID = 3, Amount = 600) #sold
+    bid3 = Bid ( BidderID = 3, AuctionID = 4, Amount = 400) #under offer
+
+    register1 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 2)
+    register2 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 4)
+    register3 = RegisteredAssociation(RegisteredBidderID=3, PropertyID = 5)
 
     photo1 = Photos(photo = '1.jpg', property_id = 1 )
     photo2 = Photos(photo = '1-bedroom.jpg', property_id = 1 )
@@ -302,12 +331,17 @@ def initial_db():
     db.session.add(property2)
     db.session.add(property3)
     db.session.add(property4)
+    db.session.add(property5)
     db.session.add(auction1)
     db.session.add(auction2)
+    db.session.add(auction4)
+    db.session.add(auction5)
     db.session.add(bid1)
     db.session.add(bid2)
+    db.session.add(bid3)
     db.session.add(register1)
     db.session.add(register2)
+    db.session.add(register3)
     db.session.add(photo1)
     db.session.add(photo2)
     db.session.add(photo3)
@@ -317,7 +351,7 @@ def initial_db():
     db.session.commit()
 
 
-# initial_db()
+initial_db()
 
 #buyers and sellers all have to add extral bank details at some point, and all their attributes are the same,
 #So I just treat them all as users, They just need to input the extral details at different time. 

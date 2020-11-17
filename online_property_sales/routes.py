@@ -89,11 +89,11 @@ def signup():
             fail=True
 
         if not form.validate_date_of_birth(form.date_of_birth.data):
-            flash(f'The phone number has been used by other users, please enter another one','danger')
+            flash(f'The date of birth should be smaller than current time','danger')
             fail=True
 
         if not form.validate_phone_number(form.phone_number.data):
-            flash(f'The date of birth should be smaller than current time','danger')
+            flash(f'The phone number has been used by other users, please enter another one','danger')
             fail=True
         
         if fail:
@@ -308,11 +308,8 @@ def account(user_id):
              return render_template('account.html', title='account', form=form, user=user, cards = cards, user_id = current_user.id)
 
         if form.login_name.data:
-            if form.validate_username(form.login_name.data, user.id):
-                flash('Congrats! The login name has been changed to '+ form.login_name.data, 'success')
-                user.set_login_name(form.login_name.data)
-            else:
-                return render_template('account.html', title='account', form=form, user=user, cards = cards, user_id = current_user.id)
+            flash('Congrats! The login name has been changed to '+ form.login_name.data, 'success')
+            user.set_login_name(form.login_name.data)
 
         user.set_address(form.address.data)
         user.set_phone_number(form.phone_number.data)
@@ -390,8 +387,6 @@ def addBankDetail():
     form = BankDetailsForm()
     user = User.query.filter_by(login_name=current_user.login_name).first_or_404()
 
-    
-
     if form.validate_on_submit():
         
         card_number = form.card_number.data
@@ -402,6 +397,11 @@ def addBankDetail():
 
         if not form.validate_expire_date(expire_date):
             flash(f'The expire date should be greater than current time','danger')
+            return render_template('addBankDetail.html', title='addBankDetail', form=form)
+
+        
+        if not form.validate_cvc(form.cvc.data):
+            flash(f"Please input valid CVC number",'danger')
             return render_template('addBankDetail.html', title='addBankDetail', form=form)
 
         if len(card_number)==16:
@@ -929,6 +929,6 @@ def send_email(recipients_id, win, auctionId):
 def if_have_cards(user_id):
     user=db.session.query(User).get(user_id)
     cards = user.cards.count()
-    if cards > 0 and len(user.id_confirmation)>0:
+    if cards > 0 and user.id_confirmation:
         return True
     return False

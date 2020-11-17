@@ -10,8 +10,8 @@ from datetime import datetime
 
 
 class BankDetailsForm(FlaskForm):
-    holder_fname = StringField ('Holder First Name', validators=[DataRequired()])
-    holder_lname = StringField ('Holder Last Name', validators=[DataRequired()])
+    holder_fname = StringField ('Holder First Name', validators=[DataRequired(), Regexp('^[A-Za-z]+$', message="Please input only characters")])
+    holder_lname = StringField ('Holder Last Name', validators=[DataRequired(), Regexp('^[A-Za-z]+$', message="Please input only characters" )])
     card_number = StringField ( 'Card Number',validators=[ DataRequired(),Length(min=16, max=16), Regexp('^[0-9]{16}$', message='Please input exact 16 digits')  ] )
     cvc = StringField ( 'CVC', validators=[ DataRequired(),Length(min=3, max=3), Regexp('^[0-9]{3}$', message='Please input exact 3 digits') ] )
     expire_date = DateTimeField('Expire Date', format = "%m/%Y", validators=[DataRequired()])
@@ -57,7 +57,7 @@ class AccountForm(FlaskForm):
 
     def validate_username(self, login_name, user_id):
         user = User.query.filter( func.lower(User.login_name) == func.lower(login_name)).first()
-        if user is not None and str(user.id) != user_id:
+        if user is not None:
             return False
         return True
         
