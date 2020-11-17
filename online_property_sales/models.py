@@ -347,7 +347,7 @@ def initial_db():
     db.session.commit()
 
 
-initial_db()
+# initial_db()
 
 #buyers and sellers all have to add extral bank details at some point, and all their attributes are the same,
 #So I just treat them all as users, They just need to input the extral details at different time. 
