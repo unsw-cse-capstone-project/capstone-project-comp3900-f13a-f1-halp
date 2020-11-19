@@ -234,6 +234,7 @@ def initial_db():
     u3.set_password('Sky123@g')
     bank1=BankDetails(id='5555444433331111', holder_fname='Tom', holder_lname='Han',cvc='123', expire_date=datetime.strptime("12/2022","%m/%Y") ,user = u1)
     bank2 = BankDetails (id='1111222233334444', holder_fname='Sky', holder_lname='Sky', cvc='123', expire_date=datetime.strptime("12/2021","%m/%Y"), user=u3)
+    bank3 = BankDetails (id='1111222233335555', holder_fname='Cloudia', holder_lname='Scan', cvc='123', expire_date=datetime.strptime("12/2021","%m/%Y"), user=u2)
     property1 = Property(   property_type = 'House',
                             add_num = '10', add_name = 'street', add_suburb = 'suburb1',
                             add_state = 'NSW', add_pc = '2000', num_bedrooms = '1',
@@ -325,6 +326,7 @@ def initial_db():
     db.session.add(u3)
     db.session.add(bank1)
     db.session.add(bank2)
+    db.session.add(bank3)
     db.session.add(property1)
     db.session.add(property2)
     db.session.add(property3)
