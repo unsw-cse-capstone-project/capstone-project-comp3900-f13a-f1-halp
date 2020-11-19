@@ -780,6 +780,8 @@ def changeAuctionDetails(AuctionID_):
         auction.AuctionEnd = form.auctionEnd.data
         auction.ReservePrice = form.reservePrice.data
         auction.MinBiddingGap = form.minBiddingGap.data
+        p =Property.query.get(auction.PropertyID)
+        p.status = 'auction'
         db.session.commit()
         flash(f'Auction edited successful!', 'success')
         return redirect(url_for('home'))
